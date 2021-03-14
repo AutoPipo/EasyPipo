@@ -9,12 +9,7 @@ setup(
     author_email='corleone@kakao.com',
     description='hello flask',
     scripts = ["diy_maker"],
-    packages=find_packages(),#["diy_maker"],
-    # entry_points={
-        # "console_scripts": [
-            # "diy_maker = hello"
-        # ]
-    # },
+    packages=find_packages(),
     classifiers=[
         'Programming Language :: Python :: 3.x',
         'License :: ',

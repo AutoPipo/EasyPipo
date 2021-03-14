@@ -1,4 +1,5 @@
-﻿# flask app
+﻿# flask create app
+
 from flask import Flask, Blueprint
 from .server import server
 

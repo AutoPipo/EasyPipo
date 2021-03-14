@@ -1,5 +1,6 @@
 ﻿# flask server
-# 20210310
+# Author : minku Koo
+# Project Start:: 2021.03.10
 
 from flask import Flask, request, render_template, jsonify, Blueprint, redirect, url_for
 import cv2
