@@ -19,19 +19,17 @@
 
     <div class="canvas_box">
       <span class="canvas_title">Original Picture</span>
-      <canvas id="canvas_pic" width="600" height="500"></canvas>
+      <canvas class="canvas_size" id="canvas_pic" width="600" height="500"></canvas>
 
       <input type="button" id="clear_btn" value="Clear" onclick="clearit()">
     </div>
 
     <div class="canvas_box">
       <span class="canvas_title">Line Drawing</span>
-      <canvas id="canvas_result" width="600" height="500"></canvas>
-      <input type="button" id="clear_btn" value="Clear" onclick="">
+      <canvas class="canvas_size" id="canvas_result" width="600" height="500"></canvas>
+      <input type="button" id="clear_btn_result" value="Clear" onclick="">
     </div>
-
-
-
+    
 <script>
 
 
@@ -42,7 +40,7 @@
   
   ctx.fillStyle = "red";
   ctx.strokeStyle = "red";
-  ctx.globalAlpha = "0.5";
+  ctx.globalAlpha = "0.05";
   ctx.lineWidth = 0;
   ctx.globalCompositeOperation = "source-over"; 
  
@@ -60,9 +58,9 @@
     var dist = distanceBetween(lastPoint, currentPoint);
     var angle = angleBetween(lastPoint, currentPoint);
     
-    var x_value = 10; // x좌표
-    var y_value = -50; // y좌표
-    var circle_r = 12; // 반지름
+    var x_value = 0; // x좌표
+    var y_value = -100; // y좌표
+    var circle_r = 8; // 반지름
 
     for (var i = 0; i < dist; i+=3) {
       x = lastPoint.x + (Math.sin(angle) * i) - 25;
@@ -73,6 +71,9 @@
       ctx.closePath();
       ctx.fill();
       ctx.stroke();
+      console.log("x:"+ (x+x_value-circle_r));
+      console.log("y:"+ (y+y_value-circle_r));
+      console.log("size:"+ (circle_r*2));
     }
     
     lastPoint = currentPoint;
@@ -81,7 +82,8 @@
   el.onmouseup = function() {
     isDrawing = false;
   };
-  
+
+
 
 var result_canvas = document.getElementById('canvas_result');
 var result_canvas = document.getElementById('canvas_pic');
@@ -89,6 +91,14 @@ var result_ctx = result_canvas.getContext('2d');
 var image_path = '../static/test-image/aa.jpg';
 
 make_base(image_path);
+
+
+  // diy makers Javascript
+  function clearit() {
+      ctx.clearRect(0,0, 1000, 1000);
+      make_base(image_path);
+  }
+
 
 function make_base(path) {
   image = new Image();
@@ -98,7 +108,7 @@ function make_base(path) {
     //    이미지의 왼위 부분x, 이미지의 왼위 부분y, 이미지의 원하는 가로크기, 
     //  이미지의 원하는 세로크기,
     //   사각형 부분x, 사각형 부분y, 가로크기, 세로크기)
-    result_ctx.drawImage(image, 40, 20, 300,300);
+    result_ctx.drawImage(image, 0, 0, 600, 500);
   }
 }
 

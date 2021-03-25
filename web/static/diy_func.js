@@ -1,7 +1,3 @@
-// diy makers Javascript
-function clearit() {
-    ctx.clearRect(0,0, 1000, 1000);
-}
 
 function distanceBetween(point1, point2) {
     return Math.sqrt(Math.pow(point2.x - point1.x, 2) + Math.pow(point2.y - point1.y, 2));
