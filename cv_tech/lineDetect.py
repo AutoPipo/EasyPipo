@@ -92,7 +92,7 @@ if __name__ == "__main__":
     regionss = [[2212,1612,130,160], [212,1612,30,100]]
     
     
-    image = readImage(filepath)
+    image = readImage(filepath) 
     
     '''
     # 흑백 처리 
@@ -123,5 +123,7 @@ if __name__ == "__main__":
 
     # canvas = makePipo(canvas, addThreshold)
     showImage(canvas, "pipo2")
-
+    
+    # test
+    
 
