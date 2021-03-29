@@ -29,15 +29,13 @@ body{
     vertical-align: top;
 }
 
-.canvas_size{
-    /* position: absolute;
-    right: 0; */
-    float: right;
-}
-
 .canvas_title{
     margin: 10px auto;
     font-size: 22px;
+}
+
+#line_detail_box{
+    height: 40px;
 }
 
 #brush_slider_box{
@@ -53,13 +51,29 @@ body{
     -webkit-appearance: slider-vertical; /* WebKit */
 }
 
+
+#eraser_slider_box{
+    float: right;
+    margin-left: 7px;
+    font-size: 12px;
+    font-weight: bold;
+    text-align: center;
+}
+#eraser_size{
+    width: 10px;
+    writing-mode: bt-lr; /* IE */
+    -webkit-appearance: slider-vertical; /* WebKit */
+}
+
 #canvas_pic{
     display: inline-block;
+    float: right;
     width: 600px;
     border: 1px solid #ccc;
 }
 
 #canvas_result{
+    float: left;
     width: 600px;
     height: auto;
     border: 1px solid #ccc;
@@ -71,13 +85,35 @@ body{
     bottom: 0;
     font-weight: bold;
 }
-#clear_btn{
+.btn{
+    width: 80px;
+    height: 30px;
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+#pic_clear_btn{
     position: absolute;
-    width: 60px;
-    height: 20px;
     right: 0;
     bottom: 0;
-    font-weight: bold;
+    cursor: pointer;
+}
+#undo_btn{
+    float: left;
+    font-size: 24px;
+    line-height: 6px;
+    cursor: pointer;
+}
+#result_clear_btn{
+    float: right;
+    cursor: pointer;
+}
+#result_eraser{
+    float: right;
+    margin-left: 10px;
+    margin-right: 10px;
+    font-size: 22px;
+    line-height: 6px;
     cursor: pointer;
 }
 
@@ -85,7 +121,6 @@ body{
     display: inline-block;
     width: 160px;
     vertical-align: top;
-    font-weight: bold;
 }
 .convert_box p{
     margin-top: 130px;
