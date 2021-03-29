@@ -74,7 +74,7 @@ if __name__ == "__main__":
     import random, datetime
     nowTime = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
     sessions = nowTime + str(random.randint(11 , 999999))
-    
+    print("session:",sessions)
     dirpath = "./test-image/"
     filename = "a1"
     filepath = dirpath + filename + ".jpg"
@@ -107,7 +107,7 @@ if __name__ == "__main__":
     
     #showImage(edge, "edges")
     # pipo = np.zeros(edge.shape)
-
+    print("session:",sessions)
     # 영역 선택 / 이외 부분 제거
     canvas = addLine(edge, canvas, regions)
     #showImage(addThreshold, "erase1")
@@ -117,14 +117,16 @@ if __name__ == "__main__":
     
     
     
-    
+    print("session:",sessions)
     canvas = addLine(edge, canvas, regionss)
     #showImage(addThreshold, "erase2")
     updateCanvas(conn, sessions, canvas)
     # canvas = makePipo(canvas, addThreshold)
     showImage(canvas, "pipo2")
-    
+    print("session:",sessions)
     a = getCanvas(conn, sessions, index = -1)
+    # print(a)
+    print( type(a)   )
     showImage(a, "dbdb")
     
     conn.close()
