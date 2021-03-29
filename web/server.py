@@ -6,6 +6,7 @@ from flask import Flask, request, render_template, jsonify, Blueprint, redirect,
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np
+import sqlite3 as sqlite
 
 server = Blueprint("server", __name__)
 
