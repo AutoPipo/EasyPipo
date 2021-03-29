@@ -82,10 +82,7 @@ $(window).on('load', function(){
                     ctx.arc(x + x_value, y + y_value, brush_size, false, Math.PI * 2, false);
                     ctx.closePath();
                     ctx.fill();
-                    ctx.stroke();
-                    // console.log("x:"+ (x+x_value-brush_size), "y:"+ (y+y_value-brush_size));
-                    // console.log("y:"+ (y+y_value-brush_size));
-                    // console.log("size:"+ (brush_size*2));
+                    // ctx.stroke(); // 이거 하면 border생김
                 }
                 
                 lastPoint = currentPoint;
