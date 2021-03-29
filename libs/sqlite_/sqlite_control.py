@@ -20,8 +20,8 @@ def insertData(conn, session, image, canvas):
     buffer = BytesIO()
     # b_image = base64.b64encode(image)
     # b_canvas = base64.b64encode(canvas)
-    image = sqlite.register_adapter(np.array, image)    
-    canvas = sqlite.register_adapter(np.array, canvas)    
+    image = sqlite.register_adapter(np.array, blob)    
+    canvas = sqlite.register_adapter(np.array, blob)    
     #sqlite3.register_converter("array", convert_array)
     
     sql = """
