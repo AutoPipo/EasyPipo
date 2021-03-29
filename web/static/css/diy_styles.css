@@ -1,0 +1,95 @@
+/********* Index Page *********/
+*{
+    box-sizing: border-box;
+    font-family:'Malgun Gothic';
+    margin: 0;
+    padding: 0;
+    white-space: nowrap;
+    border-spacing: 0;
+}
+body{
+    width: 100vw;
+    height: 95vh;
+    text-align: center;
+}
+
+/*main page title*/
+.index_title{
+    width: 40%;
+    margin: 30px auto;
+    font-size: 35px;
+    text-decoration: underline blue;
+}
+
+.canvas_box{
+    position: relative;
+    display: inline-block;
+    width: 650px;
+    /* border: 2px solid red; */
+    vertical-align: top;
+}
+
+.canvas_size{
+    /* position: absolute;
+    right: 0; */
+    float: right;
+}
+
+.canvas_title{
+    margin: 10px auto;
+    font-size: 22px;
+}
+
+#brush_slider_box{
+    float: left;
+    margin-left: 7px;
+    font-size: 12px;
+    font-weight: bold;
+    text-align: center;
+}
+#brush_size{
+    width: 10px;
+    writing-mode: bt-lr; /* IE */
+    -webkit-appearance: slider-vertical; /* WebKit */
+}
+
+#canvas_pic{
+    display: inline-block;
+    width: 600px;
+    border: 1px solid #ccc;
+}
+
+#canvas_result{
+    width: 600px;
+    height: auto;
+    border: 1px solid #ccc;
+}
+
+.img_url{
+    position: absolute;
+    left: 50px;
+    bottom: 0;
+    font-weight: bold;
+}
+#clear_btn{
+    position: absolute;
+    width: 60px;
+    height: 20px;
+    right: 0;
+    bottom: 0;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.convert_box{
+    display: inline-block;
+    width: 160px;
+    vertical-align: top;
+    font-weight: bold;
+}
+.convert_box p{
+    margin-top: 130px;
+    font-size: 100px;
+    color: blue;
+    cursor: pointer;
+}

@@ -1,66 +1,54 @@
 <!doctype html>
 <html>
 <head>
+    <meta charset="utf-8">
     <title>DIY Maker</title>
 
-    <meta charset="utf-8">
-    <link rel="stylesheet" href="{{ url_for('static', filename='diy_styles.css') }}">
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/moonspam/NanumBarunGothic@1.0/nanumbarungothicsubset.css">
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js">
-    </script>
-    <script src="//code.jquery.com/jquery-3.2.1.min.js"></script>
-    <script src="{{ url_for('static', filename='diy_func.js') }}"></script>
+
+    <!-- import jquery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <!------------------->
+
+
+    <!-- local js & css file import start -->
+    <script src="{{ url_for('static', filename='js/diy_func.js') }}"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/diy_styles.css') }}">
+    <!-------------------------------------->
 </head>
 
-<body>
-    <h1 class="index_title">
-        Image to DIY Picture Auto creater
-    </h1>
+<body> <!--onload="image_onCanvas();"-->
+    <h1 class="index_title">PIPO SKETCHER</h1>
 
-    <canvas id="cv1" width="400" height="300">    
-    </canvas>
-    <canvas id="cv2" width="400" height="300">
-    </canvas>
-    <hr>
-    <button onclick='merge();'>Merge</button>
+    <div class="canvas_box">
+        <div id='brush_slider_box'>
+            <label for="brush">Brush<br>Size</label>
+            <br>
+            <input name="brush" id="brush_size" type="range" value="8"  min="1" max="20" />
+        </div>
+        
+        <label for="brush">Line Detail</label><br>
+        <input name="line" id="line_detail" type="range" value="50"  min="1" max="100" />
 
-    <style>
-        canvas {
-        border:1px solid #c3c3c3;
-        }
-        </style>
-<script>
-    var el1 = document.getElementById('cv1');
-    var el2 = document.getElementById('cv2');
-    var ctx1 = el1.getContext('2d');
-    var ctx2 = el2.getContext('2d');
-    ctx1.lineJoin = "round"
-    ctx1.strokeStyle = "#00FF00"; 
-    ctx1.globalAlpha = "0.2"; 
-    ctx1.lineWidth = 30; 
-    ctx1.globalCompositeOperation = "source-over";
-  ctx2.globalCompositeOperation = "source-over";
-    var isDrawing, lastPoint;
-    el1.onmousedown = function(e) {
-        isDrawing = true;
-        lastPoint = { x: e.clientX, y: e.clientY };
-    };  
-    el1.onmousemove = function(e) {
-    if (!isDrawing) return;
-        var currentPoint = { x: e.clientX, y: e.clientY };
-        ctx1.beginPath();
-        ctx1.moveTo(lastPoint.x, lastPoint.y);
-        ctx1.lineTo(currentPoint.x, currentPoint.y);
-        ctx1.closePath();
-        ctx1.stroke();
-        lastPoint = currentPoint;
-    };
-    el1.onmouseup = function() {
-        isDrawing = false;
-    };
-function merge() {
-ctx2.putImageData(ctx1.getImageData(0,0,400,300),0,0);
-}
-</script>
+
+        <canvas class="canvas_size" id="canvas_pic"></canvas>
+
+        
+        <span class='img_url' id='original_img_url'></span>
+
+        <input type="button" id="clear_btn" value="Clear">
+    </div>
+
+    <div class='convert_box'>
+        <p>▶</p>
+        CONVERT
+    </div>
+
+    <div class="canvas_box">
+        <canvas class="canvas_size" id="canvas_result"></canvas>
+
+        <input type="button" id="clear_btn_result" value="Clear" onclick="">
+    </div>
+
 </body>
 </html>
