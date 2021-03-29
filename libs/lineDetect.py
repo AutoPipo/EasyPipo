@@ -1,11 +1,13 @@
 """
 2021.03.26
 """
-
+# __init__.py
+from sqlite_.sqlite_control import *
 import matplotlib.pyplot as plt
 import cv2
 import numpy as np
 import sqlite3 as sqlite
+
 
 def showImage(image, title = "Show Image", width = 1000, height = 700):
     
@@ -27,9 +29,6 @@ def makeThreshold(image, block_size = 11, c = 5):
 
 def createCanvas(threshold):
     canvas = np.zeros(threshold.shape) + 255
-    print("canvas", canvas)
-    print("threshold.shape", threshold.shape)
-    print("canvas.shape",canvas.shape)
     return canvas
 
 def setBlur(image, blur_size = 7):
@@ -62,7 +61,7 @@ def addLine(threshold, canvas, regions):
     for region in regions:
         x, y, w, h = region
         canvas[y : y + h, x : x + w] = threshold[y : y + h, x : x + w]
-        print("coord:", region)
+        
     
     
     return canvas
@@ -70,19 +69,11 @@ def addLine(threshold, canvas, regions):
 def makePipo(org_threshold, threshold):
     return org_threshold + threshold
 
-def get_db_query(dbname):
-    conn = sqlite.connect(dbname)
-    cursor = conn.cursor()
-    return conn, cursor
-    
-def exit_db(conn, cursor):
-    conn.close()
-    cursor.close()
-    return 
 
 if __name__ == "__main__":
-    print(sqlite.version)
-    print(sqlite.sqlite_version)
+    import random, datetime
+    nowTime = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+    sessions = nowTime + str(random.randint(11 , 999999))
     
     dirpath = "./test-image/"
     filename = "a1"
@@ -93,6 +84,7 @@ if __name__ == "__main__":
     
     
     image = readImage(filepath) 
+    org_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     
     '''
     # 흑백 처리 
@@ -103,27 +95,39 @@ if __name__ == "__main__":
     gray = setBlur( gray, 7)
     showImage(gray, "median blur")
     '''
-
+    conn = get_db_query("../databases/test.db")
+    createTable(conn)
+    
     # edge
     edge = getEdge(image, blur_size = 7, block_size = 11, c = 5)
     showImage(edge, "edge")
+    
     canvas = createCanvas(edge)
+    insertData(conn, sessions, org_image, canvas)
+    
     #showImage(edge, "edges")
     # pipo = np.zeros(edge.shape)
 
     # 영역 선택 / 이외 부분 제거
     canvas = addLine(edge, canvas, regions)
     #showImage(addThreshold, "erase1")
-
+    updateCanvas(conn, sessions, canvas)
     # canvas = makePipo(canvas, addThreshold)
     showImage(canvas, "pipo1")
-
+    
+    
+    
+    
     canvas = addLine(edge, canvas, regionss)
     #showImage(addThreshold, "erase2")
-
+    updateCanvas(conn, sessions, canvas)
     # canvas = makePipo(canvas, addThreshold)
     showImage(canvas, "pipo2")
     
+    a = getCanvas(conn, sessions, index = -1)
+    showImage(a, "dbdb")
+    
+    conn.close()
     # test
     
 
