@@ -36,6 +36,8 @@ body{
 
 #line_detail_box{
     height: 40px;
+    font-size: 12px;
+    font-weight: bold;
 }
 
 #brush_slider_box{
@@ -122,6 +124,7 @@ body{
     display: inline-block;
     width: 160px;
     vertical-align: top;
+    font-weight: bold;
 }
 .convert_box p{
     margin-top: 130px;

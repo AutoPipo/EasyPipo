@@ -1,5 +1,5 @@
 $(window).on('load', function(){
-    var image_path = '../static/test-image/t4.jpg';
+    var image_path = '../static/test-image/a5.jpg';
     
     make_base(image_path);
     
