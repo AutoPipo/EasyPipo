@@ -30,12 +30,11 @@ def convert():
 
 
     brush = Brush(image_path, "./databases/test.db")
-    print("line detail>", line_detail)
+    
     edge = brush.getEdge( line_detail = line_detail, block_size = 11)
     
     canvas = brush.drawLine(edge, regions=area_arr)
 
-    # brush.showImage(title="hello")
     brush.save("./web/static/render_image/")
     brush.finish()
 
