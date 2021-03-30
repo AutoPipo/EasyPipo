@@ -28,11 +28,11 @@ def convert():
     image_path = './web'+image_path[2:]
     image_name = os.path.basename(image_path)
 
-    for item in area_arr[:20]:
-        print(item)
 
     brush = Brush(image_path, "./databases/test.db")
+    print("line detail>", line_detail)
     edge = brush.getEdge( line_detail = line_detail, block_size = 11)
+    
     canvas = brush.drawLine(edge, regions=area_arr)
 
     # brush.showImage(title="hello")
