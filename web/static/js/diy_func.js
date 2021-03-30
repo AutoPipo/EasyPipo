@@ -21,19 +21,21 @@ $(window).on('load', function(){
         console.log(img_size);
         console.log(img_size_origin);
         console.log(area_arr);
-        
-        // $.ajax({
-        //     url: '/getLineScale',
-        //     data: {"jsons":jsons, "fileName":"{{fileName}}", "page":this_page},
-        //     dataType:'json',
-        //     type: 'POST',
-        //     success: function (data) {
-        //         $("#line_scale").val(data.line_scale);
-        //     },
-        //     error: function (error) {
-        //         console.error(error);
-        //     }
-        // });
+
+        $.ajax({
+            url: '/convert',
+            data: {"img_size":JSON.stringify(img_size), "img_size_origin":JSON.stringify(img_size_origin), "area_arr":JSON.stringify(area_arr)},
+            dataType:'json',
+            type: 'POST',
+            success: function (data) {
+                // $("#line_scale").val(data.line_scale);
+                console.log('성공');
+                console.log(data);
+            },
+            error: function (error) {
+                console.error(error);
+            }
+        });
     });
 
 
