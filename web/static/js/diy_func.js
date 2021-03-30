@@ -3,7 +3,7 @@ $(window).on('load', function(){
     
     make_base(image_path);
     
-    var brush_cursor = document.querySelector('.cursor');
+    var brush_cursor = document.querySelector('.brush_cursor');
     var brush_size = 8;
 
     // 슬라이드 조절 시 브러시 사이즈 변경
@@ -11,8 +11,6 @@ $(window).on('load', function(){
         var slider = document.getElementById('brush_size');
         brush_size = $(this).val();
         
-        // brush_cursor.style.width = brush_size*2;
-        // brush_cursor.style.height = brush_size*2;
         $(brush_cursor).css('width', brush_size*2);
         $(brush_cursor).css('height', brush_size*2);
     });
