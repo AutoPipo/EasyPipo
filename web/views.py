@@ -36,15 +36,19 @@ def convert():
     print(image_path)
 
     for item in area_arr:
-        print(item)
+        #print(item)
+        pass
 
     brush = Brush(image_path, "./databases/test.db")
     edge = brush.getEdge( blur_size = 7, block_size = 11, c = 5)
-    canvas = brush.drawLine(edge, regions=[])
-    
+    print("draw line start ", "**"*20)
+    canvas = brush.drawLine(edge, regions=area_arr)
+    print("draw line finish", "**"*20)
     # brush.showImage(title="hello")
-    brush.save()
+    brush.save("./web/static/render_image/")
+    brush.finish()
 
-
-
+    print("간다")
     return jsonify(img_name=image_name, img_size=img_size, img_size_origin=img_size_origin, area_arr=area_arr)
+    
+    

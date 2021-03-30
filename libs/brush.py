@@ -37,23 +37,34 @@ class Brush:
     def drawLine(self, edge, regions=[]):
         regions_ = []
         if regions == []:
-            regions_ = [( 0,0,self.org_image.shape[1], self.org_image.shape[0]), ]
-        else:
-            for dict in regions_:
-                x, y, radius = dict["x"], dict["y"], dict["radius"]
-                x, y, w, h = x-radius, y-radius, radius*2, radius*2
-                regions_.append([x, y, w, h])
+            regions_ = [( 0, 0, self.org_image.shape[1], self.org_image.shape[0]), ]
+            print("region empty")
+        
+        for idx, dict in enumerate(regions):
+            # print("dict", dict, "idx", idx)
+            x, y, radius = int(dict["x"]), int(dict["y"]), int(dict["radius"])
+            x, y, w, h = x-radius, y-radius, radius*2, radius*2
+            print(x, y, w, h )
+            print("1>",self.canvas.shape)
+            print("2>",self.org_image.shape)
+            regions_.append([x, y, w, h])
+            # print("i>>",idx)
+        print("coordinate end")
             
-        self.__addLine(edge, regions)
+        self.canvas = self.__addLine(edge, regions_)
         self.__db.insertData(self.__session_id, self.org_image, self.canvas)
+        print("ff")
+        # cv2.imwrite("./web/static/render_image/rr.jpg", self.canvas)
         
     def __addLine(self, threshold, regions):
         print(self.canvas.shape)
         print(threshold.shape)
         for region in regions:
+            # print("region>",region)
             x, y, w, h = region
             self.canvas[y : y + h, x : x + w] = threshold[y : y + h, x : x + w]
-            
+        # print(self.canvas)
+        # self.showImage()
         return self.canvas
 
     def getEdge(self, blur_size = 7, block_size = 11, c = 5):
@@ -78,15 +89,18 @@ class Brush:
         return edges
 
     def showImage(self, title = "Show Image", width = 1000, height = 700):
-    
-        image = cv2.resize(self.image, dsize=(width, height))
+        
+        image = cv2.resize(self.canvas, dsize=(width, height))
         cv2.imshow(title, image)
         cv2.waitKey(0)
         return
 
     def save(self, directory="./web/static/render_image/"):
         path = os.path.join(directory, self.filename)
+        print("save path>", path)
         cv2.imwrite(path, self.canvas)
+        self.showImage()
+        # self.__db.dbClose()
     
     def undo(self):
         self.canvas = db.undoCanvas(self.__session_id)
