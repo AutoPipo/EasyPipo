@@ -3,6 +3,8 @@ $(window).on('load', function(){
     var brush_cursor = document.querySelector('.brush_cursor');
     var brush_size = 8;
     var area_arr = [];
+    var img_size_origin = {};
+    var img_size = {};
     
     make_base(image_path);
 
@@ -16,7 +18,10 @@ $(window).on('load', function(){
     });
 
     $('.convert_box p').click(function(){
+        console.log(img_size);
+        console.log(img_size_origin);
         console.log(area_arr);
+        
         // $.ajax({
         //     url: '/getLineScale',
         //     data: {"jsons":jsons, "fileName":"{{fileName}}", "page":this_page},
@@ -52,6 +57,9 @@ $(window).on('load', function(){
 
             result_canvas.width = width_set;
             result_canvas.height = height_set;
+
+            img_size = {width:width_set, height:height_set};
+            img_size_origin = {width:image.width, height:image.height};
 
 
             var ctx = pic_canvas.getContext('2d');
