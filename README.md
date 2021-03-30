@@ -1,2 +1,2 @@
-# Auto-create_DIY-picture
+# Auto-create-Pipo-Painting
 Auto creation DIY(DoItYourself) Pirtures
