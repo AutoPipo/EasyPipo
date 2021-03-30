@@ -45,9 +45,9 @@ class Brush:
             x, y, radius = int(dict["x"]), int(dict["y"]), int(dict["radius"])
             x, y, w, h = x-radius, y-radius, radius*2, radius*2
             regions_.append([x, y, w, h])
+            #rint(">>",x, y, w, h)
             
-            
-        self.canvas = self.__addLine(edge, regions_)
+        self.__addLine(edge, regions_)
         self.__db.insertData(self.__session_id, self.org_image, self.canvas)
         
         
@@ -70,10 +70,14 @@ class Brush:
         gray = self.__setBlur( gray, blur_size)
         edge = self.__makeThreshold(gray, block_size = block_size, c=c )
         self.canvas = np.zeros(edge.shape) + 255
+        # cv2.imshow("eg", edge)
+        # cv2.waitKey(0)
         return edge
         
     def __calcDetail(self, value, max=20):
+        print("v??", value)
         value = max - int(value)
+        
         # blur = int(10 - value * 0.1 )
         blur = 7
         # c = round( value * 0.6, 1) + (12 - blur)
@@ -86,13 +90,14 @@ class Brush:
         
     # make adaptive threshold 
     def __makeThreshold(self, image, block_size = 11, c = 5):
-        edges = cv2.adaptiveThreshold(image, 
-                                    255, 
-                                    cv2.ADAPTIVE_THRESH_MEAN_C, 
-                                    cv2.THRESH_BINARY, 
-                                    block_size, 
-                                    c
-                                    )
+        edges = cv2.adaptiveThreshold(
+            image, 
+            255, 
+            cv2.ADAPTIVE_THRESH_MEAN_C, 
+            cv2.THRESH_BINARY, 
+            block_size, 
+            c
+        )
         return edges
 
     def showImage(self, title = "Show Image", width = 1000, height = 700):
