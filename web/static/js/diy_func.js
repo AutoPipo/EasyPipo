@@ -27,9 +27,6 @@ $(window).on('load', function(){
     });
 
     $('.convert_box p').click(function(){
-        console.log(img_size);
-        console.log(img_size_origin);
-        console.log(area_arr);
         $('.loader').addClass('is-active');
 
         $.ajax({
@@ -38,11 +35,13 @@ $(window).on('load', function(){
             dataType:'json',
             type: 'POST',
             success: function (data) {
-                console.log(data);
-
                 image = new Image();
-                image.src = '/static/render_image/'+data.img_name;
+                var time = new Date().getTime();
 
+                image.src = '/static/render_image/'+data.img_name+'?time='+time;
+
+                console.log(image.src);
+                
                 $(image).on('load', function(){
                     var width_set = pic_size;
                     var height_set = pic_size * image.height / image.width;
