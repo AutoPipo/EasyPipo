@@ -18,7 +18,7 @@ class Brush:
         nowTime = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
         self.__session_id = nowTime + str(random.randint(11 , 999999))
         
-        self.imageSetting( filepath)
+        self.imageSetting( filepath )
         self.dbSetting(db_path)
     
     def imageSetting(self, filepath):
@@ -26,14 +26,24 @@ class Brush:
         self.image = cv2.imread(filepath)
         self.org_image = cv2.cvtColor(self.image, cv2.COLOR_BGR2RGB)
         
+        directory="./web/static/org_image/"
+        path = os.path.join(directory, self.filename)
+        cv2.imwrite(path, self.image)
     
     def dbSetting(self, db_path):
         self.__db = dbControl(db_path)
         self.__db.createTable()
 
     def drawLine(self, edge, regions=[]):
+        regions_ = []
         if regions == []:
-            regions = [( 0,0,self.org_image.shape[1], self.org_image.shape[0]), ]
+            regions_ = [( 0,0,self.org_image.shape[1], self.org_image.shape[0]), ]
+        else:
+            for dict in regions_:
+                x, y, radius = dict["x"], dict["y"], dict["radius"]
+                x, y, w, h = x-radius, y-radius, radius*2, radius*2
+                regions_.append([x, y, w, h])
+            
         self.__addLine(edge, regions)
         self.__db.insertData(self.__session_id, self.org_image, self.canvas)
         
@@ -74,7 +84,7 @@ class Brush:
         cv2.waitKey(0)
         return
 
-    def save(self, directory="./web/static/line-detect/"):
+    def save(self, directory="./web/static/render_image/"):
         path = os.path.join(directory, self.filename)
         cv2.imwrite(path, self.canvas)
     
@@ -94,5 +104,8 @@ if __name__ == "__main__":
     edge = brush.getEdge( blur_size = 7, block_size = 11, c = 5)
     canvas = brush.drawLine(edge, regions=[])
     
-    brush.showImage(title="hello")
-    brush.save()
+    # brush.showImage(title="hello")
+    brush.save("../web/static/render_image/")
+    brush.finish()
+    
+    
