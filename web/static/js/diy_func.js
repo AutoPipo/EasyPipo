@@ -27,9 +27,6 @@ $(window).on('load', function(){
     });
 
     $('.convert_box p').click(function(){
-        console.log(img_size);
-        console.log(img_size_origin);
-        console.log(area_arr);
         $('.loader').addClass('is-active');
 
         $.ajax({
@@ -38,11 +35,13 @@ $(window).on('load', function(){
             dataType:'json',
             type: 'POST',
             success: function (data) {
-                console.log(data);
-
                 image = new Image();
-                image.src = '/static/render-image/'+data.img_name;
+                var time = new Date().getTime();
 
+                image.src = '/static/render_image/'+data.img_name+'?time='+time;
+
+                console.log(image.src);
+                
                 $(image).on('load', function(){
                     var width_set = pic_size;
                     var height_set = pic_size * image.height / image.width;
@@ -141,7 +140,14 @@ $(window).on('load', function(){
                     ctx.closePath();
                     ctx.fill();
 
-                    area_arr.push({x:x + x_value, y:y + y_value, radius:brush_size});
+
+                    scalingFactorX = img_size_origin['width'] / img_size['width'];
+                    scalingFactorY = img_size_origin['height'] / img_size['height'];
+                    
+                    x1 = (x + x_value) * scalingFactorX;
+                    y1 = (y + y_value) * scalingFactorY;
+
+                    area_arr.push({x:x1, y:y1, radius:brush_size});
                 }
                 
                 lastPoint = currentPoint;

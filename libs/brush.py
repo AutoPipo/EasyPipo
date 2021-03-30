@@ -99,7 +99,6 @@ class Brush:
         path = os.path.join(directory, self.filename)
         print("save path>", path)
         cv2.imwrite(path, self.canvas)
-        self.showImage()
         # self.__db.dbClose()
     
     def undo(self):
@@ -121,5 +120,3 @@ if __name__ == "__main__":
     # brush.showImage(title="hello")
     brush.save("../web/static/render_image/")
     brush.finish()
-    
-    
