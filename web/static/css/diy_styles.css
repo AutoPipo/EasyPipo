@@ -70,6 +70,7 @@ body{
     float: right;
     width: 600px;
     border: 1px solid #ccc;
+    cursor: none;
 }
 
 #canvas_result{
@@ -128,3 +129,16 @@ body{
     color: blue;
     cursor: pointer;
 }
+
+
+.cursor {
+    width: 16px;
+    height: 16px;
+    border-radius: 100%;
+    background-color: red;
+    opacity: .3;
+    position: fixed;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    transition: width .3s, height .3s, opacity .3s;
+  }

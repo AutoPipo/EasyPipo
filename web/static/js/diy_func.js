@@ -1,14 +1,20 @@
 $(window).on('load', function(){
-    var image_path = '../static/test-image/aa.jpg';
+    var image_path = '../static/test-image/t4.jpg';
     
     make_base(image_path);
     
+    var brush_cursor = document.querySelector('.cursor');
     var brush_size = 8;
 
     // 슬라이드 조절 시 브러시 사이즈 변경
     $('#brush_size').change(function(e){
         var slider = document.getElementById('brush_size');
         brush_size = $(this).val();
+        
+        // brush_cursor.style.width = brush_size*2;
+        // brush_cursor.style.height = brush_size*2;
+        $(brush_cursor).css('width', brush_size*2);
+        $(brush_cursor).css('height', brush_size*2);
     });
   
 
@@ -56,15 +62,20 @@ $(window).on('load', function(){
 
             
             var isDrawing, lastPoint;
-              
 
             
             pic_canvas.onmousedown = function(e) {
                 isDrawing = true;
                 lastPoint = { x: e.offsetX, y: e.offsetY }; // 왼쪽 위
             };
-            
+
             pic_canvas.onmousemove = function(e) {
+                var x = e.clientX;
+                var y = e.clientY;
+                brush_cursor.style.left = x + "px";
+                brush_cursor.style.top = y + "px";
+
+
                 if (!isDrawing){
                     return;
                 }
