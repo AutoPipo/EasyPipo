@@ -2,11 +2,10 @@
 2021.03.26
 """
 # __init__.py
-from sqlite_.sqlite_control import *
+from sqlite_.sqlite_control import dbControl
 import matplotlib.pyplot as plt
 import cv2
 import numpy as np
-import sqlite3 as sqlite
 
 
 def showImage(image, title = "Show Image", width = 1000, height = 700):
@@ -75,12 +74,13 @@ if __name__ == "__main__":
     nowTime = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
     sessions = nowTime + str(random.randint(11 , 999999))
     print("session:",sessions)
+    
     dirpath = "./test-image/"
-    filename = "a1"
+    filename = "a3"
     filepath = dirpath + filename + ".jpg"
     # x, y, w, h
-    regions = [[1512,1512,230,140], [1212,912,100,100]]
-    regionss = [[2212,1612,130,160], [212,1612,30,100]]
+    regions = [[10,10,52,40], [380,360,60,40]]
+    regionss = [[150,100,50,50], [100,150,44,56]]
     
     
     image = readImage(filepath) 
@@ -95,41 +95,43 @@ if __name__ == "__main__":
     gray = setBlur( gray, 7)
     showImage(gray, "median blur")
     '''
-    conn = get_db_query("../databases/test.db")
-    createTable(conn)
+    db = dbControl("../databases/test.db")
+    db.createTable()
     
     # edge
     edge = getEdge(image, blur_size = 7, block_size = 11, c = 5)
     showImage(edge, "edge")
+    print(edge.shape)
     
     canvas = createCanvas(edge)
-    insertData(conn, sessions, org_image, canvas)
+    db.insertData(sessions, org_image, canvas)
     
     #showImage(edge, "edges")
     # pipo = np.zeros(edge.shape)
-    print("session:",sessions)
     # 영역 선택 / 이외 부분 제거
     canvas = addLine(edge, canvas, regions)
     #showImage(addThreshold, "erase1")
-    updateCanvas(conn, sessions, canvas)
+    # db.updateCanvas(sessions, canvas)
+    db.insertData(sessions, org_image, canvas)
     # canvas = makePipo(canvas, addThreshold)
     showImage(canvas, "pipo1")
     
     
-    
-    print("session:",sessions)
     canvas = addLine(edge, canvas, regionss)
     #showImage(addThreshold, "erase2")
-    updateCanvas(conn, sessions, canvas)
-    # canvas = makePipo(canvas, addThreshold)
+    # db.updateCanvas(sessions, canvas)
+    db.insertData(sessions, org_image, canvas)
     showImage(canvas, "pipo2")
-    print("session:",sessions)
-    a = getCanvas(conn, sessions, index = -1)
+    
+    a = db.getCanvas(sessions)
     # print(a)
     print( type(a)   )
     showImage(a, "dbdb")
     
-    conn.close()
+    a = db.undoCanvas(sessions)
+    showImage(a, "UNDO")
+    
+    db.dbClose()
     # test
     
 
