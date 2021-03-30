@@ -20,7 +20,8 @@ views = Blueprint("server", __name__)
 def index():
     if "id" not in session:
         session["id"] = get_job_id()
-    print("__job_id:",session["id"])
+    
+    # session.pop("id")
     return render_template("index.html")
 
 
@@ -33,7 +34,6 @@ def convert():
     image_path = './web'+image_path[2:]
     image_name = os.path.basename(image_path)
 
-    print("__job_id in convert:",session["id"])
     brush = Brush(image_path, session["id"], "./databases/test.db")
     
     edge = brush.getEdge( line_detail = line_detail, block_size = 11)
@@ -42,6 +42,8 @@ def convert():
 
     brush.save("./web/static/render_image/")
     brush.finish()
+    
+    
 
     return jsonify(img_name=image_name, area_arr=area_arr)
     
