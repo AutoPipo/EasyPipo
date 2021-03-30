@@ -62,6 +62,8 @@ $(window).on('load', function(){
 
                     $('.loader').removeClass('is-active');
                 });
+				
+				area_arr = []; // koo
             },
             error: function (error) {
                 console.error(error);
