@@ -1,10 +1,19 @@
 $(window).on('load', function(){
     var image_path = '../static/test-image/a5.jpg';
+    var pic_size = 600;
+
     var brush_cursor = document.querySelector('.brush_cursor');
     var brush_size = 8;
     var area_arr = [];
     var img_size_origin = {};
     var img_size = {};
+
+    
+    var pic_canvas = document.getElementById('canvas_pic');
+    var result_canvas = document.getElementById('canvas_result');
+
+    var ctx = '';
+    var result_ctx = '';
     
     make_base(image_path);
 
@@ -21,6 +30,7 @@ $(window).on('load', function(){
         console.log(img_size);
         console.log(img_size_origin);
         console.log(area_arr);
+        $('.loader').addClass('is-active');
 
         $.ajax({
             url: '/convert',
@@ -28,9 +38,19 @@ $(window).on('load', function(){
             dataType:'json',
             type: 'POST',
             success: function (data) {
-                // $("#line_scale").val(data.line_scale);
-                console.log('성공');
                 console.log(data);
+
+                image = new Image();
+                image.src = '/static/test-image/'+data.img_name;
+
+                $(image).on('load', function(){
+                    var width_set = pic_size;
+                    var height_set = pic_size * image.height / image.width;
+                    
+                    result_ctx.drawImage( image, 0, 0, width_set, height_set );
+
+                    $('.loader').removeClass('is-active');
+                });
             },
             error: function (error) {
                 console.error(error);
@@ -45,11 +65,8 @@ $(window).on('load', function(){
         image.src = path;
 
         $(image).on('load', function(){
-            var pic_canvas = document.getElementById('canvas_pic');
-            var result_canvas = document.getElementById('canvas_result');
-
-            var width_set = 600;
-            var height_set = 600 * image.height / image.width;
+            var width_set = pic_size;
+            var height_set = pic_size * image.height / image.width;
 
             pic_canvas.width = width_set;
             pic_canvas.height = height_set;
@@ -64,8 +81,8 @@ $(window).on('load', function(){
             img_size_origin = {width:image.width, height:image.height};
 
 
-            var ctx = pic_canvas.getContext('2d');
-            var result_ctx = result_canvas.getContext('2d');
+            ctx = pic_canvas.getContext('2d');
+            result_ctx = result_canvas.getContext('2d');
 
             ctx.fillStyle = "rgba(255, 0, 0, 0.05)";
             

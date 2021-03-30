@@ -16,9 +16,16 @@
     <script src="{{ url_for('static', filename='js/diy_func.js') }}"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/diy_styles.css') }}">
     <!-------------------------------------->
+
+    <!-- CSS Loader -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='dist/css-loader.css') }}">
+    <!---------------->
 </head>
 
-<body> <!--onload="image_onCanvas();"-->
+<body>
+    <div class="loader loader-default data-text="Converting..."></div>
+
+
     <h1 class="index_title">PIPO SKETCHER</h1>
 
     <div class="canvas_box">

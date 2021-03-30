@@ -22,6 +22,7 @@ def convert():
     img_size = json.loads(request.form['img_size'])
     img_size_origin = json.loads(request.form['img_size_origin'])
     area_arr = json.loads(request.form['area_arr'])
+    img_name = 'a5.jpg'
 
     print(f'img_size: {img_size}')
     print('\n\n')
@@ -31,4 +32,4 @@ def convert():
     for area in area_arr:
         print(area)
 
-    return jsonify(img_size=img_size, img_size_origin=img_size_origin, area_arr=area_arr)
+    return jsonify(img_name=img_name, img_size=img_size, img_size_origin=img_size_origin, area_arr=area_arr)
