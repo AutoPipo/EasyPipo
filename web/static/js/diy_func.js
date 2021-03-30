@@ -41,7 +41,7 @@ $(window).on('load', function(){
                 console.log(data);
 
                 image = new Image();
-                image.src = '/static/render-image/'+data.img_name;
+                image.src = '/static/render_image/'+data.img_name;
 
                 $(image).on('load', function(){
                     var width_set = pic_size;
@@ -141,7 +141,14 @@ $(window).on('load', function(){
                     ctx.closePath();
                     ctx.fill();
 
-                    area_arr.push({x:x + x_value, y:y + y_value, radius:brush_size});
+
+                    scalingFactorX = img_size_origin['width'] / img_size['width'];
+                    scalingFactorY = img_size_origin['height'] / img_size['height'];
+                    
+                    x1 = (x + x_value) * scalingFactorX;
+                    y1 = (y + y_value) * scalingFactorY;
+
+                    area_arr.push({x:x1, y:y1, radius:brush_size});
                 }
                 
                 lastPoint = currentPoint;
