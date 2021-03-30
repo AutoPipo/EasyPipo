@@ -3,7 +3,7 @@
 # Project Start:: 2021.03.10
 # Last Modified from Ji-yong 2021.03.30
 
-from flask import Flask, request, render_template, jsonify, Blueprint, redirect, url_for
+from flask import Flask, request, render_template, jsonify, Blueprint, redirect, url_for, session
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np
@@ -11,11 +11,15 @@ import sqlite3 as sqlite
 import json
 import os
 from libs.brush import Brush
+from libs.getSession import Sessions
 
 views = Blueprint("server", __name__)
+veiws.secret_key = "wh2fdjqw3k4rvna5dml46smv"
 
 @views.route("/", methods=["GET"])
 def index():
+    session["id"] = Sessions.getSession()
+    print("session:",session["id"])
     return render_template("index.html")
 
 
