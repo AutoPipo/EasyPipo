@@ -46,8 +46,11 @@ $(window).on('load', function(){
                 $(image).on('load', function(){
                     var width_set = pic_size;
                     var height_set = pic_size * image.height / image.width;
-                    
+
                     result_ctx.drawImage( image, 0, 0, width_set, height_set );
+
+                    $("#result_img_url").text(data.img_name);
+                    $('#result_download_btn').css('visibility', 'visible');
 
                     $('.loader').removeClass('is-active');
                 });
@@ -97,7 +100,7 @@ $(window).on('load', function(){
             //  사각형 부분x, 사각형 부분y, 가로크기, 세로크기)
             ctx.drawImage( image, 0, 0, width_set, height_set );
 
-            $("#original_img_url").text(path);
+            $("#target_img_url").text(path);
             $(".canvas_box, .convert_box").css('height', height_set + 90);
 
             

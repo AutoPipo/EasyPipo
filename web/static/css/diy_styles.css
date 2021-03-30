@@ -94,22 +94,20 @@ body{
     font-size: 18px;
     font-weight: bold;
     margin-bottom: 10px;
+    cursor: pointer;
 }
 #pic_clear_btn{
     position: absolute;
     right: 0;
     bottom: 0;
-    cursor: pointer;
 }
 #undo_btn{
     float: left;
     font-size: 24px;
     line-height: 6px;
-    cursor: pointer;
 }
 #result_clear_btn{
     float: right;
-    cursor: pointer;
 }
 #result_eraser{
     float: right;
@@ -117,7 +115,14 @@ body{
     margin-right: 10px;
     font-size: 22px;
     line-height: 6px;
-    cursor: pointer;
+}
+#result_download_btn{
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    margin-right: 50px;
+    font-size: 30px;
+    line-height: 6px;
 }
 
 .convert_box{
