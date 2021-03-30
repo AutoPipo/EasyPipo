@@ -17,9 +17,16 @@ $(window).on('load', function(){
     
     make_base(image_path);
 
+
+    // diy makers Javascript
+    function clearit() {
+        ctx.clearRect(0,0, 1000, 1000);
+        make_base(image_path);
+        brush_size = 8;
+    }
+
     // 슬라이드 조절 시 브러시 사이즈 변경
     $('#brush_size').change(function(e){
-        var slider = document.getElementById('brush_size');
         brush_size = $(this).val();
         
         $(brush_cursor).css('width', brush_size*2);
@@ -31,7 +38,11 @@ $(window).on('load', function(){
 
         $.ajax({
             url: '/convert',
-            data: {"image_path":image_path, "img_size":JSON.stringify(img_size), "img_size_origin":JSON.stringify(img_size_origin), "area_arr":JSON.stringify(area_arr)},
+            data: {
+                "image_path":image_path,
+                "area_arr":JSON.stringify(area_arr),
+                "line_detail":$("#brush_size").val()
+            },
             dataType:'json',
             type: 'POST',
             success: function (data) {
@@ -39,8 +50,6 @@ $(window).on('load', function(){
                 var time = new Date().getTime();
 
                 image.src = '/static/render_image/'+data.img_name+'?time='+time;
-
-                console.log(image.src);
                 
                 $(image).on('load', function(){
                     var width_set = pic_size;
@@ -58,6 +67,8 @@ $(window).on('load', function(){
                 console.error(error);
             }
         });
+
+        clearit();
     });
 
 
@@ -159,12 +170,6 @@ $(window).on('load', function(){
 
 
             
-            // diy makers Javascript
-            function clearit() {
-                ctx.clearRect(0,0, 1000, 1000);
-                make_base(image_path);
-                brush_size = 8;
-            }
             $("#pic_clear_btn").click(function(){
                 clearit();
             });

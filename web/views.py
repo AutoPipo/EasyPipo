@@ -21,15 +21,9 @@ def index():
 
 @views.route("/convert", methods=["POST"])
 def convert():
-    img_size = json.loads(request.form['img_size'])
-    img_size_origin = json.loads(request.form['img_size_origin'])
+    line_detail = json.loads(request.form['line_detail'])
     area_arr = json.loads(request.form['area_arr'])
     image_path = request.form['image_path']
-
-    print(f'img_size: {img_size}')
-    print('\n\n')
-    print(f'img_size_origin: {img_size_origin}')
-    print('\n\n')
     
     image_path = './web'+image_path[2:]
     image_name = os.path.basename(image_path)
@@ -38,13 +32,13 @@ def convert():
         print(item)
 
     brush = Brush(image_path, "./databases/test.db")
-    edge = brush.getEdge( blur_size = 7, block_size = 11, c = 5)
+    edge = brush.getEdge( line_detail = line_detail, block_size = 11)
     canvas = brush.drawLine(edge, regions=area_arr)
 
     # brush.showImage(title="hello")
     brush.save("./web/static/render_image/")
     brush.finish()
 
-    return jsonify(img_name=image_name, img_size=img_size, img_size_origin=img_size_origin, area_arr=area_arr)
+    return jsonify(img_name=image_name, area_arr=area_arr)
     
     
