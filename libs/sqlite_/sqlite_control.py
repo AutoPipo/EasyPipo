@@ -89,13 +89,39 @@ class dbControl:
                 WHERE session = ? ;
                 """
         try:
-            # print(c.execute(sql, (session, )).fetchall())
             data = c.execute(sql, (session, )).fetchall()
+            print("d",data)
+            # if data == []: result = None
+            # else: result = data[index][0]
         except:
             print("Select DB Error !!")
             print("Error Location: ./libs/sqlite_control/getCanvas()")
-        # for i in data: print(i)
+        
         return data[index][0]
+    
+    def checkJobID(self, session):
+        """
+        * Check Job ID in DB
+        
+        Parameters
+            session <String> : Session ID
+        returns
+            boolean : Job ID in DB or not
+        """
+        c = self.__conn.cursor()
+        sql = "SELECT count(*) FROM IMAGE WHERE session = ? ;"
+        try:
+            data = c.execute(sql, (session, )).fetchone()[0]
+            print("session in db count:", data)
+            if data >0 :
+                return True
+            else:
+                return False
+        except:
+            print("Select DB Error !!")
+            print("Error Location: ./libs/sqlite_control/getCanvas()")
+        
+        return False
     
     def undoCanvas(self, session):
         """
