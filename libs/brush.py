@@ -7,14 +7,14 @@
 # Line Detection from Image
 """
 
-from sqlite_.sqlite_control import dbControl
+from libs.sqlite_.sqlite_control import dbControl
 import matplotlib.pyplot as plt
 import cv2
 import numpy as np
 import random, datetime, os
 
 class Brush:
-    def __init__ (self, filepath, db_path = "../databases/test.db"):
+    def __init__ (self, filepath, db_path = "./databases/test.db"):
         nowTime = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
         self.__session_id = nowTime + str(random.randint(11 , 999999))
         
@@ -74,7 +74,7 @@ class Brush:
         cv2.waitKey(0)
         return
 
-    def save(self, directory="../web/static/line-detect/"):
+    def save(self, directory="./web/static/line-detect/"):
         path = os.path.join(directory, self.filename)
         cv2.imwrite(path, self.canvas)
     
@@ -96,7 +96,3 @@ if __name__ == "__main__":
     
     brush.showImage(title="hello")
     brush.save()
-    
-    
-    
-    

@@ -1,5 +1,5 @@
 $(window).on('load', function(){
-    var image_path = '../static/test-image/a5.jpg';
+    var image_path = '../static/org_image/a5.jpg';
     var pic_size = 600;
 
     var brush_cursor = document.querySelector('.brush_cursor');
@@ -34,14 +34,14 @@ $(window).on('load', function(){
 
         $.ajax({
             url: '/convert',
-            data: {"img_size":JSON.stringify(img_size), "img_size_origin":JSON.stringify(img_size_origin), "area_arr":JSON.stringify(area_arr)},
+            data: {"image_path":image_path, "img_size":JSON.stringify(img_size), "img_size_origin":JSON.stringify(img_size_origin), "area_arr":JSON.stringify(area_arr)},
             dataType:'json',
             type: 'POST',
             success: function (data) {
                 console.log(data);
 
                 image = new Image();
-                image.src = '/static/test-image/'+data.img_name;
+                image.src = '/static/render-image/'+data.img_name;
 
                 $(image).on('load', function(){
                     var width_set = pic_size;
