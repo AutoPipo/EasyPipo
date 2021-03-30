@@ -7,7 +7,7 @@
 # Line Detection from Image
 """
 
-from libs.sqlite_.sqlite_control import dbControl
+from sqlite_.sqlite_control import dbControl
 import matplotlib.pyplot as plt
 import cv2
 import numpy as np
@@ -21,9 +21,9 @@ class Brush:
         self.imageSetting( filepath )
         self.dbSetting(db_path)
     
-    def imageSetting(self, filepath):
-        self.filename = os.path.basename(filepath)
-        self.image = cv2.imread(filepath)
+    def imageSetting(self, imagepath):
+        self.filename = os.path.basename(imagepath)
+        self.image = cv2.imread(imagepath)
         self.org_image = cv2.cvtColor(self.image, cv2.COLOR_BGR2RGB)
         
         directory="./web/static/org_image/"
@@ -38,42 +38,49 @@ class Brush:
         regions_ = []
         if regions == []:
             regions_ = [( 0, 0, self.org_image.shape[1], self.org_image.shape[0]), ]
-            print("region empty")
+            
         
         for idx, dict in enumerate(regions):
-            # print("dict", dict, "idx", idx)
+            
             x, y, radius = int(dict["x"]), int(dict["y"]), int(dict["radius"])
             x, y, w, h = x-radius, y-radius, radius*2, radius*2
-            print(x, y, w, h )
-            print("1>",self.canvas.shape)
-            print("2>",self.org_image.shape)
             regions_.append([x, y, w, h])
-            # print("i>>",idx)
-        print("coordinate end")
+            
             
         self.canvas = self.__addLine(edge, regions_)
         self.__db.insertData(self.__session_id, self.org_image, self.canvas)
-        print("ff")
-        # cv2.imwrite("./web/static/render_image/rr.jpg", self.canvas)
+        
+        
+        return
         
     def __addLine(self, threshold, regions):
-        print(self.canvas.shape)
-        print(threshold.shape)
         for region in regions:
-            # print("region>",region)
             x, y, w, h = region
             self.canvas[y : y + h, x : x + w] = threshold[y : y + h, x : x + w]
-        # print(self.canvas)
+        
         # self.showImage()
         return self.canvas
-
-    def getEdge(self, blur_size = 7, block_size = 11, c = 5):
+    
+    def getEdge(self, line_detail = 8, block_size = 11):
+        #          blur_size = 7,     , c = 5
+        blur_size, c = self.__calcDetail(line_detail)
+        print("line_detail",line_detail)
+        print("blur:", blur_size, " c:", c)
         gray = cv2.cvtColor(self.image, cv2.COLOR_BGR2GRAY) 
         gray = self.__setBlur( gray, blur_size)
         edge = self.__makeThreshold(gray, block_size = block_size, c=c )
         self.canvas = np.zeros(edge.shape) + 255
         return edge
         
+    def __calcDetail(self, value, max=20):
+        value = max - int(value)
+        # blur = int(10 - value * 0.1 )
+        blur = 7
+        # c = round( value * 0.6, 1) + (12 - blur)
+        c = round(1 + value * 0.8, 1)
+        if blur % 2 == 0: blur -= 1
+        return blur, c
+    
     def __setBlur(self, image, blur_size = 7):
         return cv2.medianBlur(image, blur_size)
         
@@ -95,28 +102,35 @@ class Brush:
         cv2.waitKey(0)
         return
 
-    def save(self, directory="./web/static/render_image/"):
+    def save(self, directory="./web/static/render_image/", name = ""):
+        # if name == "": path = os.path.join(directory, self.filename)
+        # else: path = os.path.join(directory, name+".jpg")
         path = os.path.join(directory, self.filename)
-        print("save path>", path)
         cv2.imwrite(path, self.canvas)
         # self.__db.dbClose()
+        return
     
     def undo(self):
-        self.canvas = db.undoCanvas(self.__session_id)
+        self.canvas = self.__db.undoCanvas(self.__session_id)
         self.save()
+        return
         
     def finish(self):
         self.__db.dbClose()
+        return
     
 if __name__ == "__main__":
     dirpath = "./test-image/"
-    filename = "a3"
+    filename = "a7"
     filepath = dirpath + filename + ".jpg"
     
     brush = Brush(filepath, "../databases/test.db")
-    edge = brush.getEdge( blur_size = 7, block_size = 11, c = 5)
-    canvas = brush.drawLine(edge, regions=[])
-    
-    # brush.showImage(title="hello")
-    brush.save("../web/static/render_image/")
+    for value in range(0, 20, 3):
+        edge = brush.getEdge( line_detail = value, block_size = 11)
+        canvas = brush.drawLine(edge, regions=[])
+        
+        # brush.showImage(title="hello")
+        brush.save("./result-image/", name = str(value))
+    # brush.showImage("check detail")
     brush.finish()
+    
