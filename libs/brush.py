@@ -16,31 +16,34 @@ import random, datetime, os
 class Brush:
     def __init__ (self, filepath, job_id, db_path = "./databases/test.db"):
         self.__job_id = job_id
-        print("session in brush:", self.__job_id)
+        print("__job_id in brush:", self.__job_id)
+        
+        self.__db = self.dbSetting(db_path)
+        self.isNewJob = self.__db.checkJobID(self.__job_id)
         self.imageSetting( filepath )
-        self.dbSetting(db_path)
-    
+        
     def imageSetting(self, imagepath):
         self.filename = os.path.basename(imagepath)
         self.image = cv2.imread(imagepath)
         self.org_image = cv2.cvtColor(self.image, cv2.COLOR_BGR2RGB)
         
-        directory="./web/static/org_image/"
-        path = os.path.join(directory, self.filename)
-        cv2.imwrite(path, self.image)
+        if not self.isNewJob:
+            directory="./web/static/org_image/"
+            path = os.path.join(directory, self.filename)
+            cv2.imwrite(path, self.image)
     
     def dbSetting(self, db_path):
-        self.__db = dbControl(db_path)
-        self.__db.createTable()
+        db = dbControl(db_path)
+        db.createTable()
+        return db
 
     def drawLine(self, edge, regions=[]):
         regions_ = []
         if regions == []:
             regions_ = [( 0, 0, self.org_image.shape[1], self.org_image.shape[0]), ]
             
-        
-        for idx, dict in enumerate(regions):
-            
+        for dict in regions:
+            # print(dict)
             x, y, radius = int(dict["x"]), int(dict["y"]), int(dict["radius"])
             x, y, w, h = x-radius, y-radius, radius*2, radius*2
             regions_.append([x, y, w, h])
@@ -67,13 +70,16 @@ class Brush:
         gray = cv2.cvtColor(self.image, cv2.COLOR_BGR2GRAY) 
         gray = self.__setBlur( gray, blur_size)
         edge = self.__makeThreshold(gray, block_size = block_size, c=c )
-        self.canvas = np.zeros(edge.shape) + 255
+        
+        if not self.isNewJob:
+            self.canvas = np.zeros(edge.shape) + 255
+        else:
+            self.canvas = self.__db.getCanvas(self.__job_id)
         # cv2.imshow("eg", edge)
         # cv2.waitKey(0)
         return edge
         
     def __calcDetail(self, value, max=20):
-        print("v??", value)
         value = max - int(value)
         
         # blur = int(10 - value * 0.1 )
