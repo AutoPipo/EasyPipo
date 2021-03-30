@@ -14,10 +14,9 @@ import numpy as np
 import random, datetime, os
 
 class Brush:
-    def __init__ (self, filepath, db_path = "./databases/test.db"):
-        nowTime = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
-        self.__session_id = nowTime + str(random.randint(11 , 999999))
-        
+    def __init__ (self, filepath, job_id, db_path = "./databases/test.db"):
+        self.__job_id = job_id
+        print("session in brush:", self.__job_id)
         self.imageSetting( filepath )
         self.dbSetting(db_path)
     
@@ -45,10 +44,9 @@ class Brush:
             x, y, radius = int(dict["x"]), int(dict["y"]), int(dict["radius"])
             x, y, w, h = x-radius, y-radius, radius*2, radius*2
             regions_.append([x, y, w, h])
-            #rint(">>",x, y, w, h)
             
         self.__addLine(edge, regions_)
-        self.__db.insertData(self.__session_id, self.org_image, self.canvas)
+        self.__db.insertData(self.__job_id, self.org_image, self.canvas)
         
         
         return
@@ -116,7 +114,7 @@ class Brush:
         return
     
     def undo(self):
-        self.canvas = self.__db.undoCanvas(self.__session_id)
+        self.canvas = self.__db.undoCanvas(self.__job_id)
         self.save()
         return
         

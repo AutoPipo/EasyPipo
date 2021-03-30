@@ -11,15 +11,16 @@ import sqlite3 as sqlite
 import json
 import os
 from libs.brush import Brush
-from libs.getSession import Sessions
+from libs.utils import *
 
 views = Blueprint("server", __name__)
-veiws.secret_key = "wh2fdjqw3k4rvna5dml46smv"
+
 
 @views.route("/", methods=["GET"])
 def index():
-    session["id"] = Sessions.getSession()
-    print("session:",session["id"])
+    if "id" not in session:
+        session["id"] = get_job_id()
+    print("__job_id:",session["id"])
     return render_template("index.html")
 
 
@@ -32,8 +33,8 @@ def convert():
     image_path = './web'+image_path[2:]
     image_name = os.path.basename(image_path)
 
-
-    brush = Brush(image_path, "./databases/test.db")
+    print("__job_id in convert:",session["id"])
+    brush = Brush(image_path, session["id"], "./databases/test.db")
     
     edge = brush.getEdge( line_detail = line_detail, block_size = 11)
     
