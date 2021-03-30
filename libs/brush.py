@@ -7,7 +7,7 @@
 # Line Detection from Image
 """
 
-from sqlite_.sqlite_control import dbControl
+from libs.sqlite_.sqlite_control import dbControl
 import matplotlib.pyplot as plt
 import cv2
 import numpy as np
@@ -64,8 +64,8 @@ class Brush:
     def getEdge(self, line_detail = 8, block_size = 11):
         #          blur_size = 7,     , c = 5
         blur_size, c = self.__calcDetail(line_detail)
-        print("line_detail",line_detail)
-        print("blur:", blur_size, " c:", c)
+        # print("line_detail",line_detail)
+        # print("blur:", blur_size, " c:", c)
         gray = cv2.cvtColor(self.image, cv2.COLOR_BGR2GRAY) 
         gray = self.__setBlur( gray, blur_size)
         edge = self.__makeThreshold(gray, block_size = block_size, c=c )
