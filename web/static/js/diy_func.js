@@ -1,10 +1,10 @@
 $(window).on('load', function(){
     var image_path = '../static/test-image/a5.jpg';
-    
-    make_base(image_path);
-    
     var brush_cursor = document.querySelector('.brush_cursor');
     var brush_size = 8;
+    var area_arr = [];
+    
+    make_base(image_path);
 
     // 슬라이드 조절 시 브러시 사이즈 변경
     $('#brush_size').change(function(e){
@@ -14,10 +14,25 @@ $(window).on('load', function(){
         $(brush_cursor).css('width', brush_size*2);
         $(brush_cursor).css('height', brush_size*2);
     });
-  
+
+    $('.convert_box p').click(function(){
+        console.log(area_arr);
+        // $.ajax({
+        //     url: '/getLineScale',
+        //     data: {"jsons":jsons, "fileName":"{{fileName}}", "page":this_page},
+        //     dataType:'json',
+        //     type: 'POST',
+        //     success: function (data) {
+        //         $("#line_scale").val(data.line_scale);
+        //     },
+        //     error: function (error) {
+        //         console.error(error);
+        //     }
+        // });
+    });
 
 
-
+    // 캔버스 기본 세팅
     function make_base(path) {
         image = new Image();
         image.src = path;
@@ -95,6 +110,8 @@ $(window).on('load', function(){
                     ctx.arc(x + x_value, y + y_value, brush_size, false, Math.PI * 2, false);
                     ctx.closePath();
                     ctx.fill();
+
+                    area_arr.push({x:x + x_value, y:y + y_value, radius:brush_size});
                 }
                 
                 lastPoint = currentPoint;
@@ -119,17 +136,6 @@ $(window).on('load', function(){
 
         
     }
-
-    // function sketchit(e) {
-    //     context.beginPath()
-    //     context.moveTo(mouseX, mouseY);
-    //     context.lineTo(mouseX,mouseY)
-    //     context.lineCap = 'round';
-    //     context.lineWidth = document.getElementById('brush_size').value;
-    //     context.strokeStyle = document.getElementById('color').value;
-    //     context.stroke();
-    //     MouseIsDown = true;
-    // };
 });
 
 
