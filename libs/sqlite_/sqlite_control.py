@@ -83,18 +83,63 @@ class dbControl:
             data <nd.array> : Image Array
         """
         c = self.__conn.cursor()
+        
         sql =   """
                 SELECT canvas FROM IMAGE
                 WHERE session = ? ;
                 """
         try:
-            data = c.execute(sql, (session, )).fetchone()[0]
+            # print(c.execute(sql, (session, )).fetchall())
+            data = c.execute(sql, (session, )).fetchall()
         except:
             print("Select DB Error !!")
             print("Error Location: ./libs/sqlite_control/getCanvas()")
+        # for i in data: print(i)
+        return data[index][0]
+    
+    def undoCanvas(self, session):
+        """
+        * Undo
+        
+        Parameters
+            session <String> : Session ID
+        returns
+             <nd.array> : Image Array
+        """
+        self.__deleteCanvas(session)
+        
+        return self.getCanvas(session)
+    
+    def __deleteCanvas(self, session):
+        """
+        * Delete DB Last Data
+        
+        Parameters
+            session <String> : Session ID
+        returns
+            None
+        """
+        c = self.__conn.cursor()
+        
+        try:
+            sql =   """
+                    SELECT id FROM IMAGE WHERE session = ? ;
+                    """
             
-        return data
-
+            id = c.execute(sql, (session, )).fetchall()[-1][0]
+            
+            sql =   """
+                    DELETE FROM IMAGE
+                    WHERE session = ? AND id = ?;
+                    """
+        
+            c.execute(sql, (session, id, ))
+        except:
+            print("Delete DB Error !!")
+            print("Error Location: ./libs/sqlite_control/deleteCanvas()")
+            
+        return
+    
     def createTable(self):
         """
         * Create Database Table
