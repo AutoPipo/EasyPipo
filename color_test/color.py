@@ -31,7 +31,7 @@ class Color:
         print(hexColor)
         return
     
-    def colorProcess(self, image):
+    def colorProcess(self, image, direction = "h"):
         print("color process start")
         print(" ======= File Name ======")
         print("file:", self.filename)
@@ -39,16 +39,16 @@ class Color:
         # dict = self.__createColorDict(image) # make  self.colorDict
         # print("--------- dict count:", len(dict.keys()))
         images = image.copy()
-        self.colorMap = self.__createColorMap(image)
+        self.colorMap = self.__createColorMap(image, direction = direction)
         print(" ======= Convert Image Size ======")
         print("size:",self.colorMap.shape )
-        self.imageSave(self.colorMap, name=render_file_name+"change"  )
-        dict =  self.__createColorDict(self.colorMap)
-        print(" ======= COLOR Numbers ======")
-        print("color:", len(dict.keys()))
+        self.imageSave(self.colorMap, name=render_file_name+"-change"  )
+        # dict =  self.__createColorDict(self.colorMap)
+        # print(" ======= COLOR Numbers ======")
+        # print("color:", len(dict.keys()))
         
-        changeMap = self.checkChange(images, self.colorMap)
-        self.imageSave(changeMap, name=render_file_name+"change_area"  )
+        # changeMap = self.checkChange(images, self.colorMap)
+        # self.imageSave(changeMap, name=render_file_name+"-change_area"  )
         
         return 
         
@@ -70,7 +70,9 @@ class Color:
         '''
         이미지 크기에 맞추어 블러 사이즈 조절하기
         '''
-        
+        sigmaColor += self.image.shape[1] * self.image.shape[0] // 100000
+        print(" ======= Blur Size ======")
+        print("blur:",sigmaColor )
         blurring = cv2.bilateralFilter(self.image,  radius, sigmaColor, sigmaSpace)
         # cv2.imshow("bilateralFilter", dst)
         return blurring
@@ -107,7 +109,7 @@ class Color:
         # print(self.colorDict)
         return self.colorDict
     
-    def __createColorMap(self, blurImage, value = 15):
+    def __createColorMap(self, blurImage, value = 15, direction = "h"):
         map = []
         count = 0
         image_size_ = blurImage.shape[0]
@@ -118,18 +120,20 @@ class Color:
                 colorChange = False
                 blue, green, red = bgr
                 for c in [-1, 1]:
-                    try: 
-                        b, g, r = blurImage[y+c, x]
-                        if b==blue and g==green and r==red: pass
-                        elif  b-value< blue <b+value and \
-                        g-value< green <g+value and \
-                        r-value< red <r+value: # and \
-                        #(r!=red or b!=blue or g!=green):
-                            line.append( [b, g, r] )
-                            blurImage[y][x] = [ b, g, r ]
-                            colorChange = True
-                            break
-                    except IndexError as e: pass
+                    if direction == "v":
+                        
+                        try: 
+                            b, g, r = blurImage[y+c, x]
+                            if b==blue and g==green and r==red: pass
+                            elif  b-value< blue <b+value and \
+                            g-value< green <g+value and \
+                            r-value< red <r+value: # and \
+                            #(r!=red or b!=blue or g!=green):
+                                line.append( [b, g, r] )
+                                blurImage[y][x] = [ b, g, r ]
+                                colorChange = True
+                                break
+                        except IndexError as e: pass
                     
                     try: 
                         b, g, r = blurImage[y, x+c]
@@ -143,6 +147,24 @@ class Color:
                             colorChange = True
                             break
                     except IndexError as e: pass
+                    
+                    if direction == "h":
+                        try: 
+                            b, g, r = blurImage[y+c, x]
+                            if b==blue and g==green and r==red: pass
+                            elif  b-value< blue <b+value and \
+                            g-value< green <g+value and \
+                            r-value< red <r+value: # and \
+                            #(r!=red or b!=blue or g!=green):
+                                line.append( [b, g, r] )
+                                blurImage[y][x] = [ b, g, r ]
+                                colorChange = True
+                                break
+                        except IndexError as e: pass
+                    
+                    
+                    
+                    
                 if not colorChange: line.append( [blue, green, red] )
                 else: count += 1
             map.append( line )
@@ -190,9 +212,9 @@ if __name__ == "__main__":
     color_class = Color( dirpath + filename + ".jpg" )
     # color_class.showBar()
     value = 110
-    blurImage = color_class.blurring(radius = 18, sigmaColor = 90, sigmaSpace = 110)
-    color_class.imageSave(blurImage, name=filename+"org")
-    color_class.colorProcess(blurImage)
+    blurImage = color_class.blurring(radius = 18, sigmaColor = 80, sigmaSpace = 110)
+    color_class.imageSave(blurImage, name=filename+"-blur")
+    color_class.colorProcess(blurImage, direction = "h")
     
     
     print("time :", time.time() - start)
