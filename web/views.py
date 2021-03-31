@@ -18,6 +18,7 @@ views = Blueprint("server", __name__)
 
 @views.route("/", methods=["GET"])
 def index():
+    
     if "id" not in session:
         session["id"] = get_job_id()
     
@@ -36,7 +37,7 @@ def convert():
 
     brush = Brush(image_path, session["id"], "./databases/test.db")
     
-    edge = brush.getEdge( line_detail = line_detail, block_size = 11)
+    edge = brush.getEdge( line_detail = line_detail)
     
     canvas = brush.drawLine(edge, regions=area_arr)
 

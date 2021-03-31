@@ -90,9 +90,6 @@ class dbControl:
                 """
         try:
             data = c.execute(sql, (session, )).fetchall()
-            print("d",data)
-            # if data == []: result = None
-            # else: result = data[index][0]
         except:
             print("Select DB Error !!")
             print("Error Location: ./libs/sqlite_control/getCanvas()")

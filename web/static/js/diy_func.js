@@ -1,9 +1,9 @@
 $(window).on('load', function(){
-    var image_path = '../static/org_image/a5.jpg';
+    var image_path = '../static/org_image/a10.jpg';
     var pic_size = 600;
 
     var brush_cursor = document.querySelector('.brush_cursor');
-    var brush_size = 8;
+    var brush_size = 20;
     var area_arr = [];
     var img_size_origin = {};
     var img_size = {};
@@ -20,9 +20,10 @@ $(window).on('load', function(){
 
     // diy makers Javascript
     function clearit() {
-        ctx.clearRect(0,0, 1000, 1000);
+        // ctx.clearRect(0,0, 1000, 1000);
         make_base(image_path);
-        brush_size = 8;
+        brush_size = 20;
+		
     }
 
     // 슬라이드 조절 시 브러시 사이즈 변경
