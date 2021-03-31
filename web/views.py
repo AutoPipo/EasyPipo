@@ -29,15 +29,18 @@ def index():
 @views.route("/convert", methods=["POST"])
 def convert():
     line_detail = json.loads(request.form['line_detail'])
+    blur_size = json.loads(request.form['blur_size'])
     area_arr = json.loads(request.form['area_arr'])
     image_path = request.form['image_path']
+    
+    print("blur size in flask:", blur_size)
     
     image_path = './web'+image_path[2:]
     image_name = os.path.basename(image_path)
 
     brush = Brush(image_path, session["id"], "./databases/test.db")
     
-    edge = brush.getEdge( line_detail = line_detail)
+    edge = brush.getEdge( line_detail = line_detail, blur_size= blur_size)
     
     canvas = brush.drawLine(edge, regions=area_arr)
 

@@ -52,7 +52,6 @@ class Brush:
         self.__addLine(edge, regions_)
         self.__db.insertData(self.__job_id, self.org_image, self.canvas)
         
-        
         return
         
     def __addLine(self, threshold, regions):
@@ -65,7 +64,8 @@ class Brush:
     def getEdge(
             self, 
             line_detail = 8, 
-            threshold_value= 80
+            threshold_value= 80,
+            blur_size = 3
             ):
         #          blur_size = 7,     , c = 5
         canny_value1, canny_value2 = self.__calcDetail(line_detail)
@@ -75,6 +75,7 @@ class Brush:
         
         gray = cv2.cvtColor(self.image, cv2.COLOR_BGR2GRAY) 
         
+        
         '''
         gray_h, gray_w = gray.shape
         max_width = self.max_width
@@ -82,8 +83,9 @@ class Brush:
         gray = cv2.resize(gray, (max_width, max_height))
         '''
         gray_h, gray_w = gray.shape
-        blurSize = 3 + (gray_w // 1000)
+        blurSize = 2 + blur_size + (gray_w // 1000)
         if blurSize % 2 == 0: blurSize += 1
+        
         print("blurSize",blurSize)
         # gray = self.__setBlur( gray, blur_size)
         # edge = self.__makeThreshold(gray, block_size = block_size, c=c )

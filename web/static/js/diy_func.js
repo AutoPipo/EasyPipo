@@ -1,5 +1,5 @@
 $(window).on('load', function(){
-    var image_path = '../static/org_image/a10.jpg';
+    var image_path = '../static/org_image/lala.jpg';
     var pic_size = 600;
 
     var brush_cursor = document.querySelector('.brush_cursor');
@@ -42,7 +42,8 @@ $(window).on('load', function(){
             data: {
                 "image_path":image_path,
                 "area_arr":JSON.stringify(area_arr),
-                "line_detail":$("#line_detail").val()
+                "line_detail":$("#line_detail").val(),
+				"blur_size":$("#blur_size").val() // koo
             },
             dataType:'json',
             type: 'POST',
