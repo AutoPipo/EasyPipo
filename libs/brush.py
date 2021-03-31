@@ -45,8 +45,10 @@ class Brush:
         for dict in regions:
             # print(dict)
             x, y, radius = int(dict["x"]), int(dict["y"]), int(dict["radius"])
+            print("rad:", radius)
             x, y, w, h = x-radius, y-radius, radius*2, radius*2
-            regions_.append([x, y, w, h])
+            regions_.append( (x, y, w, h) )
+            print("x, y, w, h",x, y, w, h)
             
         self.__addLine(edge, regions_)
         self.__db.insertData(self.__job_id, self.org_image, self.canvas)
@@ -83,7 +85,7 @@ class Brush:
         value = max - int(value)
         
         # blur = int(10 - value * 0.1 )
-        blur = 7
+        blur = 5
         # c = round( value * 0.6, 1) + (12 - blur)
         c = round(1 + value * 0.8, 1)
         if blur % 2 == 0: blur -= 1
