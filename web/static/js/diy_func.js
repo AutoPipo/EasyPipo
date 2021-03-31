@@ -160,7 +160,7 @@ $(window).on('load', function(){
                     x1 = (x + x_value) * scalingFactorX;
                     y1 = (y + y_value) * scalingFactorY;
 
-                    area_arr.push({x:x1, y:y1, radius:brush_size});
+                    area_arr.push({x:x1, y:y1, radius:brush_size * scalingFactorX});
                 }
                 
                 lastPoint = currentPoint;
