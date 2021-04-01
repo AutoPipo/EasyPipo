@@ -16,6 +16,7 @@ class Color:
         self.__job_id = job_id
         self.colorDict = {}
         self.colorMap = np.array([])
+        self.lineDetected = np.array([])
         
         self.width, self.height = 800, 500
         
@@ -39,19 +40,108 @@ class Color:
         # dict = self.__createColorDict(image) # make  self.colorDict
         # print("--------- dict count:", len(dict.keys()))
         images = image.copy()
-        self.colorMap = self.__createColorMap(image, direction = direction)
+        # 원래 이거
+        # self.colorMap = self.__createColorMap(image, direction = "h")
+        # 이건 라인 검출 테스트용 
+        self.colorMap = cv2.imread("./render/"+render_file_name+"-change.jpg")
+        
+        # test
+        '''
+        testMap = self.colorMap.copy()
+        testt = self.__createColorMap(testMap,  direction = "v")
+        self.imageSave(testt, name=render_file_name+"-ttestt"  )
+        
+        testMaps = testt.copy()
+        testts = self.__createColorMap(testMaps, value=20, direction = "h")
+        self.imageSave(testts, name=render_file_name+"-ttestts"  )
+        '''
         print(" ======= Convert Image Size ======")
         print("size:",self.colorMap.shape )
-        self.imageSave(self.colorMap, name=render_file_name+"-change"  )
+        # self.imageSave(self.colorMap, name=render_file_name+"-change"  )
+        
+        
+        
+        
+        # 색 넘버 : 포지션 -> 딕셔너리 // 색 개수 파악
         # dict =  self.__createColorDict(self.colorMap)
         # print(" ======= COLOR Numbers ======")
         # print("color:", len(dict.keys()))
         
+        # 달라진 부분 체크 -> 달라지지 않으면 흰색
         # changeMap = self.checkChange(images, self.colorMap)
         # self.imageSave(changeMap, name=render_file_name+"-change_area"  )
         
+        # 라인 체크해보자
+        print("line detect start")
+        self.lineDetected = self.drawLine(self.colorMap)
+        print("line detect end")
+        self.imageSave(self.lineDetected, name=render_file_name+"-liness"  )
+        
+        
         return 
         
+    def drawLine(self, colorMap, value = 11):
+        map = []
+        tempMap = np.zeros(colorMap.shape) + 255
+        count = 0
+        # blacklist = []
+        for y, row in enumerate(colorMap):
+            line = []
+            # if y % 10 ==0: print("line draw:", y)
+            if y % 100 ==0: print("line draw:", y)
+            # xlist = []
+            for x, bgr in enumerate(row):
+                colorChange = False
+                blue, green, red = bgr
+                for c in [-1, 1]:
+                    try: 
+                        
+                        # if tempMap[y+c, x].tolist() == [0, 0, 0]: break
+                        # if tempMap[y, x+c].tolist() == [0, 0, 0]: break
+                        # if tempMap[y-c, x].tolist() == [0, 0, 0]: break
+                        # if tempMap[y, x-c].tolist() == [0, 0, 0]: break
+                            
+                        b, g, r = colorMap[y+c, x]
+                        if b-value< blue <b+value and \
+                            g-value< green <g+value and \
+                            r-value< red <r+value: pass
+                        # elif (y+c, x) in blacklist: break
+                        else : 
+                            # line.append( [0, 0, 0] )
+                            tempMap[y, x ]=[0, 0, 0]
+                            # blacklist.append( [y, x] )
+                            colorChange = True
+                            break
+                    except IndexError as e: pass
+                    
+                    try: 
+                        
+                        # if colorMap[y, x+c].tolist() == [255, 255, 255]: break
+                        b, g, r = colorMap[y, x+c]
+                            
+                        if b-value< blue <b+value and \
+                            g-value< green <g+value and \
+                            r-value< red <r+value: pass
+                        # elif (y, x+c) in blacklist: break
+                        else : 
+                            # line.append( [0, 0, 0] )
+                            tempMap[y, x ]=[0, 0, 0]
+                            # xlist.append( [y, x] )
+                            colorChange = True
+                            break
+                    except IndexError as e: pass
+                if not colorChange:
+                    count +=1
+                    # line.append( [255, 255, 255] )
+                    tempMap[y, x ]=[255, 255, 255]
+                    
+            # map.append( line )
+        print("count:", count)
+        # print("calc line finish")
+        # print(np.array(map).shape)
+        # print(type(np.array(map)))
+        return tempMap
+        return np.array(map)
         
     def checkChange(self, image, map):
         maps = []
@@ -207,13 +297,13 @@ if __name__ == "__main__":
     import time
     start = time.time()
     dirpath = "./test/"
-    filename = "tli"
+    filename = "lala"
     
     color_class = Color( dirpath + filename + ".jpg" )
     # color_class.showBar()
     value = 110
     blurImage = color_class.blurring(radius = 18, sigmaColor = 80, sigmaSpace = 110)
-    color_class.imageSave(blurImage, name=filename+"-blur")
+    # color_class.imageSave(blurImage, name=filename+"-blur")
     color_class.colorProcess(blurImage, direction = "h")
     
     
