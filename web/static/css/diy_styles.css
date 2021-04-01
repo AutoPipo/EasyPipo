@@ -35,6 +35,14 @@ body{
 }
 
 #line_detail_box{
+    display: inline-block;
+    height: 40px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+#blur_box{
+    display: inline-block;
     height: 40px;
     font-size: 12px;
     font-weight: bold;
