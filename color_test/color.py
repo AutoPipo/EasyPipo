@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import cv2
 import numpy as np
 import random, datetime, os
+from colorCode import HexColorCode
 
 '''
 # -- 메모 --
@@ -27,12 +28,25 @@ class Color:
         self.image = cv2.imread(imagepath) #, cv2.IMREAD_GRAYSCALE
         # self.rgb_image = cv2.cvtColor(self.image, cv2.COLOR_BGR2RGB)
         
-        a = [30, 56, 87]
-        hexColor = self.__bgr2hex(a)
-        print(hexColor)
+        # a = [30, 56, 87]
+        # hexColor = self.__bgr2hex(a)
+        # print(hexColor)
         return
     
     def colorProcess(self, image, direction = "h"):
+        def imageMerge(image, map):
+            new_map = np.zeros(image.shape) + 255
+            for y, row in enumerate(image):
+                if y % 300 == 0: print("processing...", y, "/", image.shape[0])
+                for x, bgr in enumerate(row):
+                    # b, g, r = 
+                    if map[y][x].tolist() == [0, 0, 0]:
+                        new_map[y][x] = [0, 0, 0]
+                    else:
+                        new_map[y][x] = bgr.tolist()
+                    
+            return new_map
+            
         print("color process start")
         print(" ======= File Name ======")
         print("file:", self.filename)
@@ -41,9 +55,9 @@ class Color:
         # print("--------- dict count:", len(dict.keys()))
         images = image.copy()
         # 원래 이거
-        # self.colorMap = self.__createColorMap(image, direction = "h")
+        self.colorMap = self.__createColorMap(image, direction = "h")
         # 이건 라인 검출 테스트용 
-        self.colorMap = cv2.imread("./render/"+render_file_name+"-change.jpg")
+        # self.colorMap = cv2.imread("./render/"+render_file_name+"-merge7.jpg")
         
         # test
         '''
@@ -57,15 +71,18 @@ class Color:
         '''
         print(" ======= Convert Image Size ======")
         print("size:",self.colorMap.shape )
-        # self.imageSave(self.colorMap, name=render_file_name+"-change"  )
+        self.imageSave(self.colorMap, name=render_file_name+"-changes"  )
         
         
-        
+        mergeMap = self.mergeColor(self.colorMap)
+        self.imageSave(mergeMap, name=render_file_name+"-merges"  )
         
         # 색 넘버 : 포지션 -> 딕셔너리 // 색 개수 파악
-        # dict =  self.__createColorDict(self.colorMap)
-        # print(" ======= COLOR Numbers ======")
-        # print("color:", len(dict.keys()))
+        # dict =  self.__createColorDict(mergeMap)
+        #테스트용
+        dict =  self.__createColorDict(mergeMap)
+        print(" ======= COLOR Numbers ======")
+        print("color:", len(dict.keys()))
         
         # 달라진 부분 체크 -> 달라지지 않으면 흰색
         # changeMap = self.checkChange(images, self.colorMap)
@@ -73,13 +90,49 @@ class Color:
         
         # 라인 체크해보자
         print("line detect start")
-        self.lineDetected = self.drawLine(self.colorMap)
+        self.lineDetected = self.drawLine(mergeMap)
         print("line detect end")
-        self.imageSave(self.lineDetected, name=render_file_name+"-liness"  )
+        self.imageSave(self.lineDetected, name=render_file_name+"-linesss"  )
         
+        
+        linecolor = imageMerge(mergeMap, self.lineDetected )
+        self.imageSave(linecolor, name=render_file_name+"-linecolor"  )
         
         return 
-        
+    
+    def mergeColor(self, colorImage):
+        def calcSimilarColor(color, hexColors):
+            minColor = {} # key: abs / value : hexColorCode
+            blue, green, red = color
+            for hex in hexColors:
+                b, g, r = self.__hex2bgr(hex)
+                value = abs(b-blue) + abs(r-red) + abs(g-green)
+                if value == 0:  return [b, g, r]
+                minColor[value] = [b, g, r]
+            return minColor[ min(minColor.keys()) ]
+        def minColor(bgr):
+            b, g, r = bgr
+            if b <30 : b = 30
+            if g <30 : g =30
+            if r <30 : r =30
+            return [b, g, r]
+        map = colorImage.copy()
+        colorCode = HexColorCode().hexColorCodeList
+        colorDict = {}
+        for y, row in enumerate(colorImage):
+            if y % 200 ==0: print("merge color:", y)
+            for x, color in enumerate(row):
+                if tuple(color) in colorDict.keys():
+                    map[y][x] = colorDict[tuple(color) ]
+                else:
+                    hexColor = calcSimilarColor(color, colorCode)
+                    map[y][x] = hexColor
+                    colorDict[tuple(color) ] = hexColor
+                
+                
+        return map
+    
+    
     def drawLine(self, colorMap, value = 11):
         map = []
         tempMap = np.zeros(colorMap.shape) + 255
@@ -172,6 +225,9 @@ class Color:
         for color in bgr: hexColor+= hex(color).split('x')[-1]
         return hexColor
     
+    def __hex2bgr(self, hex):
+        return tuple(int(hex[i:i+2], 16) for i in (4, 2, 0))
+        
     def __createColorDict(self, image, value = 15):
         for y, row in enumerate(image):
             for x, bgr in enumerate(row):
@@ -201,67 +257,64 @@ class Color:
     
     def __createColorMap(self, blurImage, value = 15, direction = "h"):
         map = []
-        count = 0
+        '''
+        blurImage = blurImage // 3
+        print(blurImage)
+        for y, row in enumerate(blurImage):
+            for x, cell in enumerate(row):
+                b, g, r = cell
+                if b <30 : b = 30
+                if g <30 : g =30
+                if r <30 : r =30
+                blurImage[y][x] = [ b, g, r ]
+        '''
         image_size_ = blurImage.shape[0]
         for y, row in enumerate(blurImage):
             line = []
-            if y % 500 == 0: print("processing...", y, "/", image_size_)
+            if y % 300 == 0: print("processing...", y, "/", image_size_)
             for x, bgr in enumerate(row):
                 colorChange = False
                 blue, green, red = bgr
                 for c in [-1, 1]:
-                    if direction == "v":
-                        
-                        try: 
-                            b, g, r = blurImage[y+c, x]
-                            if b==blue and g==green and r==red: pass
-                            elif  b-value< blue <b+value and \
-                            g-value< green <g+value and \
-                            r-value< red <r+value: # and \
-                            #(r!=red or b!=blue or g!=green):
-                                line.append( [b, g, r] )
-                                blurImage[y][x] = [ b, g, r ]
-                                colorChange = True
-                                break
-                        except IndexError as e: pass
                     
                     try: 
-                        b, g, r = blurImage[y, x+c]
+                        if direction == "v":
+                            b, g, r = blurImage[y+c, x]
+                        else:
+                            b, g, r = blurImage[y, x+c]
+                            
                         if b==blue and g==green and r==red: pass
                         elif  b-value< blue <b+value and \
                         g-value< green <g+value and \
-                        r-value< red <r+value: # and \
-                        #(r!=red or b!=blue or g!=green):
+                        r-value< red <r+value:
                             line.append( [b, g, r] )
                             blurImage[y][x] = [ b, g, r ]
                             colorChange = True
                             break
                     except IndexError as e: pass
                     
-                    if direction == "h":
-                        try: 
+                    try: 
+                        if direction == "v":
+                            b, g, r = blurImage[y, x+c]
+                        else:
                             b, g, r = blurImage[y+c, x]
-                            if b==blue and g==green and r==red: pass
-                            elif  b-value< blue <b+value and \
-                            g-value< green <g+value and \
-                            r-value< red <r+value: # and \
-                            #(r!=red or b!=blue or g!=green):
-                                line.append( [b, g, r] )
-                                blurImage[y][x] = [ b, g, r ]
-                                colorChange = True
-                                break
-                        except IndexError as e: pass
-                    
-                    
-                    
+                            
+                        if b==blue and g==green and r==red: pass
+                        elif  b-value< blue <b+value and \
+                        g-value< green <g+value and \
+                        r-value< red <r+value: 
+                            line.append( [b, g, r] )
+                            blurImage[y][x] = [ b, g, r ]
+                            colorChange = True
+                            break
+                    except IndexError as e: pass
                     
                 if not colorChange: line.append( [blue, green, red] )
-                else: count += 1
+                
             map.append( line )
-        print("change count:", count)
+        
         return np.array(map)
         
-    
     def imageSave(self, image, directory = "./render/", name = ""):
         if name == "": path = os.path.join(directory, self.filename)
         else: path = os.path.join(directory, name+".jpg")
@@ -292,17 +345,20 @@ class Color:
             cv2.imshow("Trackbar Windows", dst)
 
         cv2.destroyAllWindows()
-            
+
+
+
+
 if __name__ == "__main__":
     import time
     start = time.time()
     dirpath = "./test/"
-    filename = "lala"
+    filename = "av"
     
     color_class = Color( dirpath + filename + ".jpg" )
     # color_class.showBar()
     value = 110
-    blurImage = color_class.blurring(radius = 18, sigmaColor = 80, sigmaSpace = 110)
+    blurImage = color_class.blurring(radius = 22, sigmaColor = 80, sigmaSpace = 110)
     # color_class.imageSave(blurImage, name=filename+"-blur")
     color_class.colorProcess(blurImage, direction = "h")
     
