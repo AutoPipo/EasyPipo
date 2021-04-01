@@ -1,5 +1,5 @@
 $(window).on('load', function(){
-    var image_path = '../static/org_image/her1-change.jpg';
+    var image_path = '../static/org_image/lala.jpg';
     var pic_size = 600;
 
     var brush_cursor = document.querySelector('.brush_cursor');
