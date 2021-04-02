@@ -194,8 +194,6 @@ def getImgLabelFromImage(colors, img):
     return img_lab
 
 
-image2 = cv2.convertScaleAbs(image2)
-image3 = cv2.convertScaleAbs(image3)
 
 
 def setColorNumberFromContours(img, contours, img_lab):
