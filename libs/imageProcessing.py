@@ -184,7 +184,7 @@ def makeWhiteFromImage(img):
 def getImgLabelFromImage(colors, img):
     lab = np.zeros((len(colors), 1, 3), dtype="uint8")
     for i in range(len(colors)):
-    lab[i] = colors[i]
+        lab[i] = colors[i]
 
     lab = cv2.cvtColor(lab, cv2.COLOR_BGR2LAB)
 
