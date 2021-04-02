@@ -45,18 +45,33 @@ def reducial(img, div):
 # Contour 영역 내에 텍스트 쓰기
 # https://github.com/bsdnoobz/opencv-code/blob/master/shape-detect.cpp
 def setLabel(image, str, contour):
-   fontface = cv2.FONT_HERSHEY_SIMPLEX
-   scale = 0.4 # 0.6
-   thickness = 1 # 2
+    fontface = cv2.FONT_HERSHEY_SIMPLEX
+    scale = 0.4 # 0.6
+    thickness = 1 # 2
 
-   size = cv2.getTextSize(str, fontface, scale, thickness)
-   text_width = size[0][0]
-   text_height = size[0][1]
+    size = cv2.getTextSize(str, fontface, scale, thickness)
+    text_width = size[0][0]
+    text_height = size[0][1]
 
-   x, y, width, height = cv2.boundingRect(contour)
+    x, y, width, height = cv2.boundingRect(contour)
+   
 
-   pt = (x + int((width - text_width) / 2), y + int((height + text_height) / 2))
-   cv2.putText(image, str, pt, fontface, scale, (0, 0, 0), thickness, 8)
+    # temp = cv2.arcLength(contour, True)
+
+    M = cv2.moments(contour)
+
+
+    # contour 0인 경우 (예외)
+    if M['m00'] == 0.0:
+        return
+
+    cx = int( M['m10'] / M['m00'] )
+    cy = int( M['m01'] / M['m00'] )
+
+    # pt = (x + int((width - text_width) / 2), y + int((height + text_height) / 2))
+    pt = (cx, cy)
+
+    cv2.putText(image, str, pt, fontface, scale, (0, 0, 0), thickness, 8)
 
 
 # 컨투어 내부의 색을 평균내서 어느 색인지 체크
@@ -122,6 +137,7 @@ def drawLine(colorMap, value = 1):
             
     # print("count:", count)
     return tempMap
+
 
 def imageMerge(image, map):
     new_map = np.zeros(image.shape) + 255
@@ -193,21 +209,18 @@ def getImgLabelFromImage(colors, img):
 
 
 
-
 def setColorNumberFromContours(img, contours, img_lab, lab, colorNames):
     # 컨투어 별로 체크
     for contour in contours:
         #    컨투어를 그림
-        # cv2.drawContours(image, [contour], -1, (0, 255, 0), 2)
         cv2.drawContours(img, [contour], -1, (0, 0, 0), 1)
 
         # 컨투어 내부에 검출된 색을 표시
         color_text = label(img_lab, contour, lab, colorNames)
 
-        # setLabel(image2, color_text, contour)
         setLabel(img, color_text, contour)
 
         # contour 1개씩 그려지는거 확인
-        # cv2.imshow('draw_contour', img)
-        # cv2.waitKey(0)
+        cv2.imshow('draw_contour', img)
+        cv2.waitKey(0)
     return img

@@ -55,7 +55,7 @@ def convert():
 
 
     # 색 일반화
-    image = reducial(img, 96)
+    image = reducial(img, 64)
 
     # 선 그리기
     # image2 = drawLine(image)
@@ -67,10 +67,10 @@ def convert():
     # image3 = cv2.convertScaleAbs(image3)
 
     # 색 추출
-    # colorNames, colors = getColorFromImage(image
+    colorNames, colors = getColorFromImage(image)
 
 
-    colors = """
+    colors2 = """
 FF0000,00FF00,0000FF,
 CD5C5C,7FFFD4,
 00FFFF,E9967A,00FA9A,
@@ -133,12 +133,16 @@ F4A460,DAA520,
 6F0505,4A1010,6B1111,9E0E09,720A06,400603,370D0C,450B09,
 0E0F58,06086D,040695,090A56,1A1A42,14154B""".split(',')
 
-    for idx in range(len(colors)):
-        colors[idx] = tuple(int(colors[idx][i:i+2], 16) for i in (4, 2, 0))
+    for idx in range(len(colors2)):
+        colors2[idx] = tuple(int(colors2[idx][i:i+2], 16) for i in (4, 2, 0))
 
-    colorNames = [ str(i+1) for i in range(len(colors)) ]
+    colorNames2 = [ str(i+1) for i in range(len(colors2)) ]
 
+    colorNames, colors = colorNames2, colors2
     print(f'색 {len(colorNames)}개')
+
+
+
 
 
     # 라벨 추출
