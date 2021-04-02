@@ -59,30 +59,26 @@ class Color:
         # 이건 라인 검출 테스트용 
         # self.colorMap = cv2.imread("./render/"+render_file_name+"-merge7.jpg")
         
-        # test
-        '''
-        testMap = self.colorMap.copy()
-        testt = self.__createColorMap(testMap,  direction = "v")
-        self.imageSave(testt, name=render_file_name+"-ttestt"  )
         
-        testMaps = testt.copy()
-        testts = self.__createColorMap(testMaps, value=20, direction = "h")
-        self.imageSave(testts, name=render_file_name+"-ttestts"  )
-        '''
         print(" ======= Convert Image Size ======")
         print("size:",self.colorMap.shape )
-        self.imageSave(self.colorMap, name=render_file_name+"-changes"  )
+        self.imageSave(self.colorMap, name=render_file_name+"-change"  )
         
         
         mergeMap = self.mergeColor(self.colorMap)
-        self.imageSave(mergeMap, name=render_file_name+"-merges"  )
+        self.imageSave(mergeMap, name=render_file_name+"-merge"  )
+        
+        # test
+        # imagepath = "./render/iron-merge.jpg"
+        # mergeMap = cv2.imread(imagepath) 
         
         # 색 넘버 : 포지션 -> 딕셔너리 // 색 개수 파악
-        # dict =  self.__createColorDict(mergeMap)
-        #테스트용
         dict =  self.__createColorDict(mergeMap)
         print(" ======= COLOR Numbers ======")
         print("color:", len(dict.keys()))
+        
+        self.lineByColor(dict)
+            
         
         # 달라진 부분 체크 -> 달라지지 않으면 흰색
         # changeMap = self.checkChange(images, self.colorMap)
@@ -92,13 +88,82 @@ class Color:
         print("line detect start")
         self.lineDetected = self.drawLine(mergeMap)
         print("line detect end")
-        self.imageSave(self.lineDetected, name=render_file_name+"-linesss"  )
+        self.imageSave(self.lineDetected, name=render_file_name+"-line2"  )
         
         
         linecolor = imageMerge(mergeMap, self.lineDetected )
-        self.imageSave(linecolor, name=render_file_name+"-linecolor"  )
+        self.imageSave(linecolor, name=render_file_name+"-linecolor2"  )
         
         return 
+    
+    def lineByColor(self, dict):
+        def getContour(img):
+            img = 255-img
+            print( type(img) )
+            img = cv2.convertScaleAbs(img)
+            imgray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+            ret, thresh = cv2.threshold(imgray,127,255,0)
+            contours, hierachy = cv2.findContours(thresh, cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
+            dot = []
+            for i in range(len(contours)):
+                if cv2.contourArea(contours[i]) == 0: dot.append(i)
+            dot.sort()
+            dot.reverse()
+            for i in dot:  contours.pop(i)
+
+            result = {}
+
+            for i in range(len(contours)):
+                result[str(i)] = [cv2.contourArea(contours[i]), contours[i]]
+            return result
+            
+            
+        # kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (2,1))
+            
+        for color in dict.keys():
+            map = np.zeros(self.image.shape) + 255
+            g, b, r = color
+            for y, x in dict[color]:
+                map[y][x] = [g, b, r]
+            for y, row in enumerate(map):
+                for x, cell in enumerate(row):
+                    try:
+                        if map[y][x].tolist() == [ g, b, r] and \
+                        (map[y+1][x].tolist() == [255, 255, 255] or \
+                        map[y][x+1].tolist() == [255, 255, 255] or \
+                        map[y][x-1].tolist() == [255, 255, 255] or \
+                        map[y-1][x].tolist() == [255, 255, 255]) :
+                            map[y][x] = [0, 0, 0]
+                    except: pass
+            for y, row in enumerate(map):
+                for x, cell in enumerate(row):
+                    if map[y][x].tolist() == [255, 255, 255]: continue
+                    if map[y][x].tolist() != [0, 0, 0]  :
+                        map[y][x] = [255, 255, 255]
+            # dilation = cv2.dilate(map, kernel)
+            # render = cv2.erode(dilation, kernel)
+            
+            # print("map.shape",map.shape)
+            # print("map type", type(map))
+            contours = getContour(map)
+            for color_key in contours.keys():
+                if contours[color_key][0] < 1.0:
+                    continue
+                else:
+                    new_map =  np.zeros(self.image.shape) + 255
+                    print(contours[color_key][1])
+                    for cood in contours[color_key][1]:
+                        print(cood)
+                        # print(contours[color_key][1][0][0])
+                        new_map[y][x] = [0, 0, 0]
+                        print(">",x, y)
+                    
+                    import time
+                    print("image save")
+                    time.sleep(2)
+                    self.imageSave(new_map, name="./colorline/color-"+self.filename+"-"+str(color)+"-"+color_key)
+                        
     
     def mergeColor(self, colorImage):
         def calcSimilarColor(color, hexColors):
@@ -106,16 +171,13 @@ class Color:
             blue, green, red = color
             for hex in hexColors:
                 b, g, r = self.__hex2bgr(hex)
-                value = abs(b-blue) + abs(r-red) + abs(g-green)
-                if value == 0:  return [b, g, r]
+                value = abs(b-blue)  + abs(r-red)  + abs(g-green) 
+                # values = b-blue + r-red + g-green
+                # if value == 0:  return [b, g, r]
                 minColor[value] = [b, g, r]
+                
             return minColor[ min(minColor.keys()) ]
-        def minColor(bgr):
-            b, g, r = bgr
-            if b <30 : b = 30
-            if g <30 : g =30
-            if r <30 : r =30
-            return [b, g, r]
+        
         map = colorImage.copy()
         colorCode = HexColorCode().hexColorCodeList
         colorDict = {}
@@ -129,11 +191,10 @@ class Color:
                     map[y][x] = hexColor
                     colorDict[tuple(color) ] = hexColor
                 
-                
         return map
     
     
-    def drawLine(self, colorMap, value = 11):
+    def drawLine(self, colorMap, value = 2):
         map = []
         tempMap = np.zeros(colorMap.shape) + 255
         count = 0
@@ -158,6 +219,7 @@ class Color:
                         if b-value< blue <b+value and \
                             g-value< green <g+value and \
                             r-value< red <r+value: pass
+                        elif tempMap[y+c][x].tolist() == [0, 0, 0] : pass
                         # elif (y+c, x) in blacklist: break
                         else : 
                             # line.append( [0, 0, 0] )
@@ -176,6 +238,7 @@ class Color:
                             g-value< green <g+value and \
                             r-value< red <r+value: pass
                         # elif (y, x+c) in blacklist: break
+                        elif tempMap[y][x+c].tolist() == [0, 0, 0] : pass
                         else : 
                             # line.append( [0, 0, 0] )
                             tempMap[y, x ]=[0, 0, 0]
@@ -210,13 +273,17 @@ class Color:
         return np.array(maps)
     
     def blurring(self, radius = 15, sigmaColor = 90, sigmaSpace = 60) :
+        image = self.image.copy()
+        div = 32
+        qimg = image // div * div + div // 2
+        
         '''
         이미지 크기에 맞추어 블러 사이즈 조절하기
         '''
         sigmaColor += self.image.shape[1] * self.image.shape[0] // 100000
         print(" ======= Blur Size ======")
         print("blur:",sigmaColor )
-        blurring = cv2.bilateralFilter(self.image,  radius, sigmaColor, sigmaSpace)
+        blurring = cv2.bilateralFilter(qimg,  radius, sigmaColor, sigmaSpace)
         # cv2.imshow("bilateralFilter", dst)
         return blurring
     
@@ -232,7 +299,7 @@ class Color:
         for y, row in enumerate(image):
             for x, bgr in enumerate(row):
                 bgr = tuple(bgr)
-                if self.colorDict == {}: self.colorDict[ bgr ] = [ (x, y) ]
+                if self.colorDict == {}: self.colorDict[ bgr ] = [ (y, x) ]
                 """
                 for key in self.colorDict.keys():
                     b, g, r = key
@@ -248,9 +315,9 @@ class Color:
                 """
                 # hexColor = self.__bgr2hex(bgr)
                 if bgr in self.colorDict.keys():
-                    self.colorDict[bgr].append( (x, y) )
+                    self.colorDict[bgr].append( (y, x) )
                 else:
-                    self.colorDict[bgr] = [ (x, y) ]
+                    self.colorDict[bgr] = [ (y, x) ]
                 
         # print(self.colorDict)
         return self.colorDict
@@ -353,18 +420,31 @@ if __name__ == "__main__":
     import time
     start = time.time()
     dirpath = "./test/"
-    filename = "av"
+    filename = "iron"
+    # for filename in ["about", "lala", "her1"]:
     
-    color_class = Color( dirpath + filename + ".jpg" )
+    color_class = Color( dirpath + filename + ".png" )
     # color_class.showBar()
     value = 110
-    blurImage = color_class.blurring(radius = 22, sigmaColor = 80, sigmaSpace = 110)
+    blurImage = color_class.blurring(radius = 40, sigmaColor = 50, sigmaSpace = 80)
     # color_class.imageSave(blurImage, name=filename+"-blur")
     color_class.colorProcess(blurImage, direction = "h")
     
-    
+    print(f"===  {'filename'}finish... ===")
     print("time :", time.time() - start)
     
     # color_class.imageSave(blurImage) #, name = filename+str(value)
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     
