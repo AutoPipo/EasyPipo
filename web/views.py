@@ -37,15 +37,20 @@ def convert():
     image_path = './web'+image_path[2:]
     image_name = os.path.basename(image_path)
 
-    brush = Brush(image_path, session["id"], "./databases/test.db")
-    
-    edge = brush.getEdge( line_detail = line_detail, blur_size= blur_size)
-    
-    canvas = brush.drawLine(edge, regions=area_arr)
 
-    brush.save("./web/static/render_image/")
-    brush.finish()
+    ###### minku koo
+
+    # brush = Brush(image_path, session["id"], "./databases/test.db")
     
+    # edge = brush.getEdge( line_detail = line_detail, blur_size= blur_size)
+    
+    # canvas = brush.drawLine(edge, regions=area_arr)
+
+    # brush.save("./web/static/render_image/")
+    # brush.finish()
+    
+
+
     # 원본 이미지 불러오기
     img = getImageFromPath(image_path)
 
@@ -59,7 +64,7 @@ def convert():
     image3 = imageMerge(image, image2)
 
     # image2 = cv2.convertScaleAbs(image2)
-    # image3 = cv2.convertScaleAbs(image3)
+    image3 = cv2.convertScaleAbs(image3)
 
     # 색 추출
     colorNames, colors = getColorFromImage(image3)
