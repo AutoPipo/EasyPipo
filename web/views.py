@@ -63,15 +63,15 @@ def convert():
     # 선 합성
     image3 = imageMerge(image, image2)
 
-    # image2 = cv2.convertScaleAbs(image2)
+    image2 = cv2.convertScaleAbs(image2)
     image3 = cv2.convertScaleAbs(image3)
 
     # 색 추출
-    colorNames, colors = getColorFromImage(image3)
+    colorNames, colors = getColorFromImage(image)
     print(f'색 {len(colorNames)}개')
 
     # contour 추출
-    contours = getContoursFromImage(image3)
+    contours = getContoursFromImage(image2)
 
     # 라벨 추출
     img_lab, lab = getImgLabelFromImage(colors, image)
