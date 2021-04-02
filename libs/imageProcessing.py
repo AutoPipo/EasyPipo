@@ -46,7 +46,7 @@ def reducial(img, div):
 # https://github.com/bsdnoobz/opencv-code/blob/master/shape-detect.cpp
 def setLabel(image, str, contour):
     fontface = cv2.FONT_HERSHEY_SIMPLEX
-    scale = 0.4 # 0.6
+    scale = 0.3 # 0.6
     thickness = 1 # 2
 
     size = cv2.getTextSize(str, fontface, scale, thickness)
@@ -65,6 +65,7 @@ def setLabel(image, str, contour):
     if M['m00'] == 0.0:
         return
 
+    무게 중심
     cx = int( M['m10'] / M['m00'] )
     cy = int( M['m01'] / M['m00'] )
 
