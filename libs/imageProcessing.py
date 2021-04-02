@@ -30,12 +30,12 @@ def createColorDict(image):
 
 
 # 색 일반화 함수 (Ji-yong)
-def reducial(img):
+def reducial(img, div):
     # N = 8 #8
     # A = 1024 #1024
     # qimg = np.round( img*(N/A))*( A/N )
 
-    div = 64 #64
+    # div = 64 #64
     qimg = img // div * div + div // 2
 
     qimg = cv2.medianBlur(qimg, 3)
@@ -56,28 +56,27 @@ def setLabel(image, str, contour):
    x, y, width, height = cv2.boundingRect(contour)
 
    pt = (x + int((width - text_width) / 2), y + int((height + text_height) / 2))
-#    cv2.putText(image, str, pt, fontface, scale, (255, 255, 255), thickness, 8)
    cv2.putText(image, str, pt, fontface, scale, (0, 0, 0), thickness, 8)
 
 
 # 컨투어 내부의 색을 평균내서 어느 색인지 체크
 def label(image, contour, lab, colorNames):
-   mask = np.zeros(image.shape[:2], dtype="uint8")
-   cv2.drawContours(mask, [contour], -1, 255, -1)
+    mask = np.zeros(image.shape[:2], dtype="uint8")
 
-   mask = cv2.erode(mask, None, iterations=2)
-   mean = cv2.mean(image, mask=mask)[:3]
+    cv2.drawContours(mask, [contour], -1, 255, -1)
 
-   minDist = (np.inf, None)
+    mask = cv2.erode(mask, None, iterations=2)
+    mean = cv2.mean(image, mask=mask)[:3]
 
-   for (i, row) in enumerate(lab):
+    minDist = (np.inf, None)
 
-       d = dist.euclidean(row[0], mean)
+    for (i, row) in enumerate(lab):
+        d = dist.euclidean(row[0], mean)
 
-       if d < minDist[0]:
-           minDist = (d, i)
-
-   return colorNames[minDist[1]]
+        if d < minDist[0]:
+            minDist = (d, i)
+            
+    return colorNames[minDist[1]]
 
 
 def drawLine(colorMap, value = 1):
@@ -162,9 +161,8 @@ def getContoursFromImage(img):
 
 
     # 컨투어 검출
-    contours = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
     # contours = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
-    # contours = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    contours = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
 
     # 컨투어 리스트가 OpenCV 버전에 따라 차이있기 때문에 추가
@@ -189,7 +187,7 @@ def getImgLabelFromImage(colors, img):
     lab = cv2.cvtColor(lab, cv2.COLOR_BGR2LAB)
 
     # 색검출할 색공간으로 LAB사용
-    img_lab = cv2.cvtColor(lab, cv2.COLOR_BGR2LAB)
+    img_lab = cv2.cvtColor(img, cv2.COLOR_BGR2LAB)
 
     return img_lab, lab
 
@@ -203,12 +201,13 @@ def setColorNumberFromContours(img, contours, img_lab, lab, colorNames):
         # cv2.drawContours(image, [contour], -1, (0, 255, 0), 2)
         cv2.drawContours(img, [contour], -1, (0, 0, 0), 1)
 
-    # 컨투어 내부에 검출된 색을 표시
+        # 컨투어 내부에 검출된 색을 표시
         color_text = label(img_lab, contour, lab, colorNames)
+
         # setLabel(image2, color_text, contour)
         setLabel(img, color_text, contour)
 
         # contour 1개씩 그려지는거 확인
-        # cv2.imshow('draw_contour', image4)
+        # cv2.imshow('draw_contour', img)
         # cv2.waitKey(0)
     return img

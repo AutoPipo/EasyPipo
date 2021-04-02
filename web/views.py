@@ -55,31 +55,34 @@ def convert():
     img = getImageFromPath(image_path)
 
     # 색 일반화
-    image = reducial(img)
+    image = reducial(img, 64)
 
     # 선 그리기
-    image2 = drawLine(image)
+    # image2 = drawLine(image)
     
     # 선 합성
-    image3 = imageMerge(image, image2)
+    # image3 = imageMerge(image, image2)
 
-    image2 = cv2.convertScaleAbs(image2)
-    image3 = cv2.convertScaleAbs(image3)
+    # image2 = cv2.convertScaleAbs(image2)
+    # image3 = cv2.convertScaleAbs(image3)
 
     # 색 추출
     colorNames, colors = getColorFromImage(image)
     print(f'색 {len(colorNames)}개')
 
-    # contour 추출
-    contours = getContoursFromImage(image2)
-
     # 라벨 추출
     img_lab, lab = getImgLabelFromImage(colors, image)
+
+
+    # contour 추출
+    contours = getContoursFromImage(image)
+
 
     # 결과 이미지 백지화
     result_img = makeWhiteFromImage(image)
 
     # 결과이미지 렌더링
+    # result_img = setColorNumberFromContours(image, contours, img_lab, lab, colorNames)
     result_img = setColorNumberFromContours(result_img, contours, img_lab, lab, colorNames)
 
     cv2.imwrite(f'./web/static/render_image/result_{image_name}', result_img)
