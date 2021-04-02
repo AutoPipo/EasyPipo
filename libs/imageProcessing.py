@@ -212,6 +212,3 @@ def setColorNumberFromContours(img, contours, img_lab):
         # cv2.imshow('draw_contour', image4)
         # cv2.waitKey(0)
     return img
-
-
-cv2.imwrite('result4.jpg', image4)
