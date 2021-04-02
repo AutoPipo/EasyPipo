@@ -75,6 +75,7 @@ def convert():
     result_img = setColorNumberFromContours(result_img, contours, img_lab)
 
     cv2.imwrite(f'./web/static/render_image/result_{image_name}', result_img)
+    image_name = 'result_'+image_name
     
 
 
