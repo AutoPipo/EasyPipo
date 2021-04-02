@@ -74,7 +74,7 @@ def convert():
     contours = getContoursFromImage(image3)
 
     # 라벨 추출
-    img_lab = getImgLabelFromImage(image)
+    img_lab = getImgLabelFromImage(colors, image)
 
     # 결과 이미지 백지화
     result_img = makeWhiteFromImage(image)
