@@ -61,7 +61,7 @@ def setLabel(image, str, contour):
 
 
 # 컨투어 내부의 색을 평균내서 어느 색인지 체크
-def label(image, contour):
+def label(image, contour, lab, colorNames):
    mask = np.zeros(image.shape[:2], dtype="uint8")
    cv2.drawContours(mask, [contour], -1, 255, -1)
 
@@ -191,12 +191,12 @@ def getImgLabelFromImage(colors, img):
     # 색검출할 색공간으로 LAB사용
     img_lab = cv2.cvtColor(lab, cv2.COLOR_BGR2LAB)
 
-    return img_lab
+    return img_lab, lab
 
 
 
 
-def setColorNumberFromContours(img, contours, img_lab):
+def setColorNumberFromContours(img, contours, img_lab, lab, colorNames):
     # 컨투어 별로 체크
     for contour in contours:
         #    컨투어를 그림
@@ -204,7 +204,7 @@ def setColorNumberFromContours(img, contours, img_lab):
         cv2.drawContours(img, [contour], -1, (0, 0, 0), 1)
 
     # 컨투어 내부에 검출된 색을 표시
-        color_text = label(img_lab, contour)
+        color_text = label(img_lab, contour, lab, colorNames)
         # setLabel(image2, color_text, contour)
         setLabel(img, color_text, contour)
 

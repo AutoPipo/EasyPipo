@@ -74,13 +74,13 @@ def convert():
     contours = getContoursFromImage(image3)
 
     # 라벨 추출
-    img_lab = getImgLabelFromImage(colors, image)
+    img_lab, lab = getImgLabelFromImage(colors, image)
 
     # 결과 이미지 백지화
     result_img = makeWhiteFromImage(image)
 
     # 결과이미지 렌더링
-    result_img = setColorNumberFromContours(result_img, contours, img_lab)
+    result_img = setColorNumberFromContours(result_img, contours, img_lab, lab, colorNames)
 
     cv2.imwrite(f'./web/static/render_image/result_{image_name}', result_img)
     image_name = 'result_'+image_name
