@@ -65,9 +65,13 @@ def setLabel(image, str, contour):
     if M['m00'] == 0.0:
         return
 
-    무게 중심
+    # 무게 중심
     cx = int( M['m10'] / M['m00'] )
     cy = int( M['m01'] / M['m00'] )
+
+
+
+
 
     # pt = (x + int((width - text_width) / 2), y + int((height + text_height) / 2))
     pt = (cx, cy)

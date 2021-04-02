@@ -58,7 +58,15 @@ def convert():
     image = reducial(img, 64)
 
     # 선 그리기
-    # image2 = drawLine(image)
+    image2 = drawLine(image)
+
+    image2 = cv2.convertScaleAbs(image2)
+
+
+
+
+
+
     
     # 선 합성
     # image3 = imageMerge(image, image2)
@@ -149,7 +157,41 @@ F4A460,DAA520,
     img_lab, lab = getImgLabelFromImage(colors, image)
 
     # contour 추출
-    contours = getContoursFromImage(image)
+    # contours = getContoursFromImage(image)
+
+
+    
+
+
+    img = image2.copy()
+
+    image_bin = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
+    retval,image_bin = cv2.threshold(image_bin, 254,255, cv2.THRESH_BINARY_INV)
+    # contours_, hierarchy = cv2.findContours(image_bin.copy(),cv2.RETR_CCOMP , cv2.CHAIN_APPROX_SIMPLE)
+    contours, hierarchy = cv2.findContours(image_bin.copy(),cv2.RETR_CCOMP , cv2.CHAIN_APPROX_SIMPLE)
+    # image_with_contour=np.zeros(img.shape, np.uint8)
+    # dist=np.zeros((img.shape[0],image.shape[1]))
+    # cv2.drawContours(image_with_contour, contours_, -1,(255,255,255),1, cv2.LINE_AA)
+
+    # for ind_y in range(img.shape[0]):
+    #     for ind_x in range(img.shape[1]):
+    #         dist[ind_y,ind_x] = cv2.pointPolygonTest(contours_[0],(ind_y,ind_x),True)
+
+    # minVal, maxVal, minLoc, maxLoc = cv2.minMaxLoc(dist)
+    # # cv2.circle(image, (maxLoc[1], maxLoc[0]), int(maxVal), (255 , 0, 0), 1, cv2.LINE_AA, 0)
+    # print(f'ㄱㄱ', (maxLoc[1], maxLoc[0]), int(maxVal))
+    # cv2.circle(img, (maxLoc[1], maxLoc[0]), abs(int(maxVal)), (255, 0, 0), 1, cv2.LINE_AA, 0)
+
+    # cv2.imshow('original', img)
+    # cv2.imshow('contour', image_with_contour)
+
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
+
+
+
+
+
 
     # 결과 이미지 백지화
     result_img = makeWhiteFromImage(image)
