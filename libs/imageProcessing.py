@@ -221,6 +221,6 @@ def setColorNumberFromContours(img, contours, img_lab, lab, colorNames):
         setLabel(img, color_text, contour)
 
         # contour 1개씩 그려지는거 확인
-        cv2.imshow('draw_contour', img)
-        cv2.waitKey(0)
+        # cv2.imshow('draw_contour', img)
+        # cv2.waitKey(0)
     return img
