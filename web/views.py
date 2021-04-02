@@ -12,6 +12,7 @@ import json
 import os
 from libs.brush import Brush
 from libs.utils import *
+from libs.imageProcessing import *
 
 views = Blueprint("server", __name__)
 
@@ -33,8 +34,6 @@ def convert():
     area_arr = json.loads(request.form['area_arr'])
     image_path = request.form['image_path']
     
-    print("blur size in flask:", blur_size)
-    
     image_path = './web'+image_path[2:]
     image_name = os.path.basename(image_path)
 
@@ -47,8 +46,36 @@ def convert():
     brush.save("./web/static/render_image/")
     brush.finish()
     
+    # 원본 이미지 불러오기
+    img = getImageFromPath(image_path)
+
+    # 색 일반화
+    image = reducial(img)
+
+    # 선 그리기
+    image2 = drawLine(image)
+    
+    # 선 합성
+    image3 = imageMerge(image, image2)
+
+    # 색 추출
+    colorNames, colors = getColorFromImage(image3)
+    print(f'색 {len(colorNames)}개')
+
+    # contour 추출
+    contours = getContoursFromImage(image3)
+
+    # 라벨 추출
+    img_lab = getImgLabelFromImage(image)
+
+    # 결과 이미지 백지화
+    result_img = makeWhiteFromImage(image)
+
+    # 결과이미지 렌더링
+    result_img = setColorNumberFromContours(result_img, contours, img_lab)
+
+    cv2.imwrite(f'./web/static/render_image/result_{image_name}', result_img)
     
 
+
     return jsonify(img_name=image_name, area_arr=area_arr)
-    
-    
