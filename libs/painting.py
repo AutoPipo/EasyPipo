@@ -123,7 +123,7 @@ class Painting:
                     colorDict[ bgr ] = [ (y, x) ]
                     continue
                 
-                if bgr in self.colorDict.keys():
+                if bgr in colorDict.keys():
                     colorDict[bgr].append( (y, x) )
                 else:
                     colorDict[bgr] = [ (y, x) ]
