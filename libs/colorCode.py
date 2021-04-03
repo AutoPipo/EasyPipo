@@ -272,7 +272,7 @@ F4A460,DAA520,
 """
         
         self.hexColorCodeList = self.hexColorCode.replace("\n", "").split(",")
-        #6F0505,4A1010,6B1111,9E0E09,720A06,400603,370D0C,450B09,
+        
 if __name__ == "__main__":
     code = HexColorCode().hexColorCodeList
     print(len(code))
