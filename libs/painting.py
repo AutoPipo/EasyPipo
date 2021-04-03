@@ -8,6 +8,7 @@
 
 import matplotlib.pyplot as plt
 import cv2
+import os
 import numpy as np
 from colorCode import HexColorCode
 
@@ -20,15 +21,14 @@ class Painting:
         self.filename = self.fileBasename.split(".")[0]
         self.image = cv2.imread(imagepath) # Original Image
     
-    def blurring(self, radius = 40, sigmaColor = 70, sigmaSpace = 60, medianValue = 5) :
+    def blurring(self, div = 32, radius = 40, sigmaColor = 70, medianValue = 5) :
         image = self.image.copy()
-        div = 32
         qimg = image // div * div + div // 2
         
         sigmaColor += (qimg.shape[1] * qimg.shape[0]) // 100000
         radius += (qimg.shape[1] * qimg.shape[0]) // 100000
         
-        blurring = cv2.bilateralFilter(qimg,  radius, sigmaColor, sigmaSpace)
+        blurring = cv2.bilateralFilter(qimg,  radius, sigmaColor, 60)
         blurring = cv2.medianBlur(blurring, medianValue)
         blurring = cv2.resize(blurring, None, fx=2, fy=2, interpolation=cv2.INTER_CUBIC)
         
@@ -106,11 +106,14 @@ class Painting:
                 
         return map
     
-    def colorProcess(self, image, direction = "h"):
-        self.similarColorMap = self.__createSimilarColorMap(image, direction = direction)
-        self.paintingMap = self.__createPaintingMap(self.similarColorMap)
-        return 
-    
+    def getSimilarColorMap(self, blurImage, value = 15, direction = "h"):
+        self.similarColorMap = self.__createSimilarColorMap(blurImage, value = value, direction = direction)
+        return self.similarColorMap
+        
+    def getPaintingColorMap(self, similarImage):
+        self.paintingMap = self.__createPaintingMap(similarImage)
+        return self.paintingMap
+        
     def getColorDict(self, image):
         colorDict = {} # Key : Color Code / Values : Pixel Position
         for y, row in enumerate(image):
@@ -143,9 +146,8 @@ if __name__ == "__main__":
     painting = Painting( "./imageDir/image.jpg")
     blurImage = painting.blurring(radius = 20, sigmaColor = 40, medianValue=5)
     
-    painting.colorProcess(blurImage, direction = "h")
-    similarMap = painting.similarColorMap
-    paintingMap = painting.paintingMap
+    similarMap = painting.getSimilarColorMap(blurImage, value = 15, direction = "h" )
+    paintingMap = painting.getPaintingColorMap(similarMap)
     
     colorDict = painting.getColorDict(paintingMap)
     '''

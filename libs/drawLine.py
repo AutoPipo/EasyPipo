@@ -5,6 +5,8 @@
 # Update : 21.04.03
 # Author : Minku Koo
 '''
+import cv2
+import numpy as np
 
 class DrawLine:
     def __init__(self, image, mergeValue = 1):
@@ -15,7 +17,7 @@ class DrawLine:
         #          여기서 이제 라인 빈공간 없애기
         self.lineMap = np.zeros(self.colorImage.shape) + 255
         
-        image_size_ = blurImage.shape[0]
+        image_size_ = self.colorImage.shape[0]
         for y, row in enumerate(self.colorImage):
             line = []
             if y % 200 ==0: print("line draw process:", y,"/", image_size_ )
