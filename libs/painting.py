@@ -21,9 +21,10 @@ class Painting:
         self.filename = self.fileBasename.split(".")[0]
         self.image = cv2.imread(imagepath) # Original Image
     
-    def blurring(self, div = 32, radius = 40, sigmaColor = 70, medianValue = 5) :
-        image = self.image.copy()
-        qimg = image // div * div + div // 2
+    def blurring(self, image, div = 32, radius = 40, sigmaColor = 70, medianValue = 5) :
+        # image = self.image.copy()
+        img = image.copy()
+        qimg = img // div * div + div // 2
         
         sigmaColor += (qimg.shape[1] * qimg.shape[0]) // 100000
         radius += (qimg.shape[1] * qimg.shape[0]) // 100000
@@ -34,10 +35,12 @@ class Painting:
         
         return blurring
     
-    def __createSimilarColorMap(self, blurImage, value = 15, direction = "h"):
+    def __createSimilarColorMap(self, value = 15, direction = "h"):
+        image = self.image.copy()
         map = []
-        image_size_ = blurImage.shape[0]
-        for y, row in enumerate(blurImage):
+        image_size_ = image.shape[0]
+        
+        for y, row in enumerate(image):
             line = []
             if y % 300 == 0: print("similar color processing...", y, "/", image_size_)
             for x, bgr in enumerate(row):
@@ -45,29 +48,29 @@ class Painting:
                 blue, green, red = bgr
                 for c in [-1, 1]:
                     try: 
-                        if direction == "v": b, g, r = blurImage[y+c, x]
-                        else: b, g, r = blurImage[y, x+c]
+                        if direction == "v": b, g, r = image[y+c, x]
+                        else: b, g, r = image[y, x+c]
                             
                         if b==blue and g==green and r==red: pass
                         elif  b-value< blue <b+value and \
                         g-value< green <g+value and \
                         r-value< red <r+value:
                             line.append( [b, g, r] )
-                            blurImage[y][x] = [ b, g, r ]
+                            image[y][x] = [ b, g, r ]
                             colorChange = True
                             break
                     except IndexError as e: pass
                     
                     try: 
-                        if direction == "v": b, g, r = blurImage[y, x+c]
-                        else: b, g, r = blurImage[y+c, x]
+                        if direction == "v": b, g, r = image[y, x+c]
+                        else: b, g, r = image[y+c, x]
                             
                         if b==blue and g==green and r==red: pass
                         elif  b-value< blue <b+value and \
                         g-value< green <g+value and \
                         r-value< red <r+value: 
                             line.append( [b, g, r] )
-                            blurImage[y][x] = [ b, g, r ]
+                            image[y][x] = [ b, g, r ]
                             colorChange = True
                             break
                     except IndexError as e: pass
@@ -106,8 +109,8 @@ class Painting:
                 
         return map
     
-    def getSimilarColorMap(self, blurImage, value = 15, direction = "h"):
-        self.similarColorMap = self.__createSimilarColorMap(blurImage, value = value, direction = direction)
+    def getSimilarColorMap(self,  value = 15, direction = "h"): #blurImage,
+        self.similarColorMap = self.__createSimilarColorMap(value = value, direction = direction)
         return self.similarColorMap
         
     def getPaintingColorMap(self, similarImage):
