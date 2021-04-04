@@ -9,14 +9,17 @@ import cv2
 import numpy as np
 
 class DrawLine:
-    def __init__(self, image, mergeValue = 1):
+    def __init__(self, image):
         self.colorImage = image
-        self.lineMap = self.__drawLine(value = mergeValue)
-        
+        self.lineMap = np.array([]) #self.__drawLine(value = mergeValue)
+    
+    def getDrawLine(self, value = 1):
+        return self.__drawLine(value = value)
+    
     def __drawLine(self, value):
         #          여기서 이제 라인 빈공간 없애기
         self.lineMap = np.zeros(self.colorImage.shape) + 255
-        
+        # print("Expand Image Size:", self.linemap.shape)
         image_size_ = self.colorImage.shape[0]
         for y, row in enumerate(self.colorImage):
             line = []
@@ -69,9 +72,9 @@ class DrawLine:
     def getLineOnImage(self):
         return self.__lineOnImage()
         
-    def imageExpand(self, image, guessSize=False ,size = 3):
-        if guessSize : size = ( 5000 // image.shape[1] ) +1
-        return  cv2.resize(image, None, fx=size, fy=size, interpolation=cv2.INTER_CUBIC)
+def imageExpand(image, guessSize=False ,size = 3):
+    if guessSize : size = ( 5000 // image.shape[1] ) +1
+    return  cv2.resize(image, None, fx=size, fy=size, interpolation=cv2.INTER_CUBIC)
     
     
     
