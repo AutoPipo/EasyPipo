@@ -17,7 +17,6 @@ class DrawLine:
         return self.__drawLine(value = value)
     
     def __drawLine(self, value):
-        #          여기서 이제 라인 빈공간 없애기
         self.lineMap = np.zeros(self.colorImage.shape) + 255
         # print("Expand Image Size:", self.linemap.shape)
         image_size_ = self.colorImage.shape[0]

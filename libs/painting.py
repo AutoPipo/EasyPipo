@@ -31,7 +31,8 @@ class Painting:
         
         blurring = cv2.bilateralFilter(qimg,  radius, sigmaColor, 60)
         blurring = cv2.medianBlur(blurring, medianValue)
-        blurring = cv2.resize(blurring, None, fx=2, fy=2, interpolation=cv2.INTER_CUBIC)
+        
+        # blurring = cv2.resize(blurring, None, fx=2, fy=2, interpolation=cv2.INTER_CUBIC)
         
         return blurring
     
