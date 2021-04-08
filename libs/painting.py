@@ -2,7 +2,7 @@
 # Image to Painting Process
 
 # Start : 21.04.01
-# Update : 21.04.03
+# Update : 21.04.08
 # Author : Minku Koo
 '''
 
@@ -23,8 +23,10 @@ class Painting:
     
     def blurring(self, image, div = 32, radius = 40, sigmaColor = 70, medianValue = 5) :
         # image = self.image.copy()
-        img = image.copy()
-        qimg = img // div * div + div // 2
+        # img = image.copy()
+        # qimg = img // div * div + div // 2
+        
+        qimg = image.copy()
         
         sigmaColor += (qimg.shape[1] * qimg.shape[0]) // 100000
         radius += (qimg.shape[1] * qimg.shape[0]) // 100000
@@ -37,79 +39,104 @@ class Painting:
         return blurring
     
     def __createSimilarColorMap(self, value = 15, direction = "h"):
-        image = self.image.copy()
-        map = []
-        image_size_ = image.shape[0]
+        div = 32
+        img = self.image.copy()
+        image = img // div * div + div // 2
         
-        for y, row in enumerate(image):
-            line = []
-            if y % 300 == 0: print("similar color processing...", y, "/", image_size_)
-            for x, bgr in enumerate(row):
-                # colorChange = False
+        # image = self.image.copy()
+        
+        # map = []
+        # image_size_ = image.shape[0]
+        
+        # colorCode = HexColorCode().hexColorCodeList
+        # colorDict = {}
+        c = 2
+        for y, row in enumerate(image[:-1*c+1]):
+            for x, bgr in enumerate(row[:-1*c+1]):
+                if y%c==0 and x%c==0 : 
+                    sum1 = np.sum(self.image[y:y+c, x:x+c], axis=0)
+                    sum_ =np.sum(sum1, axis=0)
+                    
+                    b, g, r = sum_ // (c*c)
+                    image[y:y+c, x:x+c] = np.array([b, g, r])
+                    
+        '''
+        for y, row in enumerate(image[1:-1]):
+            # if y % 300 == 0: print("similar color processing...", y, "/", image_size_)
+            for x, bgr in enumerate(row[1:-1]):
                 blue, green, red = bgr
-                for c in [-1, 1]:
-                    try: 
-                        if direction == "v": b, g, r = image[y+c, x]
-                        else: b, g, r = image[y, x+c]
-                            
-                        if b==blue and g==green and r==red: pass
-                        elif  b-value< blue <b+value and \
-                        g-value< green <g+value and \
-                        r-value< red <r+value:
-                            # line.append( [b, g, r] )
-                            image[y][x] = np.array([ b, g, r ])
-                            # colorChange = True
-                            break
-                    except IndexError as e: pass
-                    
-                    try: 
-                        if direction == "v": b, g, r = image[y, x+c]
-                        else: b, g, r = image[y+c, x]
-                            
-                        if b==blue and g==green and r==red: pass
-                        elif  b-value< blue <b+value and \
-                        g-value< green <g+value and \
-                        r-value< red <r+value: 
-                            # line.append( [b, g, r] )
-                            image[y][x] = np.array([ b, g, r ])
-                            # colorChange = True
-                            break
-                    except IndexError as e: pass
-                    
-                # if not colorChange: 
-                    # line.append( [blue, green, red] )
-                    # image[y][x] = np.array( [blue, green, red] )
                 
-            # map.append( line )
+                for c in [-1, 1]:
+                    if direction == "v": 
+                        b, g, r = image[y+c, x]
+                        cellColor = image[y+c, x]
+                    else: 
+                        b, g, r = image[y, x+c]
+                        cellColor = image[y, x+c]
+                        
+                    if b==blue and g==green and r==red: pass
+                    
+                    elif  b-value< blue <b+value and \
+                    g-value< green <g+value and \
+                    r-value< red <r+value:
+                        image[y][x] = cellColor
+                        break
+                    
+                    if direction == "v": 
+                        b, g, r = image[y, x+c]
+                        cellColor = image[y, x+c]
+                    else: 
+                        b, g, r = image[y+c, x]
+                        cellColor = image[y+c, x]
+                        
+                    if b==blue and g==green and r==red: pass
+                    
+                    elif  b-value< blue <b+value and \
+                    g-value< green <g+value and \
+                    r-value< red <r+value: 
+                        # line.append( [b, g, r] )
+                        image[y][x] = cellColor#np.array([ b, g, r ])
+                        # colorChange = True
+                        break
+        '''      
         return image
-        # return np.array(map)
     
     def __createPaintingMap(self, colorImage):
         def calcSimilarColor(color, hexColors):
+            
             minColor = {} # key: abs / value : hexColorCode
             blue, green, red = color
-            for hex in hexColors:
+            for hex in hexColors :
                 b, g, r = self.__hex2bgr(hex)
-                value = abs(b-blue)  + abs(r-red)  + abs(g-green) 
+                if abs( sum( color ) - sum([b, g, r]) ) >100: continue
+                value = abs(b-blue)  + abs(r-red)  + abs(g-green)
                 
                 minColor[value] = np.array([b, g, r])
                 if value ==0: return np.array([b, g, r])
-                
-            return minColor[ min(minColor.keys()) ]
+            return np.array( minColor[ min(minColor.keys()) ] )
+        
+        import time
+        start = time.time()
         
         map = colorImage.copy()
         colorCode = HexColorCode().hexColorCodeList
         colorDict = {}
-        for y, row in enumerate(colorImage):
-            if y % 200 ==0: print("merge color process..:", y)
-            for x, color in enumerate(row):
-                if tuple(color) in colorDict.keys():
-                    map[y][x] = colorDict[tuple(color) ]
-                else:
-                    hexColor = calcSimilarColor(color, colorCode)
-                    map[y][x] = hexColor
-                    colorDict[tuple(color) ] = hexColor
-                
+        c = 2
+        for y, row in enumerate(colorImage[:-1*c+1]):
+            # if y % 200 ==0: print("merge color process..:", y)
+            for x, color in enumerate(row[:-1*c+1]):
+                if y%c==0 and x%c==0 : 
+                    color = tuple(color)
+                    if color in colorDict.keys():
+                        # map[y][x] = np.asarray(colorDict[ color ])
+                        map[y:y+c, x:x+c] = colorDict[ color ]
+                    else:
+                        hexColor = calcSimilarColor(color, colorCode)
+                        # map[y][x] = np.asarray(hexColor)
+                        map[y:y+c, x:x+c] = hexColor
+                        colorDict[ color ] = hexColor
+        print("Merge Color Map End//")
+        print("비교 시간 :", round((time.time() - start), 3) ,"초.." )
         return map
     
     def getSimilarColorMap(self,  value = 15, direction = "h"): #blurImage,
