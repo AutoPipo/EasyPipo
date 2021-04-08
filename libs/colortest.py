@@ -12,12 +12,14 @@ def imageSave(image, directory = "./result-image/", name = "", id=""):
     cv2.imwrite(path+".jpg", image)
     return
     
-start = time.time()
+
 
 dir = "./test-image/"
-file = "a5"
+file = "lala"
 base = ".jpg"
-id = "1"
+id = "2"
+
+start = time.time()
 
 painting = Painting( dir+file+base )
 '''
@@ -33,10 +35,14 @@ imageSave(similarMap, name = file+"-similar", id=id)
 similarMap = painting.getSimilarColorMap( value = 18, direction = "h" )
 imageSave(similarMap, name = file+"-similar", id=id)
 print("========  Similar Map End  =======")
+print("time :", round((time.time() - start), 3) ,"초 정도.." )
+start = time.time()
 blurImage = painting.blurring(similarMap, div = 32, radius = 20, sigmaColor = 40, medianValue=7)
 imageSave(blurImage, name = file+"-blur", id=id)
 print("========  Blur Map End  =======")
+print("time :", round((time.time() - start), 3) ,"초 정도.." )
 # test finish
+start = time.time()
 
 paintingMap = painting.getPaintingColorMap(blurImage)
 # paintingMap = painting.getPaintingColorMap(blurImage)

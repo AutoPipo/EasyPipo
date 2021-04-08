@@ -45,7 +45,7 @@ class Painting:
             line = []
             if y % 300 == 0: print("similar color processing...", y, "/", image_size_)
             for x, bgr in enumerate(row):
-                colorChange = False
+                # colorChange = False
                 blue, green, red = bgr
                 for c in [-1, 1]:
                     try: 
@@ -56,9 +56,9 @@ class Painting:
                         elif  b-value< blue <b+value and \
                         g-value< green <g+value and \
                         r-value< red <r+value:
-                            line.append( [b, g, r] )
-                            image[y][x] = [ b, g, r ]
-                            colorChange = True
+                            # line.append( [b, g, r] )
+                            image[y][x] = np.array([ b, g, r ])
+                            # colorChange = True
                             break
                     except IndexError as e: pass
                     
@@ -70,17 +70,19 @@ class Painting:
                         elif  b-value< blue <b+value and \
                         g-value< green <g+value and \
                         r-value< red <r+value: 
-                            line.append( [b, g, r] )
-                            image[y][x] = [ b, g, r ]
-                            colorChange = True
+                            # line.append( [b, g, r] )
+                            image[y][x] = np.array([ b, g, r ])
+                            # colorChange = True
                             break
                     except IndexError as e: pass
                     
-                if not colorChange: line.append( [blue, green, red] )
+                # if not colorChange: 
+                    # line.append( [blue, green, red] )
+                    # image[y][x] = np.array( [blue, green, red] )
                 
-            map.append( line )
-        
-        return np.array(map)
+            # map.append( line )
+        return image
+        # return np.array(map)
     
     def __createPaintingMap(self, colorImage):
         def calcSimilarColor(color, hexColors):
@@ -90,8 +92,8 @@ class Painting:
                 b, g, r = self.__hex2bgr(hex)
                 value = abs(b-blue)  + abs(r-red)  + abs(g-green) 
                 
-                minColor[value] = [b, g, r]
-                if value ==0: return [b, g, r]
+                minColor[value] = np.array([b, g, r])
+                if value ==0: return np.array([b, g, r])
                 
             return minColor[ min(minColor.keys()) ]
         
