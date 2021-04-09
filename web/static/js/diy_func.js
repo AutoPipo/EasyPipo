@@ -1,5 +1,5 @@
 $(window).on('load', function(){
-    var image_path = '../static/org_image/222.jpg';
+    var image_path = '../static/org_image/1.png';
     var pic_size = 600;
 
     var brush_cursor = document.querySelector('.brush_cursor');
@@ -37,17 +37,26 @@ $(window).on('load', function(){
     $('.convert_box p').click(function(){
         $('.loader').addClass('is-active');
 
+        /*
         var working = setInterval(function(){
-            image = new Image();
-            var time = new Date().getTime();
-            image.src = '../static/render_image/working_img.png?time='+time;
-            var width_set = pic_size;
-            var height_set = pic_size * image.height / image.width;
-    
-            result_ctx.drawImage( image, 0, 0, width_set, height_set );
+            try { // statements to try
+                image = new Image();
+                var time = new Date().getTime();
+                image.src = '../static/render_image/working_img.png?time='+time;
+                
+                $(image).on('load', function(){
+                    var width_set = pic_size;
+                    var height_set = pic_size * image.height / image.width;
+            
+                    result_ctx.drawImage( image, 0, 0, width_set, height_set );
+                });
+
+            }
+            catch (e) {
+            }
 
         }, 3000);
-
+        */
         
 
         $.ajax({
@@ -61,7 +70,7 @@ $(window).on('load', function(){
             dataType:'json',
             type: 'POST',
             success: function (data) {
-                clearInterval(working);
+                //clearInterval(working);
 
                 image = new Image();
                 var time = new Date().getTime();
@@ -76,11 +85,9 @@ $(window).on('load', function(){
 
                     $("#result_img_url").text(data.img_name);
                     $('#result_download_btn').css('visibility', 'visible');
-
-                    $('.loader').removeClass('is-active');
                 });
-				
 				area_arr = []; // koo
+                $('.loader').removeClass('is-active');
             },
             error: function (error) {
                 console.error(error);

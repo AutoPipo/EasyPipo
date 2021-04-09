@@ -228,6 +228,8 @@ def setColorNumberFromContours(img, thresh, contours, hierarchy, img_lab, lab, c
         if child_idx != -1:
             contour = np.concatenate( (contour, contours[child_idx]) )
 
+        print(f'contour len : {len(contour)}')
+
         # 내심원 반지름, 좌표 계산
         radius, center = getRadiusCenterCircle(contour, thresh)
 
@@ -242,6 +244,7 @@ def setColorNumberFromContours(img, thresh, contours, hierarchy, img_lab, lab, c
             # 컨투어 내부에 검출된 색을 표시
             color_text = label(img_lab, contour, lab, colorNames)
 
+            center = (center[0]-2, center[1]+1)
             setLabel(img, color_text, contour, center)
             cv2.imwrite(f'./web/static/render_image/working_img.png', img)
 
