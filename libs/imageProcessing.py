@@ -243,6 +243,8 @@ def setColorNumberFromContours(img, thresh, contours, hierarchy, img_lab, lab, c
             color_text = label(img_lab, contour, lab, colorNames)
 
             setLabel(img, color_text, contour, center)
+            cv2.imwrite(f'./web/static/render_image/working_img.png', img)
+
 
             # contour 1개씩 그려지는거 확인
             # cv2.imshow('draw_contour', img)

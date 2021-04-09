@@ -37,6 +37,19 @@ $(window).on('load', function(){
     $('.convert_box p').click(function(){
         $('.loader').addClass('is-active');
 
+        var working = setInterval(function(){
+            image = new Image();
+            var time = new Date().getTime();
+            image.src = '../static/render_image/working_img.png?time='+time;
+            var width_set = pic_size;
+            var height_set = pic_size * image.height / image.width;
+    
+            result_ctx.drawImage( image, 0, 0, width_set, height_set );
+
+        }, 3000);
+
+        
+
         $.ajax({
             url: '/convert',
             data: {
@@ -48,6 +61,8 @@ $(window).on('load', function(){
             dataType:'json',
             type: 'POST',
             success: function (data) {
+                clearInterval(working);
+
                 image = new Image();
                 var time = new Date().getTime();
 
