@@ -2,7 +2,7 @@
 # Draw Line on Image
 
 # Start : 21.04.01
-# Update : 21.04.03
+# Update : 21.04.09
 # Author : Minku Koo
 '''
 import cv2
@@ -11,50 +11,30 @@ import numpy as np
 class DrawLine:
     def __init__(self, image):
         self.colorImage = image
-        self.lineMap = np.array([]) #self.__drawLine(value = mergeValue)
+        self.lineMap = np.array([]) 
     
-    def getDrawLine(self, value = 1):
-        return self.__drawLine(value = value)
+    def getDrawLine(self):
+        return self.__drawLine()
     
-    def __drawLine(self, value):
+    def __drawLine(self):
         self.lineMap = np.zeros(self.colorImage.shape) + 255
-        # print("Expand Image Size:", self.linemap.shape)
-        image_size_ = self.colorImage.shape[0]
-        for y, row in enumerate(self.colorImage):
-            line = []
-            if y % 200 ==0: print("line draw process:", y,"/", image_size_ )
-            
-            for x, bgr in enumerate(row):
-                colorChange = False
-                blue, green, red = bgr
+        
+        for y, row in enumerate(self.colorImage[1:-1]):
+            for x, bgr in enumerate(row[1:-1]):
                 for c in [-1, 1]:
-                    try: 
-                        b, g, r = self.colorImage[y+c, x]
-                        if b-value< blue <b+value and \
-                            g-value< green <g+value and \
-                            r-value< red <r+value: pass
-                        elif self.lineMap[y+c][x].tolist() == [0, 0, 0] : pass
-                        else : 
-                            self.lineMap[y, x ]=[0, 0, 0]
-                            colorChange = True
-                            break
-                    except IndexError as e: pass
-                    
-                    try: 
+                    cellColor = self.colorImage[y+c, x]
+                    if np.array_equal(bgr, cellColor): pass
+                    elif np.sum(self.lineMap[y+c][x]) == 0 : pass
+                    else : 
+                        self.lineMap[y, x ]= np.array([0, 0, 0])
+                        break
                         
-                        b, g, r = self.colorImage[y, x+c]
-                            
-                        if b-value< blue <b+value and \
-                            g-value< green <g+value and \
-                            r-value< red <r+value: pass
-                        elif self.lineMap[y][x+c].tolist() == [0, 0, 0] : pass
-                        else : 
-                            self.lineMap[y, x ]=[0, 0, 0]
-                            colorChange = True
-                            break
-                    except IndexError as e: pass
-                if not colorChange:
-                    self.lineMap[y, x ]=[255, 255, 255]
+                    cellColor = self.colorImage[y, x+c]
+                    if np.array_equal(bgr, cellColor): pass
+                    elif np.sum(self.lineMap[y][x+c]) == 0 : pass
+                    else : 
+                        self.lineMap[y, x ]=np.array([0, 0, 0])
+                        break
                     
         return self.lineMap
         
@@ -63,8 +43,8 @@ class DrawLine:
         for y, row in enumerate(self.colorImage):
             if y % 300 == 0: print("line+color processing...", y, "/", self.colorImage.shape[0])
             for x, bgr in enumerate(row):
-                if self.lineMap[y][x].tolist() == [0, 0, 0]: new_map[y][x] = [0, 0, 0]
-                else: new_map[y][x] = bgr.tolist()
+                if np.sum( self.lineMap[y][x] ) == 0: new_map[y][x] = np.array([0, 0, 0])
+                else: new_map[y][x] = bgr
                 
         return new_map
         
@@ -81,11 +61,13 @@ if __name__ == "__main__":
     '''
     * How to Use?
     
-    drawLine = DrawLine(image, maergeValue = 3)
-    lineMap = drawLine.lineMap
+    drawLine = DrawLine(image)
+    lineMap = drawLine.getDrawLine()
     lineOnImage = drawLine.getLineOnImage()
     
+    # Way 1 )
     expandImage = drawLine.imageExpand(lineMap, size = 4)
+    # Way 2 )
     expandImage = drawLine.imageExpand(lineMap, guessSize = True)
     '''
     pass
