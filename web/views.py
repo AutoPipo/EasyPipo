@@ -147,33 +147,17 @@ F4A460,DAA520,
 
 
 
-
     # 라벨 추출
     img_lab, lab = getImgLabelFromImage(colors, image)
-
-    # contour 추출
-    # contours = getContoursFromImage(image)
-
 
     img = image2.copy()
     # img = image.copy()
 
+    # contour, hierarchy 추출
 
-    image_bin = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
-    retval, image_bin = cv2.threshold(image_bin, 254,255, cv2.THRESH_BINARY)
+    contours, hierarchy, thresh = getContoursFromImage(img)
 
-    # 이로션
-    # image_bin = cv2.erode(image_bin, None, iterations=2)
-
-    contours, hierarchy = cv2.findContours(image_bin.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-    image_with_contour=np.zeros(img.shape, np.uint8)
-
-    cv2.imshow('original', img)
-    cv2.imshow('contour', image_with_contour)
-
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
-
+    # image_with_contour = np.zeros(img.shape, np.uint8)
 
 
     # 결과 이미지 백지화
@@ -181,10 +165,9 @@ F4A460,DAA520,
 
     # 결과이미지 렌더링
     # image를 넣으면 원본이미지에 그려주고, result_img에 넣으면 백지에 그려줌
-    result_img = setColorNumberFromContours(result_img, contours, hierarchy, img_lab, lab, colorNames)
+    result_img = setColorNumberFromContours(result_img, thresh, contours, hierarchy, img_lab, lab, colorNames)
 
     cv2.imwrite(f'./web/static/render_image/result_{image_name}', result_img)
     image_name = 'result_'+image_name
-
 
     return jsonify(img_name=image_name, area_arr=area_arr)

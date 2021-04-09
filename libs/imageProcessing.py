@@ -141,7 +141,7 @@ def drawLine(colorMap, value = 1):
             
     return tempMap
 
-
+# 이미지 합치는 함수
 def imageMerge(image, map):
     new_map = np.zeros(image.shape) + 255
 
@@ -157,10 +157,12 @@ def imageMerge(image, map):
     return new_map
 
 
+# 해당 경로에서 이미지를 numpy형태로 반환
 def getImageFromPath(path):
     return cv2.imread(path)
 
 
+# 해당 이미지에서 색 추출
 def getColorFromImage(img):
     # 인식할 색 입력
     temp = [ (idx, color) for (idx, color) in enumerate(   list( createColorDict(img).keys() ),  1   ) ]
@@ -168,30 +170,20 @@ def getColorFromImage(img):
     return [str(i[0]) for i in temp], [i[1] for i in temp]
 
 
+# 해당 이미지에서 contours, hierarchy, image_bin 반환
 def getContoursFromImage(img):
     # 이진화
     # cv2.COLOR_BGR2HSV
 
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    # gray = cv2.cvtColor(image3, cv2.COLOR_BGR2GRAY)
-    ret, thresh = cv2.threshold(gray, 60, 255, cv2.THRESH_BINARY)
+    gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
+    retval, image_bin = cv2.threshold(gray, 254,255, cv2.THRESH_BINARY)
 
-    thresh = cv2.erode(thresh, None, iterations=2)
+    # 이로션
+    # image_bin = cv2.erode(image_bin, None, iterations=2)
 
+    contours, hierarchy = cv2.findContours(image_bin.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
-    # 컨투어 검출
-    # contours = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
-    contours = cv2.findContours(thresh.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-
-
-    # 컨투어 리스트가 OpenCV 버전에 따라 차이있기 때문에 추가
-    if len(contours) == 2:
-        contours = contours[0]
-
-    elif len(contours) == 3:
-        contours = contours[1]
-
-    return contours
+    return contours, hierarchy, image_bin
 
 
 def makeWhiteFromImage(img):
@@ -211,8 +203,7 @@ def getImgLabelFromImage(colors, img):
     return img_lab, lab
 
 
-
-def setColorNumberFromContours(img, contours, hierarchy, img_lab, lab, colorNames):
+def setColorNumberFromContours(img, thresh, contours, hierarchy, img_lab, lab, colorNames):
     # 컨투어 별로 체크
     for idx in range(len(contours)):
         print(f'contours..... {idx} / {len(contours)} \t {round(idx / len(contours)*100, 1)}%', end='\r')
