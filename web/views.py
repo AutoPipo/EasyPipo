@@ -41,9 +41,7 @@ def convert():
     ###### minku koo
 
     # brush = Brush(image_path, session["id"], "./databases/test.db")
-    
     # edge = brush.getEdge( line_detail = line_detail, blur_size= blur_size)
-    
     # canvas = brush.drawLine(edge, regions=area_arr)
 
     # brush.save("./web/static/render_image/")
@@ -62,9 +60,6 @@ def convert():
 
     cv2.imshow('original zzz', image2)
     image2 = cv2.convertScaleAbs(image2)
-
-
-
 
 
 
@@ -166,10 +161,9 @@ F4A460,DAA520,
 
 
     image_bin = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
-    retval, image_bin = cv2.threshold(image_bin, 254,255, cv2.THRESH_BINARY_INV)
-    # contours_, hierarchy = cv2.findContours(image_bin.copy(),cv2.RETR_CCOMP , cv2.CHAIN_APPROX_SIMPLE)
+    retval, image_bin = cv2.threshold(image_bin, 254,255, cv2.THRESH_BINARY)
 
-    
+    # 이로션
     # image_bin = cv2.erode(image_bin, None, iterations=2)
 
     contours, hierarchy = cv2.findContours(image_bin.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
