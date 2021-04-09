@@ -159,28 +159,22 @@ F4A460,DAA520,
 
     # contour 추출
     # contours = getContoursFromImage(image)
-    contours = getContoursFromImage(image)
-
-
-    
 
 
     img = image2.copy()
     # img = image.copy()
 
 
-
-
     image_bin = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
-    retval,image_bin = cv2.threshold(image_bin, 254,255, cv2.THRESH_BINARY_INV)
+    retval, image_bin = cv2.threshold(image_bin, 254,255, cv2.THRESH_BINARY_INV)
     # contours_, hierarchy = cv2.findContours(image_bin.copy(),cv2.RETR_CCOMP , cv2.CHAIN_APPROX_SIMPLE)
 
     
     # image_bin = cv2.erode(image_bin, None, iterations=2)
 
-    contours, hierarchy = cv2.findContours(image_bin.copy(), cv2.RETR_CCOMP, cv2.CHAIN_APPROX_SIMPLE)
+    contours, hierarchy = cv2.findContours(image_bin.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     image_with_contour=np.zeros(img.shape, np.uint8)
-    
+
     cv2.imshow('original', img)
     cv2.imshow('contour', image_with_contour)
 
@@ -189,16 +183,12 @@ F4A460,DAA520,
 
 
 
-
-
-
     # 결과 이미지 백지화
     result_img = makeWhiteFromImage(image)
 
     # 결과이미지 렌더링
     # image를 넣으면 원본이미지에 그려주고, result_img에 넣으면 백지에 그려줌
-    # result_img = setColorNumberFromContours(image, contours, img_lab, lab, colorNames)
-    result_img = setColorNumberFromContours(result_img, contours, img_lab, lab, colorNames)
+    result_img = setColorNumberFromContours(result_img, contours, hierarchy, img_lab, lab, colorNames)
 
     cv2.imwrite(f'./web/static/render_image/result_{image_name}', result_img)
     image_name = 'result_'+image_name
