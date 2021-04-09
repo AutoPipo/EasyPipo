@@ -203,6 +203,19 @@ def getImgLabelFromImage(colors, img):
     return img_lab, lab
 
 
+# contour 내심원 반지름이랑 가운데 좌표 반환 함수
+def getRadiusCenterCircle(contour, thresh):
+    # Calculate the distances to the contour
+    raw_dist = np.empty(thresh.shape, dtype=np.float32)
+    for i in range(thresh.shape[0]):
+        for j in range(thresh.shape[1]):
+            raw_dist[i,j] = cv2.pointPolygonTest(contour, (j,i), True)
+            
+    minVal, maxVal, _, center = cv2.minMaxLoc(raw_dist)
+    return maxVal, center
+
+
+
 def setColorNumberFromContours(img, thresh, contours, hierarchy, img_lab, lab, colorNames):
     # 컨투어 별로 체크
     for idx in range(len(contours)):
@@ -215,19 +228,13 @@ def setColorNumberFromContours(img, thresh, contours, hierarchy, img_lab, lab, c
         if child_idx != -1:
             contour = np.concatenate( (contour, contours[child_idx]) )
 
-        
-        # Calculate the distances to the contour
-        raw_dist = np.empty(thresh.shape, dtype=np.float32)
-        for i in range(thresh.shape[0]):
-            for j in range(thresh.shape[1]):
-                raw_dist[i,j] = cv2.pointPolygonTest(contour, (j,i), True)
-                
-        minVal, maxVal, _, center = cv2.minMaxLoc(raw_dist)
+        # 내심원 반지름, 좌표 계산
+        radius, center = getRadiusCenterCircle(contour, thresh)
 
         
         if center is not None:
             # 작은 컨투어 무시
-            if int(maxVal) < 3 : continue
+            if int(radius) < 3 : continue
 
             #    컨투어를 그림
             cv2.drawContours(img, [contour_org], -1, (0, 0, 0), 1)
