@@ -58,7 +58,7 @@ def convert():
     # 선 그리기
     image2 = drawLine(image)
 
-    cv2.imshow('original zzz', image2)
+
     image2 = cv2.convertScaleAbs(image2)
 
 
@@ -144,7 +144,6 @@ F4A460,DAA520,
 
     colorNames, colors = colorNames2, colors2
     print(f'색 {len(colorNames)}개')
-
 
 
 

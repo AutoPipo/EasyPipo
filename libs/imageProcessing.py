@@ -104,7 +104,8 @@ def drawLine(colorMap, value = 1):
 
     for y, row in enumerate(colorMap):
         line = []
-        if y % 10 ==0: print(f"line draw: {y} / {len(colorMap)} \t {round(y / len(colorMap)*100, 1)}%", end="\r")
+        if y % 10 ==0:
+            print(f"line draw: {y} / {len(colorMap)} \t {round(y / len(colorMap)*100, 1)}%", end="\r")
 
         for x, bgr in enumerate(row):
             colorChange = False
@@ -138,7 +139,6 @@ def drawLine(colorMap, value = 1):
                 count +=1
                 tempMap[y, x ]=[255, 255, 255]
             
-    # print("count:", count)
     return tempMap
 
 
@@ -212,7 +212,7 @@ def getImgLabelFromImage(colors, img):
 
 
 
-def setColorNumberFromContours(img, contours, hierarchy, img_lab, lab, colorNames, center):
+def setColorNumberFromContours(img, contours, hierarchy, img_lab, lab, colorNames):
     # 컨투어 별로 체크
     for idx in range(len(contours)):
         print(f'contours..... {idx} / {len(contours)} \t {round(idx / len(contours)*100, 1)}%', end='\r')
