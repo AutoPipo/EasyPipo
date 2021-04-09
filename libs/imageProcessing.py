@@ -44,37 +44,35 @@ def reducial(img, div):
     
 # Contour 영역 내에 텍스트 쓰기
 # https://github.com/bsdnoobz/opencv-code/blob/master/shape-detect.cpp
-def setLabel(image, str, contour):
+def setLabel(image, str, contour, pt):
     fontface = cv2.FONT_HERSHEY_SIMPLEX
     scale = 0.3 # 0.6
     thickness = 1 # 2
 
-    size = cv2.getTextSize(str, fontface, scale, thickness)
-    text_width = size[0][0]
-    text_height = size[0][1]
 
-    x, y, width, height = cv2.boundingRect(contour)
+    ### 정 가운데 ###
+    # size = cv2.getTextSize(str, fontface, scale, thickness)
+    # text_width = size[0][0]
+    # text_height = size[0][1]
+
+    # x, y, width, height = cv2.boundingRect(contour)
    
+    # pt = (x + int((width - text_width) / 2), y + int((height + text_height) / 2))
+    #################
 
-    # temp = cv2.arcLength(contour, True)
 
-    M = cv2.moments(contour)
-
+    ### 무게 중심 ###
+    # M = cv2.moments(contour)
 
     # contour 0인 경우 (예외)
-    if M['m00'] == 0.0:
-        return
+    # if M['m00'] == 0.0:
+    #     return
 
-    # 무게 중심
-    cx = int( M['m10'] / M['m00'] )
-    cy = int( M['m01'] / M['m00'] )
+    # cx = int( M['m10'] / M['m00'] )
+    # cy = int( M['m01'] / M['m00'] )
+    # pt = (cx, cy)
+    ##################
 
-
-
-
-
-    # pt = (x + int((width - text_width) / 2), y + int((height + text_height) / 2))
-    pt = (cx, cy)
 
     cv2.putText(image, str, pt, fontface, scale, (0, 0, 0), thickness, 8)
 
@@ -214,18 +212,40 @@ def getImgLabelFromImage(colors, img):
 
 
 
-def setColorNumberFromContours(img, contours, img_lab, lab, colorNames):
+def setColorNumberFromContours(img, contours, hierarchy, img_lab, lab, colorNames, center):
     # 컨투어 별로 체크
-    for contour in contours:
-        #    컨투어를 그림
-        cv2.drawContours(img, [contour], -1, (0, 0, 0), 1)
+    for idx in range(len(contours)):
+        contour = contours[idx]
+        contour_org = contour.copy()
+        child_idx = hierarchy[0][idx][2]
+        
+        # 자식 contour 있으면 걔랑 합침 (도넛모양)
+        if child_idx != -1:
+            contour = np.concatenate( (contour, contours[child_idx]) )
 
-        # 컨투어 내부에 검출된 색을 표시
-        color_text = label(img_lab, contour, lab, colorNames)
+        
+        # Calculate the distances to the contour
+        raw_dist = np.empty(thresh.shape, dtype=np.float32)
+        for i in range(thresh.shape[0]):
+            for j in range(thresh.shape[1]):
+                raw_dist[i,j] = cv2.pointPolygonTest(contour, (j,i), True)
+                
+        minVal, maxVal, _, center = cv2.minMaxLoc(raw_dist)
 
-        setLabel(img, color_text, contour)
+        
+        if center is not None:
+            # 작은 컨투어 무시
+            if int(maxVal) < 3 : continue
 
-        # contour 1개씩 그려지는거 확인
-        cv2.imshow('draw_contour', img)
-        cv2.waitKey(0)
+            #    컨투어를 그림
+            cv2.drawContours(img, [contour_org], -1, (0, 0, 0), 1)
+
+            # 컨투어 내부에 검출된 색을 표시
+            color_text = label(img_lab, contour, lab, colorNames)
+
+            setLabel(img, color_text, contour, center)
+
+            # contour 1개씩 그려지는거 확인
+            # cv2.imshow('draw_contour', img)
+            # cv2.waitKey(0)
     return img
