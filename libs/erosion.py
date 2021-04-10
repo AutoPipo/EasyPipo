@@ -10,7 +10,7 @@ import cv2
 import numpy as np
 
 dir = "./result-image/"
-file = "iron-expand-qb"
+file = "tli-expand-qb"
 base = ".jpg"
 
 filepath = dir+file+base 
