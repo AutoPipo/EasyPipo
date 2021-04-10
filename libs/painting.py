@@ -27,11 +27,14 @@ class Painting:
         qimg = img // div * div + div // 2
         # qimg = image.copy()
         
-        sigmaColor += (qimg.shape[1] * qimg.shape[0]) // 100000
-        radius += (qimg.shape[1] * qimg.shape[0]) // 100000
+        sigmaColor += (qimg.shape[1] * qimg.shape[0]) // 150000
+        radius += (qimg.shape[1] * qimg.shape[0]) // 150000
         
+        print("go blurring")
+        
+        qimg = cv2.medianBlur(qimg, medianValue)
         blurring = cv2.bilateralFilter(qimg,  radius, sigmaColor, 60)
-        blurring = cv2.medianBlur(blurring, medianValue)
+        
         
         # blurring = cv2.resize(blurring, None, fx=2, fy=2, interpolation=cv2.INTER_CUBIC)
         
@@ -46,7 +49,7 @@ class Painting:
         
         # map = []
         # image_size_ = image.shape[0]
-        
+        import time
         # colorCode = HexColorCode().hexColorCodeList
         # colorDict = {}
         '''   
@@ -61,6 +64,29 @@ class Painting:
                     image[y:y+c, x:x+c] = np.array([b, g, r])
                     
         '''
+        
+        '''
+        start = time.time()
+        for y, orgRow in enumerate(image[:-1]):
+            nextRow = image[y+1]
+            compares = np.array( np.where( (orgRow - value < nextRow ) & (orgRow + value > nextRow) ) )
+            for x in np.unique(compares[0]):
+                if np.count_nonzero(compares[0]==x)==3:
+                    image[y+1][x] = image[y][x]
+        
+        width = self.image.shape[1]
+        for x in range(width-1):
+            orgCol = self.image[:,x]
+            nextCol = self.image[:,x+1]
+            compares = np.array( np.where((orgCol - value < nextCol) & (orgCol + value > nextCol)))
+            for y in np.unique(compares[0]):
+                if np.count_nonzero(compares[0]==y)==3:
+                    image[y][x+1] = image[y][x]
+        print("time> :", round((time.time() - start), 3) ,"초 정도.." )
+        image = self.image.copy()
+        start = time.time()
+        '''
+        
         for y, row in enumerate(image[1:-1]):
             # if y % 300 == 0: print("similar color processing...", y, "/", image_size_)
             for x, bgr in enumerate(row[1:-1]):
@@ -88,7 +114,8 @@ class Painting:
                         # if not np.array_equal(bgr, cellColor) : 
                         image[y][x] = cellColor
                         break
-                            
+        # print("time>> :", round((time.time() - start), 3) ,"초 정도.." )
+
                             
         '''
         for y, row in enumerate(image[1:-1]):
@@ -170,17 +197,26 @@ class Painting:
         HexColor = np.array([ self.__hex2bgr(hex) for hex in colorCode ])
         # print(HexColor)
         colorDict = {}
+        convertedList = []
         # c = 2
-        for y, row in enumerate(colorImage[:]):
+        for y, row in enumerate(colorImage):
             # if y % 200 ==0: print("merge color process..:", y)
-            for x, color in enumerate(row[:]):
+            for x, color in enumerate(row):
                 # if y%c==0 and x%c==0 : 
+                
+                t_color = tuple(color)
+                if t_color in colorDict: 
+                    map[y][x] = colorDict[t_color]
+                    continue
+                    
                 absSum = np.sum( np.abs(HexColor - color) , axis = 1 )
-                index = np.where( absSum ==  np.min( absSum ) )
+                index = np.where( absSum ==  np.min( absSum ) )[0]
                 # 여기서 더 비슷한 이미지 2~3개중에 결정하는 코드 삽입
                 
                 # if len(index[0])>1:print("same Numbers:", len(index[0]))
-                map[y][x] = HexColor[index[0][0]  ]
+                map[y][x] = HexColor[index[0] ]
+                
+                colorDict[t_color] = HexColor[index[0] ]
                 
                 '''
                 color = tuple(color)
