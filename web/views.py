@@ -13,6 +13,7 @@ import os
 from libs.brush import Brush
 from libs.utils import *
 from libs.imageProcessing import *
+from libs.drawLine import DrawLine
 
 views = Blueprint("server", __name__)
 
@@ -56,7 +57,8 @@ def convert():
     image = reducial(img, 64)
 
     # 선 그리기
-    image2 = drawLine(image)
+    drawLineTool = DrawLine(image)
+    image2 = drawLineTool.getDrawLine()
 
 
     image2 = cv2.convertScaleAbs(image2)
@@ -154,7 +156,6 @@ F4A460,DAA520,
     # img = image.copy()
 
     # contour, hierarchy 추출
-
     contours, hierarchy, thresh = getContoursFromImage(img)
 
     # image_with_contour = np.zeros(img.shape, np.uint8)

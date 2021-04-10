@@ -8,6 +8,10 @@ import cv2
 import numpy as np
 import imutils
 from scipy.spatial import distance as dist
+import multiprocessing, parmap
+import numba
+from tqdm import trange
+import sys
 
 
 # 색 리스트 반환 함수 (Minku koo)
@@ -96,9 +100,8 @@ def label(image, contour, lab, colorNames):
             
     return colorNames[minDist[1]]
 
-
-def drawLine(colorMap, value = 1):
-    map = []
+@numba.jit
+def drawLine2(colorMap, value = 1):
     tempMap = np.zeros(colorMap.shape) + 255
     count = 0
 
@@ -203,6 +206,27 @@ def getImgLabelFromImage(colors, img):
     return img_lab, lab
 
 
+def doPointPolygonMulti(raw_dist, contour, thresh):
+    thresh = np.array(thresh)
+    print(f'i len : {thresh.shape[0]}\nj len : {thresh.shape[1]}')
+    for i in range(thresh.shape[0]):
+        for j in range(thresh.shape[1]):
+            raw_dist[i,j] = cv2.pointPolygonTest(contour, (j,i), True)
+
+
+# contour 내심원 반지름이랑 가운데 좌표 반환 함수
+def getRadiusCenterCircle2(contour, thresh):
+    num_cores = multiprocessing.cpu_count() # cpu core 개수
+
+    # Calculate the distances to the contour
+    raw_dist = np.empty(thresh.shape, dtype=np.float32)
+    splited_thresh =  np.array_split(thresh, num_cores)
+
+    results = parmap.map(doPointPolygonMulti, raw_dist, contour, splited_thresh, pm_pbar=True, pm_processes=num_cores)
+            
+    minVal, maxVal, _, center = cv2.minMaxLoc(results)
+    return maxVal, center
+    
 # contour 내심원 반지름이랑 가운데 좌표 반환 함수
 def getRadiusCenterCircle(contour, thresh):
     # Calculate the distances to the contour
@@ -216,10 +240,12 @@ def getRadiusCenterCircle(contour, thresh):
 
 
 
+@numba.jit(forceobj = True)
 def setColorNumberFromContours(img, thresh, contours, hierarchy, img_lab, lab, colorNames):
+
     # 컨투어 별로 체크
-    for idx in range(len(contours)):
-        print(f'contours..... {idx} / {len(contours)} \t {round(idx / len(contours)*100, 1)}%', end='\r')
+    for idx in trange(len(contours), file=sys.stdout, desc='find circle in contour'):
+        # print(f'contours..... {idx} / {len(contours)} \t {round(idx / len(contours)*100, 1)}%', end='\r')
         contour = contours[idx]
         contour_org = contour.copy()
         child_idx = hierarchy[0][idx][2]
@@ -228,7 +254,7 @@ def setColorNumberFromContours(img, thresh, contours, hierarchy, img_lab, lab, c
         if child_idx != -1:
             contour = np.concatenate( (contour, contours[child_idx]) )
 
-        print(f'contour len : {len(contour)}')
+        # print(f'contour len : {len(contour)}')
 
         # 내심원 반지름, 좌표 계산
         radius, center = getRadiusCenterCircle(contour, thresh)
@@ -240,6 +266,7 @@ def setColorNumberFromContours(img, thresh, contours, hierarchy, img_lab, lab, c
 
             #    컨투어를 그림
             cv2.drawContours(img, [contour_org], -1, (0, 0, 0), 1)
+            cv2.circle(img, center, int(radius), (0,0,255), 1, cv2.LINE_8, 0)
 
             # 컨투어 내부에 검출된 색을 표시
             color_text = label(img_lab, contour, lab, colorNames)
@@ -252,4 +279,5 @@ def setColorNumberFromContours(img, thresh, contours, hierarchy, img_lab, lab, c
             # contour 1개씩 그려지는거 확인
             # cv2.imshow('draw_contour', img)
             # cv2.waitKey(0)
+
     return img
