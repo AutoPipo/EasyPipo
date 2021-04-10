@@ -12,12 +12,14 @@ def imageSave(image, directory = "./result-image/", name = "", id=""):
     cv2.imwrite(path+".jpg", image)
     return
     
-
+# import time
+# start = time.time()
+# print("비교 시간 :", round((time.time() - start), 3) ,"초.." )
 
 dir = "./test-image/"
-file = "lala"
+file = "tli"
 base = ".jpg"
-id = "2"
+id = "qb"
 
 start = time.time()
 
@@ -32,20 +34,22 @@ imageSave(similarMap, name = file+"-similar", id=id)
 '''
 
 # test
-similarMap = painting.getSimilarColorMap( value = 18, direction = "h" )
+similarMap = painting.getSimilarColorMap( value = 20, direction = "h" )
 imageSave(similarMap, name = file+"-similar", id=id)
 print("========  Similar Map End  =======")
 print("time :", round((time.time() - start), 3) ,"초 정도.." )
 start = time.time()
-blurImage = painting.blurring(similarMap, div = 32, radius = 20, sigmaColor = 40, medianValue=7)
+blurImage = painting.blurring(similarMap, div = 20, radius = 20, sigmaColor = 40, medianValue=7)
 imageSave(blurImage, name = file+"-blur", id=id)
 print("========  Blur Map End  =======")
 print("time :", round((time.time() - start), 3) ,"초 정도.." )
 # test finish
 start = time.time()
 
+print("========  Merge Color Map End  =======")
 paintingMap = painting.getPaintingColorMap(blurImage)
 # paintingMap = painting.getPaintingColorMap(blurImage)
+print("time :", round((time.time() - start), 3) ,"초 정도.." )
 
 imageSave(paintingMap, name = file+"-painting", id=id)
 
@@ -56,15 +60,21 @@ print("=="*20)
 print("=="*20)
 
 drawLine = DrawLine(paintingMap)
-lineMap = drawLine.getDrawLine(value = 1)
+
+start = time.time()
+print("========  draw Line End  =======")
+lineMap = drawLine.getDrawLine()
 imageSave(lineMap, name = file+"-line", id=id)
 
-expandImage = imageExpand(lineMap, guessSize = True)
-imageSave(expandImage, name = file+"-expand", id=id)
+print("time :", round((time.time() - start), 3) ,"초 정도.." )
 
 print("========= Expand Process ========")
+start = time.time()
+expandImage = imageExpand(lineMap, guessSize = True)
+imageSave(expandImage, name = file+"-expand", id=id)
+print("time :", round((time.time() - start), 3) ,"초 정도.." )
 
 
-print("time :", round((time.time() - start)/60, 3) ,"분 정도.." )
-
+lineImage = drawLine.getLineOnImage()
+imageSave(lineImage, name = file+"-line+image", id=id)
 
