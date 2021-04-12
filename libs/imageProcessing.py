@@ -288,9 +288,12 @@ def getRadiusCenterCircle(contour, thresh):
 
 @numba.jit(forceobj = True)
 def getRadiusCenterCircle3(raw_dist):
-    dist_transform = cv2.distanceTransform(raw_dist, cv2.DIST_L2, 5)
+    dist_transform = cv2.distanceTransform(raw_dist, cv2.DIST_L2, maskSize=5)
     result = cv2.normalize(dist_transform, None, 255, 0, cv2.NORM_MINMAX, cv2.CV_8UC1)
-    return result
+    
+    minVal, maxVal, _, center = cv2.minMaxLoc(result)
+
+    return center
 
 
 
@@ -306,7 +309,7 @@ def setColorNumberFromContours(img, thresh, contours, hierarchy, img_lab, lab, c
         contour = contours[idx]
 
         # 면적 
-        if cv2.contourArea(contour) < 10: continue
+        if cv2.contourArea(contour) < 100: continue
 
         # 둘레
         # if cv2.arcLength(contour)
@@ -318,10 +321,9 @@ def setColorNumberFromContours(img, thresh, contours, hierarchy, img_lab, lab, c
         # next_idx = hierarchy[0, idx, 0]
         
         
-        raw_dist = np.empty(thresh.shape, dtype=np.float32)
+        raw_dist = np.zeros(thresh.shape, dtype=np.uint8)
         cv2.drawContours(raw_dist, contour_org, -1, (255, 255, 255), 1)
         cv2.fillPoly(raw_dist, pts =[contour_org], color=(255, 255, 255))
-        ret, raw_dist = cv2.threshold(raw_dist, 0, 255, cv2.THRESH_BINARY)
 
         # 자식 contour 있으면 걔랑 합침 (도넛모양)
         if child_idx != -1:
@@ -329,11 +331,13 @@ def setColorNumberFromContours(img, thresh, contours, hierarchy, img_lab, lab, c
             # cv2.drawContours(raw_dist, child, -1, (255, 255, 255), 1)
             cv2.fillPoly(raw_dist, pts =[child], color=(0, 0, 0))
 
+        n_white_pix = np.sum(raw_dist == 255)
+
+        # 작은 컨투어 무시
+        if n_white_pix < 1000: continue
+
+        # ret, raw_dist = cv2.threshold(raw_dist, 0, 255, cv2.THRESH_BINARY)
         center = getRadiusCenterCircle3(raw_dist)
-        
-        cv2.imshow('draw_contour', center)
-        cv2.waitKey(0)
-        continue
 
         #     c_list = [contour]
 
@@ -350,16 +354,13 @@ def setColorNumberFromContours(img, thresh, contours, hierarchy, img_lab, lab, c
         #     contour = np.concatenate( tuple(c_list) )
 
         # 내심원 반지름, 좌표 계산
-        radius, center = getRadiusCenterCircle(contour, thresh)
+        # radius, center = getRadiusCenterCircle(contour, thresh)
 
         
         if center is not None:
-            # 작은 컨투어 무시
-            if int(radius) < 3 : continue
-
             #    컨투어를 그림
             cv2.drawContours(img, contour_org, -1, (0, 0, 0), 1)
-            cv2.circle(img, center, int(radius), (0,0,255), 1, cv2.LINE_8, 0)
+            # cv2.circle(img, center, int(radius), (0,0,255), 1, cv2.LINE_8, 0)
 
             # 컨투어 내부에 검출된 색을 표시
             color_text = label(img_lab, contour_org, lab, colorNames)
