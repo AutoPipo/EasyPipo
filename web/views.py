@@ -158,8 +158,6 @@ F4A460,DAA520,
     # contour, hierarchy 추출
     contours, hierarchy, thresh = getContoursFromImage(img)
 
-    # image_with_contour = np.zeros(img.shape, np.uint8)
-
 
     # 결과 이미지 백지화
     result_img = makeWhiteFromImage(image)

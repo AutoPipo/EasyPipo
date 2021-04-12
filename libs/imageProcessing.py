@@ -8,7 +8,7 @@ import cv2
 import numpy as np
 import imutils
 from scipy.spatial import distance as dist
-import multiprocessing, parmap
+import multiprocessing as mp, parmap
 import numba
 from tqdm import trange
 import sys
@@ -100,7 +100,7 @@ def label(image, contour, lab, colorNames):
             
     return colorNames[minDist[1]]
 
-@numba.jit
+# @numba.jit
 def drawLine2(colorMap, value = 1):
     tempMap = np.zeros(colorMap.shape) + 255
     count = 0
@@ -179,12 +179,12 @@ def getContoursFromImage(img):
     # cv2.COLOR_BGR2HSV
 
     gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
-    retval, image_bin = cv2.threshold(gray, 254,255, cv2.THRESH_BINARY)
+    retval, image_bin = cv2.threshold(gray, 254,255, cv2.THRESH_BINARY_INV)
 
     # 이로션
     # image_bin = cv2.erode(image_bin, None, iterations=2)
 
-    contours, hierarchy = cv2.findContours(image_bin.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    contours, hierarchy = cv2.findContours(image_bin.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
 
     return contours, hierarchy, image_bin
 
@@ -206,34 +206,80 @@ def getImgLabelFromImage(colors, img):
     return img_lab, lab
 
 
-def doPointPolygonMulti(raw_dist, contour, thresh):
-    thresh = np.array(thresh)
-    print(f'i len : {thresh.shape[0]}\nj len : {thresh.shape[1]}')
-    for i in range(thresh.shape[0]):
-        for j in range(thresh.shape[1]):
-            raw_dist[i,j] = cv2.pointPolygonTest(contour, (j,i), True)
+# def mp_filter(x, output):
+def doPointPolygonMulti(raw_dist, contour, thresh, num_cores):
+    # print(f'바뀐 raw_dist len : {len(raw_dist)}\t{raw_dist.shape}')
+    # for i in range(thresh.shape[0]):
+    #     for j in range(thresh.shape[1]):
+    #         raw_dist[i,j] = cv2.pointPolygonTest(contour, (j,i), True)
+
+    # for idx, item in enumerate(thresh):
+    #     for i in range(item.shape[0]):
+    #         i += (item.shape[0] * idx)
+    #         for j in range(item.shape[1]):
+    #             j += (item.shape[0] * idx)
+    #             # raw_dist[i][j] = cv2.pointPolygonTest(contour, (j,i), True)
+    #             a= cv2.pointPolygonTest(contour, (j,i), True)
+    # return [
+    #             [cv2.pointPolygonTest(contour, (j+item.shape[1]*idx, i+item.shape[0]*idx), True) for j in range(item.shape[1])]
+    #             for idx, item in enumerate(thresh)
+    #             for i in range(item.shape[0])
+    #         ]
+    
+    return [
+                [cv2.pointPolygonTest(contour, (j+item.shape[1]*idx, i+item.shape[0]*idx), True) for j in range(item.shape[1])]
+                for idx, item in enumerate(thresh)
+                for i in range(item.shape[0])
+            ]
+
+    # temp = raw_dist[ raw_dist.shape[0]/num_cores*x : raw_dist.shape[0]/num_cores*(x+1), :]
+
+    # print(psutil.virtual_memory())  # monitor memory usage
+    # output.put(x, cv2.GaussianBlur(img[img.shape[0]/num_processes*x:img.shape[0]/num_processes*(x+1), :], 
+    #         (kernel_size, kernel_size), kernel_size/5))
 
 
 # contour 내심원 반지름이랑 가운데 좌표 반환 함수
 def getRadiusCenterCircle2(contour, thresh):
-    num_cores = multiprocessing.cpu_count() # cpu core 개수
+    num_cores = mp.cpu_count() # cpu core 개수
+    kernel_size = 11
+    tile_size = thresh.shape[0] / num_cores  # Assuming img.shape[0] is divisible by 4 in this case
 
     # Calculate the distances to the contour
     raw_dist = np.empty(thresh.shape, dtype=np.float32)
-    splited_thresh =  np.array_split(thresh, num_cores)
+    # raw_dist = [[0.0 for j in range(thresh.shape[1])] for i in range(thresh.shape[0])]
+    splited_thresh = np.array_split(thresh, num_cores)
+    # print(f'원래 raw_dist len : {len(raw_dist)}\t{type(raw_dist)}')
 
-    results = parmap.map(doPointPolygonMulti, raw_dist, contour, splited_thresh, pm_pbar=True, pm_processes=num_cores)
-            
-    minVal, maxVal, _, center = cv2.minMaxLoc(results)
+    # results = parmap.map(doPointPolygonMulti, raw_dist, contour, splited_thresh, num_cores, pm_pbar=True, pm_processes=num_cores)
+    results = parmap.map(doPointPolygonMulti, raw_dist.shape, contour, splited_thresh, num_cores, pm_pbar=False, pm_processes=num_cores)
+    
+    results = np.column_stack(results)
+
+    # print('results', len(results), type(results))
+    
+    # print('results[0]', len(results[0]), type(results[0]))
+    
+    # print('results[1]', len(results[1]), type(results[1]))
+
+
+    minVal, maxVal, _, center = cv2.minMaxLoc(np.array(results))
+
+
     return maxVal, center
     
 # contour 내심원 반지름이랑 가운데 좌표 반환 함수
+@numba.jit(forceobj = True)
 def getRadiusCenterCircle(contour, thresh):
     # Calculate the distances to the contour
-    raw_dist = np.empty(thresh.shape, dtype=np.float32)
-    for i in range(thresh.shape[0]):
-        for j in range(thresh.shape[1]):
-            raw_dist[i,j] = cv2.pointPolygonTest(contour, (j,i), True)
+
+    # raw_dist = np.empty(thresh.shape, dtype=np.float32)
+    # for i in range(thresh.shape[0]):
+    #     for j in range(thresh.shape[1]):
+    #         raw_dist[i,j] = cv2.pointPolygonTest(contour, (j,i), True)
+
+    for i, j in np.ndindex(thresh.shape):
+        raw_dist[i,j] = cv2.pointPolygonTest(contour, (j,i), True)
             
     minVal, maxVal, _, center = cv2.minMaxLoc(raw_dist)
     return maxVal, center
@@ -241,38 +287,86 @@ def getRadiusCenterCircle(contour, thresh):
 
 
 @numba.jit(forceobj = True)
+def getRadiusCenterCircle3(raw_dist):
+    dist_transform = cv2.distanceTransform(raw_dist, cv2.DIST_L2, maskSize=5)
+    result = cv2.normalize(dist_transform, None, 255, 0, cv2.NORM_MINMAX, cv2.CV_8UC1)
+    
+    minVal, maxVal, _, center = cv2.minMaxLoc(result)
+
+    return center
+
+
+
+# @numba.jit(forceobj = True)
 def setColorNumberFromContours(img, thresh, contours, hierarchy, img_lab, lab, colorNames):
 
+    k = -1
+
     # 컨투어 별로 체크
-    for idx in trange(len(contours), file=sys.stdout, desc='find circle in contour'):
+    for idx in trange(len(contours), file=sys.stdout, desc='Set Numbering'):
+    # for idx in range(len(contours)):
         # print(f'contours..... {idx} / {len(contours)} \t {round(idx / len(contours)*100, 1)}%', end='\r')
         contour = contours[idx]
+
+        # 면적 
+        if cv2.contourArea(contour) < 100: continue
+
+        # 둘레
+        # if cv2.arcLength(contour)
+        # if contour.shape[0] < 20 : continue
+
         contour_org = contour.copy()
-        child_idx = hierarchy[0][idx][2]
+
+        child_idx = hierarchy[0, idx, 2]
+        # next_idx = hierarchy[0, idx, 0]
         
+        
+        raw_dist = np.zeros(thresh.shape, dtype=np.uint8)
+        cv2.drawContours(raw_dist, contour_org, -1, (255, 255, 255), 1)
+        cv2.fillPoly(raw_dist, pts =[contour_org], color=(255, 255, 255))
+
         # 자식 contour 있으면 걔랑 합침 (도넛모양)
         if child_idx != -1:
-            contour = np.concatenate( (contour, contours[child_idx]) )
+            child = contours[child_idx]
+            # cv2.drawContours(raw_dist, child, -1, (255, 255, 255), 1)
+            cv2.fillPoly(raw_dist, pts =[child], color=(0, 0, 0))
 
-        # print(f'contour len : {len(contour)}')
+        n_white_pix = np.sum(raw_dist == 255)
+
+        # 작은 컨투어 무시
+        if n_white_pix < 200: continue
+
+        # ret, raw_dist = cv2.threshold(raw_dist, 0, 255, cv2.THRESH_BINARY)
+        center = getRadiusCenterCircle3(raw_dist)
+
+        #     c_list = [contour]
+
+        #     if next_idx != -1:
+        #         for i in range(idx, next_idx):
+        #             c_list.append(contours[i])
+                
+        #         c_list = tuple(c_list)
+        #     else:
+        #         c_list.append(child)
+
+        #     # print(f'지금은 {idx}인데, 첫 자식은 {child_idx}이고, 형제는 {next_idx}')
+
+        #     contour = np.concatenate( tuple(c_list) )
 
         # 내심원 반지름, 좌표 계산
-        radius, center = getRadiusCenterCircle(contour, thresh)
+        # radius, center = getRadiusCenterCircle(contour, thresh)
 
         
         if center is not None:
-            # 작은 컨투어 무시
-            if int(radius) < 3 : continue
-
             #    컨투어를 그림
-            cv2.drawContours(img, [contour_org], -1, (0, 0, 0), 1)
-            cv2.circle(img, center, int(radius), (0,0,255), 1, cv2.LINE_8, 0)
+            cv2.drawContours(img, contour_org, -1, (0, 0, 0), 1)
+            # cv2.circle(img, center, int(radius), (0,0,255), 1, cv2.LINE_8, 0)
 
             # 컨투어 내부에 검출된 색을 표시
-            color_text = label(img_lab, contour, lab, colorNames)
+            color_text = label(img_lab, contour_org, lab, colorNames)
 
-            center = (center[0]-2, center[1]+1)
-            setLabel(img, color_text, contour, center)
+            center = (center[0]-10, center[1]+4)
+            setLabel(img, color_text, contour_org, center)
             cv2.imwrite(f'./web/static/render_image/working_img.png', img)
 
 
