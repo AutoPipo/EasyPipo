@@ -334,7 +334,7 @@ def setColorNumberFromContours(img, thresh, contours, hierarchy, img_lab, lab, c
         n_white_pix = np.sum(raw_dist == 255)
 
         # 작은 컨투어 무시
-        if n_white_pix < 1000: continue
+        if n_white_pix < 200: continue
 
         # ret, raw_dist = cv2.threshold(raw_dist, 0, 255, cv2.THRESH_BINARY)
         center = getRadiusCenterCircle3(raw_dist)
