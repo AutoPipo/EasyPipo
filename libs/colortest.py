@@ -3,7 +3,7 @@
 
 import time, os
 from painting import Painting
-from drawLine import DrawLine, imageExpand
+from drawLine import DrawLine, imageExpand, leaveOnePixel
 import cv2
 
 def imageSave(image, directory = "./result-image/", name = "", id=""):
@@ -17,9 +17,9 @@ def imageSave(image, directory = "./result-image/", name = "", id=""):
 # print("비교 시간 :", round((time.time() - start), 3) ,"초.." )
 
 dir = "./test-image/"
-file = "tli"
+file = "lala"
 base = ".jpg"
-id = "qb"
+id = "a"
 
 start = time.time()
 
@@ -74,7 +74,14 @@ expandImage = imageExpand(lineMap, guessSize = True)
 imageSave(expandImage, name = file+"-expand", id=id)
 print("time :", round((time.time() - start), 3) ,"초 정도.." )
 
+skImage = leaveOnePixel(expandImage)
+imageSave(skImage, name = file+"-skeleton", id=id)
 
 lineImage = drawLine.getLineOnImage()
 imageSave(lineImage, name = file+"-line+image", id=id)
+
+
+
+
+
 
