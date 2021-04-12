@@ -158,15 +158,13 @@ F4A460,DAA520,
     # contour, hierarchy 추출
     contours, hierarchy, thresh = getContoursFromImage(img)
 
-    # image_with_contour = np.zeros(img.shape, np.uint8)
-
 
     # 결과 이미지 백지화
     result_img = makeWhiteFromImage(image)
 
     # 결과이미지 렌더링
     # image를 넣으면 원본이미지에 그려주고, result_img에 넣으면 백지에 그려줌
-    result_img = setColorNumberFromContours(image2, thresh, contours, hierarchy, img_lab, lab, colorNames)
+    result_img = setColorNumberFromContours(result_img, thresh, contours, hierarchy, img_lab, lab, colorNames)
 
     cv2.imwrite(f'./web/static/render_image/result_{image_name}', result_img)
     image_name = 'result_'+image_name

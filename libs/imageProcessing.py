@@ -179,12 +179,12 @@ def getContoursFromImage(img):
     # cv2.COLOR_BGR2HSV
 
     gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
-    retval, image_bin = cv2.threshold(gray, 254,255, cv2.THRESH_BINARY)
+    retval, image_bin = cv2.threshold(gray, 254,255, cv2.THRESH_BINARY_INV)
 
     # 이로션
     # image_bin = cv2.erode(image_bin, None, iterations=2)
 
-    contours, hierarchy = cv2.findContours(image_bin.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+    contours, hierarchy = cv2.findContours(image_bin.copy(), cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
 
     return contours, hierarchy, image_bin
 
@@ -272,7 +272,8 @@ def getRadiusCenterCircle2(contour, thresh):
 @numba.jit(forceobj = True)
 def getRadiusCenterCircle(contour, thresh):
     # Calculate the distances to the contour
-    raw_dist = np.empty(thresh.shape, dtype=np.float32)
+
+    # raw_dist = np.empty(thresh.shape, dtype=np.float32)
     # for i in range(thresh.shape[0]):
     #     for j in range(thresh.shape[1]):
     #         raw_dist[i,j] = cv2.pointPolygonTest(contour, (j,i), True)
@@ -285,8 +286,18 @@ def getRadiusCenterCircle(contour, thresh):
 
 
 
+@numba.jit(forceobj = True)
+def getRadiusCenterCircle3(raw_dist):
+    dist_transform = cv2.distanceTransform(raw_dist, cv2.DIST_L2, 5)
+    result = cv2.normalize(dist_transform, None, 255, 0, cv2.NORM_MINMAX, cv2.CV_8UC1)
+    return result
+
+
+
 # @numba.jit(forceobj = True)
 def setColorNumberFromContours(img, thresh, contours, hierarchy, img_lab, lab, colorNames):
+
+    k = -1
 
     # 컨투어 별로 체크
     for idx in trange(len(contours), file=sys.stdout, desc='Set Numbering'):
@@ -294,14 +305,49 @@ def setColorNumberFromContours(img, thresh, contours, hierarchy, img_lab, lab, c
         # print(f'contours..... {idx} / {len(contours)} \t {round(idx / len(contours)*100, 1)}%', end='\r')
         contour = contours[idx]
 
-        # if contour.shape[0] < 100 : continue
+        # 면적 
+        if cv2.contourArea(contour) < 10: continue
+
+        # 둘레
+        # if cv2.arcLength(contour)
+        # if contour.shape[0] < 20 : continue
 
         contour_org = contour.copy()
-        child_idx = hierarchy[0][idx][2]
+
+        child_idx = hierarchy[0, idx, 2]
+        # next_idx = hierarchy[0, idx, 0]
         
+        
+        raw_dist = np.empty(thresh.shape, dtype=np.float32)
+        cv2.drawContours(raw_dist, contour_org, -1, (255, 255, 255), 1)
+        cv2.fillPoly(raw_dist, pts =[contour_org], color=(255, 255, 255))
+        ret, raw_dist = cv2.threshold(raw_dist, 0, 255, cv2.THRESH_BINARY)
+
         # 자식 contour 있으면 걔랑 합침 (도넛모양)
         if child_idx != -1:
-            contour = np.concatenate( (contour, contours[child_idx]) )
+            child = contours[child_idx]
+            # cv2.drawContours(raw_dist, child, -1, (255, 255, 255), 1)
+            cv2.fillPoly(raw_dist, pts =[child], color=(0, 0, 0))
+
+        center = getRadiusCenterCircle3(raw_dist)
+        
+        cv2.imshow('draw_contour', center)
+        cv2.waitKey(0)
+        continue
+
+        #     c_list = [contour]
+
+        #     if next_idx != -1:
+        #         for i in range(idx, next_idx):
+        #             c_list.append(contours[i])
+                
+        #         c_list = tuple(c_list)
+        #     else:
+        #         c_list.append(child)
+
+        #     # print(f'지금은 {idx}인데, 첫 자식은 {child_idx}이고, 형제는 {next_idx}')
+
+        #     contour = np.concatenate( tuple(c_list) )
 
         # 내심원 반지름, 좌표 계산
         radius, center = getRadiusCenterCircle(contour, thresh)
