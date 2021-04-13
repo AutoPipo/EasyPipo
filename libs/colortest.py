@@ -17,8 +17,8 @@ def imageSave(image, directory = "./result-image/", name = "", id=""):
 # print("비교 시간 :", round((time.time() - start), 3) ,"초.." )
 
 dir = "./test-image/"
-file = "lala"
-base = ".jpg"
+file = "iron"
+base = ".png"
 id = "a"
 
 start = time.time()
@@ -34,12 +34,12 @@ imageSave(similarMap, name = file+"-similar", id=id)
 '''
 
 # test
-similarMap = painting.getSimilarColorMap( value = 20, direction = "h" )
+similarMap = painting.getSimilarColorMap( value = 10, direction = "h" )
 imageSave(similarMap, name = file+"-similar", id=id)
 print("========  Similar Map End  =======")
 print("time :", round((time.time() - start), 3) ,"초 정도.." )
 start = time.time()
-blurImage = painting.blurring(similarMap, div = 20, radius = 20, sigmaColor = 40, medianValue=7)
+blurImage = painting.blurring(similarMap, div = 20, radius = 15, sigmaColor =30, medianValue=7)
 imageSave(blurImage, name = file+"-blur", id=id)
 print("========  Blur Map End  =======")
 print("time :", round((time.time() - start), 3) ,"초 정도.." )
