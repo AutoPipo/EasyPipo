@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 import cv2
 import os
 import numpy as np
-from colorCode import HexColorCode
+from libs.colorCode import HexColorCode
 
 class Painting:
     def __init__(self, imagepath):
