@@ -10,7 +10,8 @@ import matplotlib.pyplot as plt
 import cv2
 import os
 import numpy as np
-from libs.colorCode import HexColorCode
+# from libs.colorCode import HexColorCode
+from colorCode import HexColorCode
 
 class Painting:
     def __init__(self, imagepath):
@@ -24,14 +25,14 @@ class Painting:
     def blurring(self, image, div = 32, radius = 20, sigmaColor = 50, medianValue = 5) :
         image = self.image.copy()
         img = image.copy()
-        qimg = img // div * div + div // 2
+        
+        qimg = img // div * div #+ div // 2
         
         sigmaColor += (qimg.shape[1] * qimg.shape[0]) // 150000
         radius += (qimg.shape[1] * qimg.shape[0]) // 150000
         
-        qimg = cv2.medianBlur(qimg, medianValue)
-        blurring = cv2.bilateralFilter(qimg,  radius, sigmaColor, 60)
-        
+        blurring = cv2.medianBlur(qimg, medianValue)
+        blurring = cv2.bilateralFilter(blurring,  radius, sigmaColor, 60)
         
         return blurring
     
@@ -72,38 +73,6 @@ class Painting:
         return image
     
     def __createPaintingMap(self, colorImage):
-        '''
-        def calcSimilarColor(color, hexColors):
-            
-            minColor = {} # key: abs / value : hexColorCode
-            # blue, green, red = color
-            for hex in hexColors :
-                # b, g, r = self.__hex2bgr(hex)
-                bgr = self.__hex2bgr(hex)
-                # if abs( sum( color ) - sum([b, g, r]) ) >100: continue
-                # value = abs(b-blue)  + abs(r-red)  + abs(g-green)
-                value = np.sum( np.abs(bgr - color) )
-                if value ==0: return bgr
-                minColor[value] = bgr
-                
-            return minColor[ min(minColor) ]
-        
-        def calcHexColors(hexColors):
-            minColor = {} # key: abs / value : hexColorCode
-            # blue, green, red = color
-            HexColor = np.array([ self.__hex2bgr(hex) for hex in hexColors ])
-            
-            for hex in hexColors :
-                # b, g, r = self.__hex2bgr(hex)
-                bgr = self.__hex2bgr(hex)
-                # if abs( sum( color ) - sum([b, g, r]) ) >100: continue
-                # value = abs(b-blue)  + abs(r-red)  + abs(g-green)
-                value = np.sum( np.abs(bgr - color) )
-                if value ==0: return bgr
-                minColor[value] = bgr
-                
-            return minColor[ min(minColor) ]
-        '''
         
         map = colorImage.copy()
         colorCode =  HexColorCode().hexColorCodeList
