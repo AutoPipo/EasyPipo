@@ -2,7 +2,7 @@
 # Draw Line on Image
 
 # Start : 21.04.01
-# Update : 21.04.12
+# Update : 21.04.16
 # Author : Minku Koo
 '''
 import cv2
@@ -51,13 +51,18 @@ class DrawLine:
         
 def imageExpand(image, guessSize=False ,size = 3):
     if guessSize : size = ( 5000 // image.shape[1] ) +1
-    return  cv2.resize(image, None, fx=size, fy=size, interpolation=cv2.INTER_LINEAR)
+    #       INTER_LANCZOS4
+    image = cv2.resize(image, None, fx=size, fy=size, interpolation=cv2.INTER_LINEAR)
+    _, image = cv2.threshold(image, 200, 255, cv2.THRESH_BINARY)
+    return  image
     
+
 def leaveOnePixel(lineImage):
     image = lineImage.copy()
     
-    _, image = cv2.threshold(image, 220, 1, cv2.THRESH_BINARY_INV)
+    _, image = cv2.threshold(image, 200, 1, cv2.THRESH_BINARY_INV)
     skeleton = skeletonize(image)
+    # skeleton_lee = skeletonize(blobs, method='lee')
     skeleton = cv2.cvtColor(skeleton, cv2.COLOR_BGR2GRAY)
     
     canvas = np.zeros(skeleton.shape) + 1
