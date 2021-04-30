@@ -17,11 +17,11 @@ def imageSave(image, directory = "./result-image/", name = "", id=""):
 # print("비교 시간 :", round((time.time() - start), 3) ,"초.." )
 
 dir = "./test-image/"
-file = "iron"
-base = ".png"
-id = "a"
+file = "a3"
+base = ".jpg"
+id = "bfs"
 
-start = time.time()
+
 
 painting = Painting( dir+file+base )
 '''
@@ -34,23 +34,30 @@ imageSave(similarMap, name = file+"-similar", id=id)
 '''
 
 # test
-similarMap = painting.getSimilarColorMap( value = 10, direction = "h" )
+blurImage = painting.blurring( div = 32, radius = 20, sigmaColor =30, medianValue=7)
+imageSave(blurImage, name = file+"-blur", id=id)
+print("========  blurImage End  =======")
+
+start = time.time()
+similarMap = painting.getSimilarColorMap( blurImage, value = 32, direction = "h" )
 imageSave(similarMap, name = file+"-similar", id=id)
 print("========  Similar Map End  =======")
 print("time :", round((time.time() - start), 3) ,"초 정도.." )
-start = time.time()
-blurImage = painting.blurring(similarMap, div = 20, radius = 15, sigmaColor =30, medianValue=7)
-imageSave(blurImage, name = file+"-blur", id=id)
-print("========  Blur Map End  =======")
-print("time :", round((time.time() - start), 3) ,"초 정도.." )
+
+time.sleep(5)
+
+# start = time.time()
+# similarMap = painting.getSimilarColorMap( value = 10, direction = "h" )
+# imageSave(blurImage, name = file+"-blur", id=id)
+# print("========  Blur Map End  =======")
+# print("time :", round((time.time() - start), 3) ,"초 정도.." )
 # test finish
 start = time.time()
 
 print("========  Merge Color Map End  =======")
-paintingMap = painting.getPaintingColorMap(blurImage)
+paintingMap = painting.getPaintingColorMap(similarMap)
 # paintingMap = painting.getPaintingColorMap(blurImage)
 print("time :", round((time.time() - start), 3) ,"초 정도.." )
-
 imageSave(paintingMap, name = file+"-painting", id=id)
 
 
