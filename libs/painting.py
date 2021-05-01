@@ -22,27 +22,26 @@ class Painting:
         self.filename = self.fileBasename.split(".")[0]
         self.image = cv2.imread(imagepath) # Original Image
     
-    def blurring(self, image, div = 32, radius = 20, sigmaColor = 50, medianValue = 5) :
-        image = self.image.copy()
-        img = image.copy()
+    def blurring(self, div = 32, radius = 20, sigmaColor = 50, medianValue = 5) :
+        qimg = self.image.copy()
+        # img = image.copy()
         
-        qimg = img // div * div #+ div // 2
         
-        sigmaColor += (qimg.shape[1] * qimg.shape[0]) // 150000
-        radius += (qimg.shape[1] * qimg.shape[0]) // 150000
+        sigmaColor += (qimg.shape[1] * qimg.shape[0]) // 100000
+        radius += (qimg.shape[1] * qimg.shape[0]) // 100000
         
         blurring = cv2.medianBlur(qimg, medianValue)
-        blurring = cv2.bilateralFilter(blurring,  radius, sigmaColor, 60)
+        blurring = cv2.bilateralFilter(blurring, radius, sigmaColor, 60)
+        
+        
+        blurring = qimg // div * div #+ div // 2
         
         return blurring
     
-    def __createSimilarColorMap(self, value, direction = "h"):
+    def __createSimilarColorMap(self, image, value, direction = "h"):
         
-        image = self.image.copy()
-        
-        # colorCode = HexColorCode().hexColorCodeList
-        # colorDict = {}
-        
+        # image = self.image.copy()
+        image = image.copy()
         
         for y, row in enumerate(image[1:-1]):
             for x, bgr in enumerate(row[1:-1]):
@@ -72,6 +71,124 @@ class Painting:
         
         return image
     
+    def __createSimilarColorMap_org(self, img, value, direction = "h"):
+        
+        # image = self.image.copy()
+        image = img.copy()
+        emap = np.zeros((image.shape[0], image.shape[1]))
+        width, height = image.shape[1], image.shape[0]
+        values = [value*1.0]
+        
+        def isSimilarColor(cell, other):
+            if np.array_equal(cell, other): return True
+            cell = np.array([ int(x) for x in cell ])
+            other = np.array([ int(x) for x in other ])
+            
+            sub = cell - other
+            # print("sum( sub ** 2) ** 0.5>>", sum( sub ** 2) ** 0.5)
+            if sum( sub ** 2) ** 0.5 < values[0]:
+                return True
+            else: return False
+        
+        
+        def bfs(y, x, img):
+            cimg = img.copy()
+            queue = [(y, x)]
+            check = [(y, x)]
+            colors = {}
+            
+            c = 0
+            while queue:
+                y, x = queue.pop(0)
+                c+=1
+                if c> width * height // 50: break
+                # if y>200: print("y over 200")
+                if y>0:
+                    y_, x_ = y-1, x
+                    if isSimilarColor(cimg[y_][x_], cimg[y][x]) and (y_, x_) not in check:
+                        if emap[y_][x_] == 0:
+                            check.append( (y_, x_) )
+                            queue.append( (y_, x_) )
+                            # colors.append( tuple(cimg[y_][x_]) )
+                            if tuple(cimg[y_][x_]) in colors.keys():
+                                colors[tuple(cimg[y_][x_])] +=1
+                            else: colors[tuple(cimg[y_][x_])] = 1
+                            emap[y_][x_] = 1
+                    
+                if x>0:
+                    y_, x_ = y, x-1
+                    if isSimilarColor(cimg[y_][x_], cimg[y][x]) and (y_, x_) not in check:
+                        if emap[y_][x_] == 0:
+                            check.append( (y_, x_) )
+                            queue.append( (y_, x_) )
+                            if tuple(cimg[y_][x_]) in colors.keys():
+                                colors[tuple(cimg[y_][x_])] +=1
+                            else: colors[tuple(cimg[y_][x_])] = 1
+                            emap[y_][x_] = 1
+                    
+                if y<height-1 :
+                    y_, x_ = y+1, x
+                    if isSimilarColor(cimg[y_][x_], cimg[y][x]) and (y_, x_) not in check:
+                        if emap[y_][x_] == 0:
+                            check.append( (y_, x_) )
+                            queue.append( (y_, x_) )
+                            if tuple(cimg[y_][x_]) in colors.keys():
+                                colors[tuple(cimg[y_][x_])] +=1
+                            else: colors[tuple(cimg[y_][x_])] = 1
+                            emap[y_][x_] = 1
+                    
+                if x<width-1 :
+                    y_, x_ = y, x+1
+                    if isSimilarColor(cimg[y_][x_], cimg[y][x]) and (y_, x_) not in check:
+                        if emap[y_][x_] == 0:
+                            check.append( (y_, x_) )
+                            queue.append( (y_, x_) )
+                            if tuple(cimg[y_][x_]) in colors.keys():
+                                colors[tuple(cimg[y_][x_])] +=1
+                            else: colors[tuple(cimg[y_][x_])] = 1
+                            emap[y_][x_] = 1
+            
+            
+            print("while queue end")
+            print("bfs lenght>", len(check))
+            
+            # 가장 많은 색 선정
+            color = np.array([0,0,0])
+            # print(colors)
+            for col in colors.keys():
+                # print( np.array(col) ,"*",  colors[col])
+                color_temp = np.array([int(x) for x in col]) * int(colors[col])
+                # print("color_temp", color_temp)
+                color += color_temp
+                
+            color = color // len(check)
+            # print("colors>", color)
+            for y, x in check:
+                 cimg[y][x] = color
+            print("emap sum", sum([sum(x) for x in emap]))
+            return cimg, check
+        
+        ischeck = []
+        b = 0
+        for y in range(height):
+            # if y%20==1: print("similar", y)
+            for x in range(width):
+                
+                if int(emap[y, x]) == 1: continue
+                if (y, x) not in ischeck:
+                    print("go bfs", y, x)
+                    image, check = bfs(y, x, image)
+                    print("end bfs")
+                    # cv2.imwrite("./tt/t"+str(b)+".jpg", image)
+                    ischeck.extend( check )
+                    b+=1
+            if y%100==0:
+                cv2.imwrite("./tt/a"+str(b)+".jpg", image)
+        
+        return image
+    
+    
+    
     def __createPaintingMap(self, colorImage):
         
         map = colorImage.copy()
@@ -95,8 +212,8 @@ class Painting:
                 
         return map
     
-    def getSimilarColorMap(self,  value = 15, direction = "h"): #blurImage,
-        self.similarColorMap = self.__createSimilarColorMap(value = value, direction = direction)
+    def getSimilarColorMap(self, image,  value = 15, direction = "h"): #blurImage,
+        self.similarColorMap = self.__createSimilarColorMap(image, value = value, direction = direction)
         return self.similarColorMap
         
     def getPaintingColorMap(self, similarImage):
