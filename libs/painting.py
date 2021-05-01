@@ -34,11 +34,11 @@ class Painting:
         blurring = cv2.bilateralFilter(blurring, radius, sigmaColor, 60)
         
         
-        blurring = qimg // div * div #+ div // 2
+        blurring = blurring // div * div #+ div // 2
         
         return blurring
     
-    def __createSimilarColorMap(self, image, value, direction = "h"):
+    def __createSimilarColorMap_org(self, image, value, direction = "h"):
         
         # image = self.image.copy()
         image = image.copy()
@@ -71,7 +71,7 @@ class Painting:
         
         return image
     
-    def __createSimilarColorMap_org(self, img, value, direction = "h"):
+    def __createSimilarColorMap(self, img, value, direction = "h"):
         
         # image = self.image.copy()
         image = img.copy()
@@ -80,7 +80,7 @@ class Painting:
         values = [value*1.0]
         
         def isSimilarColor(cell, other):
-            if np.array_equal(cell, other): return True
+            if np.array_equal(cell, other): return False
             cell = np.array([ int(x) for x in cell ])
             other = np.array([ int(x) for x in other ])
             
@@ -101,7 +101,7 @@ class Painting:
             while queue:
                 y, x = queue.pop(0)
                 c+=1
-                if c> width * height // 50: break
+                if c> width * height // 36: break
                 # if y>200: print("y over 200")
                 if y>0:
                     y_, x_ = y-1, x
@@ -149,23 +149,30 @@ class Painting:
                             emap[y_][x_] = 1
             
             
-            print("while queue end")
-            print("bfs lenght>", len(check))
+            # print("while queue end")
+            # print("bfs lenght>", len(check))
             
             # 가장 많은 색 선정
             color = np.array([0,0,0])
-            # print(colors)
+            
+            # 색 가중 평균
+            # for col in colors.keys():
+                # color_temp = np.array([int(x) for x in col]) * int(colors[col])
+                # color += color_temp
+            # color = color // len(check)
+            
+            maxCol = 0
+            # mainCol = []
             for col in colors.keys():
-                # print( np.array(col) ,"*",  colors[col])
-                color_temp = np.array([int(x) for x in col]) * int(colors[col])
-                # print("color_temp", color_temp)
-                color += color_temp
+                if maxCol < int(colors[col]):
+                    color = np.array([int(x) for x in col])
                 
-            color = color // len(check)
+            # print("color,", colors)
             # print("colors>", color)
-            for y, x in check:
-                 cimg[y][x] = color
-            print("emap sum", sum([sum(x) for x in emap]))
+            if len(colors)>0:
+                for y, x in check:
+                     cimg[y][x] = color
+            # print("emap sum", sum([sum(x) for x in emap]))
             return cimg, check
         
         ischeck = []
@@ -178,12 +185,12 @@ class Painting:
                 if (y, x) not in ischeck:
                     print("go bfs", y, x)
                     image, check = bfs(y, x, image)
-                    print("end bfs")
+                    # print("end bfs")
                     # cv2.imwrite("./tt/t"+str(b)+".jpg", image)
                     ischeck.extend( check )
                     b+=1
             if y%100==0:
-                cv2.imwrite("./tt/a"+str(b)+".jpg", image)
+                cv2.imwrite("./tt/v"+str(b)+".jpg", image)
         
         return image
     
