@@ -53,7 +53,7 @@ def imageExpand(image, guessSize=False ,size = 3):
     if guessSize : size = ( 5000 // image.shape[1] ) +1
     #       INTER_LANCZOS4
     image = cv2.resize(image, None, fx=size, fy=size, interpolation=cv2.INTER_LINEAR)
-    _, image = cv2.threshold(image, 200, 255, cv2.THRESH_BINARY)
+    # _, image = cv2.threshold(image, 200, 255, cv2.THRESH_BINARY)
     return  image
     
 
