@@ -26,13 +26,11 @@ class Painting:
         qimg = self.image.copy()
         # img = image.copy()
         
-        
         sigmaColor += (qimg.shape[1] * qimg.shape[0]) // 100000
         radius += (qimg.shape[1] * qimg.shape[0]) // 100000
         
         blurring = cv2.medianBlur(qimg, medianValue)
         blurring = cv2.bilateralFilter(blurring, radius, sigmaColor, 60)
-        
         
         blurring = blurring // div * div #+ div // 2
         
@@ -71,7 +69,7 @@ class Painting:
         
         return image
     
-    def __createSimilarColorMap(self, img, value, direction = "h"):
+    def __createSimilarColorMap_bfs(self, img, value, direction = "h"):
         
         # image = self.image.copy()
         image = img.copy()
@@ -80,7 +78,7 @@ class Painting:
         values = [value*1.0]
         
         def isSimilarColor(cell, other):
-            if np.array_equal(cell, other): return False
+            if np.array_equal(cell, other): return True # False
             cell = np.array([ int(x) for x in cell ])
             other = np.array([ int(x) for x in other ])
             
@@ -195,6 +193,34 @@ class Painting:
         return image
     
     
+    def __createSimilarColorMap(self, img, value, direction = "h"):
+        print("go kmeans")
+        def kmeans_color_quantization(image, clusters=8, rounds=1):
+            h, w = image.shape[:2]
+            samples = np.zeros([h*w,3], dtype=np.float32)
+            count = 0
+
+            for x in range(h):
+                for y in range(w):
+                    samples[count] = image[x][y]
+                    count += 1
+
+            compactness, labels, centers = cv2.kmeans(samples,
+                    clusters, 
+                    None,
+                    (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 10000, 0.0001), 
+                    rounds, 
+                    cv2.KMEANS_RANDOM_CENTERS)
+
+            centers = np.uint8(centers)
+            res = centers[labels.flatten()]
+            return res.reshape((image.shape))
+
+        # image = cv2.imread('1.jpg')
+        result = kmeans_color_quantization(img, clusters=16)
+        # cv2.imshow('result', result)
+        # cv2.waitKey()     
+        return result
     
     def __createPaintingMap(self, colorImage):
         
