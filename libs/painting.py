@@ -105,7 +105,7 @@ class Painting:
                     # cv2.KMEANS_PP_CENTERS
                     # cv2.KMEANS_USE_INITIAL_LABELS       중 하나.
                     cv2.KMEANS_RANDOM_CENTERS)
-
+        
         centers = np.uint8(centers)
         res = centers[labels.flatten()]
         
