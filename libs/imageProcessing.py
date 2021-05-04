@@ -166,6 +166,7 @@ def getImageFromPath(path):
 
 
 # 해당 이미지에서 색 추출
+@numba.jit(forceobj = True)
 def getColorFromImage(img):
     # 인식할 색 입력
     temp = [ (idx, color) for (idx, color) in enumerate(   list( createColorDict(img).keys() ),  1   ) ]
@@ -174,12 +175,14 @@ def getColorFromImage(img):
 
 
 # 해당 이미지에서 contours, hierarchy, image_bin 반환
+@numba.jit(forceobj = True)
 def getContoursFromImage(img):
     # 이진화
     # cv2.COLOR_BGR2HSV
 
-    # gray = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
-    retval, image_bin = cv2.threshold(img, 254,255, cv2.THRESH_BINARY_INV)
+    # img = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
+    # retval, image_bin = cv2.threshold(img, 254,255, cv2.THRESH_BINARY_INV)
+    retval, image_bin = cv2.threshold(img, 127,255, cv2.THRESH_BINARY_INV)
 
     # 이로션
     # image_bin = cv2.erode(image_bin, None, iterations=2)
@@ -193,6 +196,7 @@ def makeWhiteFromImage(img):
     return np.zeros(img.copy().shape) + 255
 
 
+@numba.jit(forceobj = True)
 def getImgLabelFromImage(colors, img):
     lab = np.zeros((len(colors), 1, 3), dtype="uint8")
     for i in range(len(colors)):
@@ -211,13 +215,13 @@ def getRadiusCenterCircle(raw_dist):
     dist_transform = cv2.distanceTransform(raw_dist, cv2.DIST_L2, maskSize=5)
     result = cv2.normalize(dist_transform, None, 255, 0, cv2.NORM_MINMAX, cv2.CV_8UC1)
     
-    minVal, maxVal, _, center = cv2.minMaxLoc(result)
+    minVal, maxVal, a, center = cv2.minMaxLoc(result)
 
     return center
 
 
 
-# @numba.jit(forceobj = True)
+@numba.jit(forceobj = True)
 def setColorNumberFromContours(img, thresh, contours, hierarchy, img_lab, lab, colorNames):
 
     k = -1
@@ -228,11 +232,15 @@ def setColorNumberFromContours(img, thresh, contours, hierarchy, img_lab, lab, c
         # print(f'contours..... {idx} / {len(contours)} \t {round(idx / len(contours)*100, 1)}%', end='\r')
         contour = contours[idx]
 
+        if cv2.isContourConvex(contour):
+            epsilon = 0.05 * cv2.arcLength(contour, True)
+            contour = cv2.approxPolyDP(contour, epsilon, True)
+
         # print(f'이거 봐라:{img_lab.shape}')
         # print(f'이거 봐라2:{thresh.shape}')
 
         # 면적 
-        if cv2.contourArea(contour) < 100: continue
+        # if cv2.contourArea(contour) < 100: continue
 
         # 둘레
         # if cv2.arcLength(contour)
@@ -255,14 +263,14 @@ def setColorNumberFromContours(img, thresh, contours, hierarchy, img_lab, lab, c
         n_white_pix = np.sum(raw_dist == 255)
 
         # 작은 컨투어 무시
-        if n_white_pix < 200: continue
+        # if n_white_pix < 200: continue
 
         center = getRadiusCenterCircle(raw_dist)
 
         
         if center is not None:
             #    컨투어를 그림
-            cv2.drawContours(img, contour_org, -1, (0, 0, 0), 1)
+            cv2.drawContours(img, [contour_org], -1, (0, 0, 0), 1)
             # cv2.circle(img, center, int(radius), (0,0,255), 1, cv2.LINE_8, 0)
 
             # 컨투어 내부에 검출된 색을 표시
@@ -270,7 +278,7 @@ def setColorNumberFromContours(img, thresh, contours, hierarchy, img_lab, lab, c
 
             center = (center[0], center[1])
             setLabel(img, color_text, contour_org, center)
-            # cv2.imwrite(f'./web/static/render_image/working_img.png', img)
+            cv2.imwrite(f'./web/static/render_image/working_img.png', img)
 
 
             # contour 1개씩 그려지는거 확인
