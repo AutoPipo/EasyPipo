@@ -2,7 +2,7 @@
 # Image to Painting Process
 
 # Start : 21.04.01
-# Update : 21.04.12
+# Update : 21.05.04
 # Author : Minku Koo
 '''
 
@@ -15,27 +15,28 @@ from colorCode import HexColorCode
 
 class Painting:
     def __init__(self, imagepath):
-        self.similarColorMap = np.array([]) # 1차 그림화 이미지
+        self.colorClusteredMap = np.array([]) # 1차 그림화 이미지
         self.paintingMap = np.array([]) # 2차 그림화 이미지
         
+        self.image = cv2.imread(imagepath) # Original Image
         self.fileBasename = os.path.basename(imagepath) # file name
         self.filename = self.fileBasename.split(".")[0]
-        self.image = cv2.imread(imagepath) # Original Image
-    
-    def blurring(self, div = 32, radius = 20, sigmaColor = 50, medianValue = 5) :
-        qimg = self.image.copy()
-        # img = image.copy()
         
-        sigmaColor += (qimg.shape[1] * qimg.shape[0]) // 100000
-        radius += (qimg.shape[1] * qimg.shape[0]) // 100000
+    
+    def blurring(self, div = 16, radius = 20, sigmaColor = 50, medianValue = 5) :
+        qimg = self.image.copy()
+        
+        imageSize = qimg.shape[1] * qimg.shape[0]
+        sigmaColor += imageSize // 100000
+        radius += imageSize // 100000
         
         blurring = cv2.medianBlur(qimg, medianValue)
         blurring = cv2.bilateralFilter(blurring, radius, sigmaColor, 60)
         
-        blurring = blurring // div * div #+ div // 2
+        blurring = blurring // div * div + div // 2
         
         return blurring
-    
+    '''
     def __createSimilarColorMap_org(self, image, value, direction = "h"):
         
         # image = self.image.copy()
@@ -191,39 +192,55 @@ class Painting:
                 cv2.imwrite("./tt/v"+str(b)+".jpg", image)
         
         return image
+    '''
     
-    
-    def __createSimilarColorMap(self, img, value, direction = "h"):
-        print("go kmeans")
-        def kmeans_color_quantization(image, clusters=8, rounds=1):
-            h, w = image.shape[:2]
-            samples = np.zeros([h*w,3], dtype=np.float32)
-            count = 0
+    def __kmeansColorCluster(self, image, clusters, rounds):
+        h, w = image.shape[:2]
+        samples = np.zeros([h*w, 3], dtype=np.float32)
+        count = 0
 
-            for x in range(h):
-                for y in range(w):
-                    samples[count] = image[x][y]
-                    count += 1
-
-            compactness, labels, centers = cv2.kmeans(samples,
-                    clusters, 
-                    None,
+        for x in range(h):
+            for y in range(w):
+                samples[count] = image[x][y]
+                count += 1
+        
+        '''
+        compactness : 각 포인트와 군집화를 위한 중심 간의 거리의 제곱의 합
+        labes : 라벨에 대한 배열이며, ‘0’, ‘1’ 등으로 표현
+        centers : 클러스터의 중심이 저장된 배열
+        '''
+        compactness, labels, centers = cv2.kmeans(
+                    samples, # 학습 데이터 정렬, data type = np.float32
+                    clusters, # 군집 개수
+                    None, # 각 샘플의 군집 번호 정렬
+                    
+                    # 종료 기준, tuple 형태 3개 원소
+                    # TERM_CRITERIA_EPS = 특정 정확도에 도달하면 알고리즘 반복 종료
+                    # TERM_CRITERIA_MAX_ITER = 특정 반복 횟수 지나면 알고리즘 반복 종료
+                    # 두 개 합 = 위 어느 조건이라도 만족하면 종료
+                    # max iter = 최대 반복 횟수 지정
+                    # epsilon 요구되는 특정 정확도
                     (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 10000, 0.0001), 
+                    # 다른 초기 레이블을 이용해 반복 실행할 횟수
                     rounds, 
+                    # 초기 중앙 설정 방법
+                    # cv2.KMEANS_RANDOM_CENTERS
+                    # cv2.KMEANS_PP_CENTERS
+                    # cv2.KMEANS_USE_INITIAL_LABELS       중 하나.
                     cv2.KMEANS_RANDOM_CENTERS)
 
-            centers = np.uint8(centers)
-            res = centers[labels.flatten()]
-            return res.reshape((image.shape))
-
-        # image = cv2.imread('1.jpg')
-        result = kmeans_color_quantization(img, clusters=16)
-        # cv2.imshow('result', result)
-        # cv2.waitKey()     
-        return result
+        centers = np.uint8(centers)
+        res = centers[labels.flatten()]
+        # return res.reshape((image.shape)), compactness ** 0.5
+    
+        # for j in range(2, 7):
+            # km_temp, sse = kmeans_color_quantization(img, clusters=j*8)
+            # print("클러스터 개수:", j*8, "SSE:", sse)
+        
+        
+        return res.reshape((image.shape)), compactness ** 0.5
     
     def __createPaintingMap(self, colorImage):
-        
         map = colorImage.copy()
         colorCode =  HexColorCode().hexColorCodeList
         HexColor = np.array( [ self.__hex2bgr(hex) for hex in colorCode ] )
@@ -245,15 +262,17 @@ class Painting:
                 
         return map
     
-    def getSimilarColorMap(self, image,  value = 15, direction = "h"): #blurImage,
-        self.similarColorMap = self.__createSimilarColorMap(image, value = value, direction = direction)
-        return self.similarColorMap
+    def colorClustering(self, image, clusters = 16, round = 1): #blurImage,
+        self.colorClusteredMap, sse = self.__kmeansColorCluster(image, 
+                                                                clusters = clusters, 
+                                                                rounds = round)
+        return self.colorClusteredMap
         
     def getPaintingColorMap(self, similarImage):
         self.paintingMap = self.__createPaintingMap(similarImage)
         return self.paintingMap
         
-    def getColorDict(self, image):
+    def getNumberOfColor(self, image):
         colorDict = {} # Key : Color Code / Values : Pixel Position
         for y, row in enumerate(image):
             for x, bgr in enumerate(row):
@@ -267,7 +286,7 @@ class Painting:
                 else:
                     colorDict[bgr] = [ (y, x) ]
                 
-        return colorDict
+        return len(colorDict.keys())
     
     def __bgr2hex(self, bgr):
         hexColor = ""
