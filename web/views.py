@@ -14,9 +14,12 @@ from libs.brush import Brush
 from libs.utils import *
 from libs.imageProcessing import *
 from libs.drawLine import *
-from libs.painting import *
+from libs.painting2 import *
 
+import logging
 views = Blueprint("server", __name__)
+log = logging.getLogger('werkzeug')
+log.setLevel(logging.ERROR)
 
 
 @views.route("/", methods=["GET"])
@@ -54,13 +57,47 @@ def convert():
     # img = getImageFromPath(image_path)
 
 
+
     # 색 일반화
     # image = reducial(img, 64)
     print(f'색 일반화 시작')
     paintingTool = Painting(image_path)
-    image = paintingTool.getSimilarColorMap()
-    image = paintingTool.blurring(image)
-    image = paintingTool.getPaintingColorMap(image)
+    image = paintingTool.image
+    cv2.imwrite(f'./web/static/render_image/working_img0001.png', image)
+    cv2.imwrite(f'./web/static/render_image/working_img.png', image)
+    # image = paintingTool.getSimilarColorMap(image)
+    # image = paintingTool.blurring(image)
+    # image = paintingTool.getPaintingColorMap(image)
+
+    def kmeans_color_quantization(image, clusters=8, rounds=1):
+        h, w = image.shape[:2]
+        samples = np.zeros([h*w,3], dtype=np.float32)
+        count = 0
+
+        for x in range(h):
+            for y in range(w):
+                samples[count] = image[x][y]
+                count += 1
+
+        compactness, labels, centers = cv2.kmeans(samples,
+                clusters, 
+                None,
+                (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 10000, 0.0001), 
+                rounds, 
+                cv2.KMEANS_RANDOM_CENTERS)
+
+        centers = np.uint8(centers)
+        res = centers[labels.flatten()]
+        return res.reshape((image.shape))
+
+    # image = cv2.GaussianBlur(image, (5,5), 0)
+
+    image = cv2.medianBlur(image, 3)
+    image = kmeans_color_quantization(image, clusters=20)
+
+    cv2.imwrite(f'./web/static/render_image/working_img0002.png', image)
+    cv2.imwrite(f'./web/static/render_image/working_img.png', image)
+
 
     # 색 추출
     colorNames, colors = getColorFromImage(image)
@@ -73,12 +110,16 @@ def convert():
     drawLineTool = DrawLine(image)
     image2 = drawLineTool.getDrawLine()
 
+    cv2.imwrite(f'./web/static/render_image/working_img.png', image2)
+
     print(f'이미지 확장 시작')
     image = imageExpand(image, guessSize=True)
     image2 = imageExpand(image2, guessSize=True)
     image2 = leaveOnePixel(image2)
 
     image2 = cv2.convertScaleAbs(image2)
+    cv2.imwrite(f'./web/static/render_image/working_img0003.png', image2)
+    cv2.imwrite(f'./web/static/render_image/working_img.png', image2)
 
     
     # 선 합성
@@ -95,7 +136,7 @@ def convert():
 
 
     # 결과 이미지 백지화
-    result_img = makeWhiteFromImage(image2)
+    result_img = makeWhiteFromImage(image)
 
     # 결과이미지 렌더링
     # image를 넣으면 원본이미지에 그려주고, result_img에 넣으면 백지에 그려줌

@@ -1,6 +1,6 @@
 $(window).on('load', function(){
-    var image_path = '../static/org_image/333.jpg';
-    // var image_path = '../static/org_image/iron.png';
+    // var image_path = '../static/org_image/a3.jpg';
+    var image_path = '../static/org_image/iron.png';
     var pic_size = 600;
 
     var brush_cursor = document.querySelector('.brush_cursor');
@@ -37,8 +37,9 @@ $(window).on('load', function(){
 
     $('.convert_box p').click(function(){
         $('.loader').addClass('is-active');
+        $('.is-active').attr('style', 'background-color:rgba(0,0,0,.15);');
 
-        /*
+        
         var working = setInterval(function(){
             try { // statements to try
                 image = new Image();
@@ -56,8 +57,8 @@ $(window).on('load', function(){
             catch (e) {
             }
 
-        }, 3000);
-        */
+        }, 1000);
+        
         
 
         $.ajax({
@@ -71,7 +72,7 @@ $(window).on('load', function(){
             dataType:'json',
             type: 'POST',
             success: function (data) {
-                //clearInterval(working);
+                clearInterval(working);
 
                 image = new Image();
                 var time = new Date().getTime();
