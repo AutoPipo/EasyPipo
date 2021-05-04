@@ -36,163 +36,16 @@ class Painting:
         blurring = blurring // div * div + div // 2
         
         return blurring
-    '''
-    def __createSimilarColorMap_org(self, image, value, direction = "h"):
+   
+    def colorClustering(self, image, cluster = 16, round = 1): #blurImage,
+        self.colorClusteredMap, sse = self.__kmeansColorCluster(image, 
+                                                                clusters = cluster, 
+                                                                rounds = round)
+        return self.colorClusteredMap
         
-        # image = self.image.copy()
-        image = image.copy()
-        
-        for y, row in enumerate(image[1:-1]):
-            for x, bgr in enumerate(row[1:-1]):
-                for c in [-1, 1]:
-                    if direction == "v": 
-                        cellColor = image[y+c, x]
-                    else: 
-                        cellColor = image[y, x+c]
-                    
-                    
-                    if (cellColor - value < bgr).all() and\
-                    ( bgr < cellColor + value).all():
-                        # if not np.array_equal(bgr, cellColor) : 
-                        image[y][x] = cellColor
-                        break
-                        
-                    if direction == "v": 
-                        cellColor = image[y, x+c]
-                    else: 
-                        cellColor = image[y+c, x]
-                        
-                    if (cellColor - value < bgr).all() and\
-                    ( bgr < cellColor + value).all():
-                        # if not np.array_equal(bgr, cellColor) : 
-                        image[y][x] = cellColor
-                        break
-        
-        return image
-    
-    def __createSimilarColorMap_bfs(self, img, value, direction = "h"):
-        
-        # image = self.image.copy()
-        image = img.copy()
-        emap = np.zeros((image.shape[0], image.shape[1]))
-        width, height = image.shape[1], image.shape[0]
-        values = [value*1.0]
-        
-        def isSimilarColor(cell, other):
-            if np.array_equal(cell, other): return True # False
-            cell = np.array([ int(x) for x in cell ])
-            other = np.array([ int(x) for x in other ])
-            
-            sub = cell - other
-            # print("sum( sub ** 2) ** 0.5>>", sum( sub ** 2) ** 0.5)
-            if sum( sub ** 2) ** 0.5 < values[0]:
-                return True
-            else: return False
-        
-        
-        def bfs(y, x, img):
-            cimg = img.copy()
-            queue = [(y, x)]
-            check = [(y, x)]
-            colors = {}
-            
-            c = 0
-            while queue:
-                y, x = queue.pop(0)
-                c+=1
-                if c> width * height // 36: break
-                # if y>200: print("y over 200")
-                if y>0:
-                    y_, x_ = y-1, x
-                    if isSimilarColor(cimg[y_][x_], cimg[y][x]) and (y_, x_) not in check:
-                        if emap[y_][x_] == 0:
-                            check.append( (y_, x_) )
-                            queue.append( (y_, x_) )
-                            # colors.append( tuple(cimg[y_][x_]) )
-                            if tuple(cimg[y_][x_]) in colors.keys():
-                                colors[tuple(cimg[y_][x_])] +=1
-                            else: colors[tuple(cimg[y_][x_])] = 1
-                            emap[y_][x_] = 1
-                    
-                if x>0:
-                    y_, x_ = y, x-1
-                    if isSimilarColor(cimg[y_][x_], cimg[y][x]) and (y_, x_) not in check:
-                        if emap[y_][x_] == 0:
-                            check.append( (y_, x_) )
-                            queue.append( (y_, x_) )
-                            if tuple(cimg[y_][x_]) in colors.keys():
-                                colors[tuple(cimg[y_][x_])] +=1
-                            else: colors[tuple(cimg[y_][x_])] = 1
-                            emap[y_][x_] = 1
-                    
-                if y<height-1 :
-                    y_, x_ = y+1, x
-                    if isSimilarColor(cimg[y_][x_], cimg[y][x]) and (y_, x_) not in check:
-                        if emap[y_][x_] == 0:
-                            check.append( (y_, x_) )
-                            queue.append( (y_, x_) )
-                            if tuple(cimg[y_][x_]) in colors.keys():
-                                colors[tuple(cimg[y_][x_])] +=1
-                            else: colors[tuple(cimg[y_][x_])] = 1
-                            emap[y_][x_] = 1
-                    
-                if x<width-1 :
-                    y_, x_ = y, x+1
-                    if isSimilarColor(cimg[y_][x_], cimg[y][x]) and (y_, x_) not in check:
-                        if emap[y_][x_] == 0:
-                            check.append( (y_, x_) )
-                            queue.append( (y_, x_) )
-                            if tuple(cimg[y_][x_]) in colors.keys():
-                                colors[tuple(cimg[y_][x_])] +=1
-                            else: colors[tuple(cimg[y_][x_])] = 1
-                            emap[y_][x_] = 1
-            
-            
-            # print("while queue end")
-            # print("bfs lenght>", len(check))
-            
-            # 가장 많은 색 선정
-            color = np.array([0,0,0])
-            
-            # 색 가중 평균
-            # for col in colors.keys():
-                # color_temp = np.array([int(x) for x in col]) * int(colors[col])
-                # color += color_temp
-            # color = color // len(check)
-            
-            maxCol = 0
-            # mainCol = []
-            for col in colors.keys():
-                if maxCol < int(colors[col]):
-                    color = np.array([int(x) for x in col])
-                
-            # print("color,", colors)
-            # print("colors>", color)
-            if len(colors)>0:
-                for y, x in check:
-                     cimg[y][x] = color
-            # print("emap sum", sum([sum(x) for x in emap]))
-            return cimg, check
-        
-        ischeck = []
-        b = 0
-        for y in range(height):
-            # if y%20==1: print("similar", y)
-            for x in range(width):
-                
-                if int(emap[y, x]) == 1: continue
-                if (y, x) not in ischeck:
-                    print("go bfs", y, x)
-                    image, check = bfs(y, x, image)
-                    # print("end bfs")
-                    # cv2.imwrite("./tt/t"+str(b)+".jpg", image)
-                    ischeck.extend( check )
-                    b+=1
-            if y%100==0:
-                cv2.imwrite("./tt/v"+str(b)+".jpg", image)
-        
-        return image
-    '''
+    def getPaintingColorMap(self, clusteredImage):
+        self.paintingMap = self.__createPaintingMap(clusteredImage)
+        return self.paintingMap
     
     def __kmeansColorCluster(self, image, clusters, rounds):
         h, w = image.shape[:2]
@@ -231,14 +84,12 @@ class Painting:
 
         centers = np.uint8(centers)
         res = centers[labels.flatten()]
-        # return res.reshape((image.shape)), compactness ** 0.5
-    
+        
         # for j in range(2, 7):
             # km_temp, sse = kmeans_color_quantization(img, clusters=j*8)
             # print("클러스터 개수:", j*8, "SSE:", sse)
         
-        
-        return res.reshape((image.shape)), compactness ** 0.5
+        return res.reshape((image.shape)), round( compactness ** 0.5 // 10, 2 )
     
     def __createPaintingMap(self, colorImage):
         map = colorImage.copy()
@@ -262,16 +113,6 @@ class Painting:
                 
         return map
     
-    def colorClustering(self, image, clusters = 16, round = 1): #blurImage,
-        self.colorClusteredMap, sse = self.__kmeansColorCluster(image, 
-                                                                clusters = clusters, 
-                                                                rounds = round)
-        return self.colorClusteredMap
-        
-    def getPaintingColorMap(self, similarImage):
-        self.paintingMap = self.__createPaintingMap(similarImage)
-        return self.paintingMap
-        
     def getNumberOfColor(self, image):
         colorDict = {} # Key : Color Code / Values : Pixel Position
         for y, row in enumerate(image):
@@ -295,30 +136,46 @@ class Painting:
     
     def __hex2bgr(self, hex):
         return np.array( [int(hex[i:i+2], 16) for i in (4, 2, 0)] ) 
+
+
         
+def imageExpand(image, guessSize=False, size = 3):
+    if guessSize : size = ( 5000 // image.shape[1] ) + 1
+    #       INTER_LANCZOS4
+    image = cv2.resize(image, None, fx=size, fy=size, interpolation=cv2.INTER_LINEAR)
+    # _, image = cv2.threshold(image, 200, 255, cv2.THRESH_BINARY)
+    return  image
+    
         
 if __name__ == "__main__":
     '''
     * How to Use?
     
-    painting = Painting( "./imageDir/image.jpg")
+    # 클래스 선언
+    painting = Painting( "./imagePath/image.jpg")
     
-    similarMap = painting.getSimilarColorMap( value = 3, direction = "h" )
-    blurImage = painting.blurring(similarMap, div = 20, radius = 20, sigmaColor = 40, medianValue = 7)
-    paintingMap = painting.getPaintingColorMap(similarMap)
+    # 색 단순화 + 블러 처리
+    blurImage = painting.blurring(  div = 8, 
+                                    radius = 10, 
+                                    sigmaColor =20, 
+                                    medianValue=7)
     
-    colorDict = painting.getColorDict(paintingMap)
+    
+    # Way 1 )
+    expandedImage = imageExpand(blurImage, size = 4)
+    # Way 2 )
+    expandedImage = imageExpand(blurImage, guessSize = True)
+    
+    
+    # K-means 알고리즘을 활용한 컬러 군집화
+    clusteredImage = painting.colorClustering( expandedImage, cluster = 16, round = 1 )
+    # 군집화된 색상을 지정된 색상과 가장 비슷한 색상으로 매칭
+    paintingMap = painting.getPaintingColorMap(clusteredImage)
+    
+    # 이미지 색상 개수 확인
+    number_of_color = painting.getNumberOfColor(paintingMap)
+    print("Number of Color :", number_of_color)
     '''
     pass
     
     
-    
-    
-    
-
-
-
-
-
-
-
