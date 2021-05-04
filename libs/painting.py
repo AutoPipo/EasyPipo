@@ -35,8 +35,8 @@ class Painting:
         qimg = self.image.copy()
         
         imageSize = int( (qimg.shape[1] * qimg.shape[0]) ** 0.5 ) // 100
-        sigmaColor += min(imageSize * 2, 80) + step * 4
-        radius += min( imageSize , 30) + step * 2
+        sigmaColor += min( int(imageSize * 2.5) , 90) + step * 4
+        radius += min( int(imageSize * 1.5) , 40) + step * 2
         
         blurring = cv2.bilateralFilter(qimg, radius, sigmaColor, 60)
         blurring = cv2.medianBlur(blurring, medianValue)
@@ -104,7 +104,7 @@ class Painting:
                     # cv2.KMEANS_RANDOM_CENTERS
                     # cv2.KMEANS_PP_CENTERS
                     # cv2.KMEANS_USE_INITIAL_LABELS       중 하나.
-                    cv2.KMEANS_RANDOM_CENTERS)
+                    cv2.KMEANS_PP_CENTERS)
         
         centers = np.uint8(centers)
         res = centers[labels.flatten()]
