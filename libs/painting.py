@@ -15,23 +15,31 @@ from libs.colorCode import HexColorCode
 
 class Painting:
     def __init__(self, imagepath):
-        self.colorClusteredMap = np.array([]) # 1차 그림화 이미지
-        self.paintingMap = np.array([]) # 2차 그림화 이미지
+        # K-Means 알고리즘 이용한 색상 군집화 이미지
+        self.colorClusteredMap = np.array([]) 
+        # 지정된 색상과 매칭한 이미지
+        self.paintingMap = np.array([])
         
         self.image = cv2.imread(imagepath) # Original Image
         self.fileBasename = os.path.basename(imagepath) # file name
         self.filename = self.fileBasename.split(".")[0]
-        
     
-    def blurring(self, div = 16, radius = 20, sigmaColor = 50, medianValue = 5) :
+    
+    def blurring(self, 
+                div = 8, 
+                radius = 10, 
+                sigmaColor = 20, 
+                medianValue = 5,
+                step = 0) :
+                
         qimg = self.image.copy()
         
-        imageSize = qimg.shape[1] * qimg.shape[0]
-        sigmaColor += imageSize // 100000
-        radius += imageSize // 100000
+        imageSize = int( (qimg.shape[1] * qimg.shape[0]) ** 0.5 ) // 100
+        sigmaColor += min( int(imageSize * 2.5) , 90) + step * 4
+        radius += min( int(imageSize * 1.5) , 40) + step * 2
         
-        blurring = cv2.medianBlur(qimg, medianValue)
-        blurring = cv2.bilateralFilter(blurring, radius, sigmaColor, 60)
+        blurring = cv2.bilateralFilter(qimg, radius, sigmaColor, 60)
+        blurring = cv2.medianBlur(blurring, medianValue)
         
         blurring = blurring // div * div + div // 2
         
@@ -46,6 +54,22 @@ class Painting:
     def getPaintingColorMap(self, clusteredImage):
         self.paintingMap = self.__createPaintingMap(clusteredImage)
         return self.paintingMap
+    
+    def getNumberOfColor(self, image):
+        colorDict = {} # Key : Color Code / Values : Pixel Position
+        for y, row in enumerate(image):
+            for x, bgr in enumerate(row):
+                bgr = tuple(bgr)
+                if colorDict == {}: 
+                    colorDict[ bgr ] = [ (y, x) ]
+                    continue
+                
+                if bgr in colorDict.keys():
+                    colorDict[bgr].append( (y, x) )
+                else:
+                    colorDict[bgr] = [ (y, x) ]
+                
+        return len(colorDict.keys())
     
     def __kmeansColorCluster(self, image, clusters, rounds):
         h, w = image.shape[:2]
@@ -80,8 +104,8 @@ class Painting:
                     # cv2.KMEANS_RANDOM_CENTERS
                     # cv2.KMEANS_PP_CENTERS
                     # cv2.KMEANS_USE_INITIAL_LABELS       중 하나.
-                    cv2.KMEANS_RANDOM_CENTERS)
-
+                    cv2.KMEANS_PP_CENTERS)
+        
         centers = np.uint8(centers)
         res = centers[labels.flatten()]
         
@@ -112,22 +136,6 @@ class Painting:
                 colorDict[t_color] = HexColor[index[0] ]
                 
         return map
-    
-    def getNumberOfColor(self, image):
-        colorDict = {} # Key : Color Code / Values : Pixel Position
-        for y, row in enumerate(image):
-            for x, bgr in enumerate(row):
-                bgr = tuple(bgr)
-                if colorDict == {}: 
-                    colorDict[ bgr ] = [ (y, x) ]
-                    continue
-                
-                if bgr in colorDict.keys():
-                    colorDict[bgr].append( (y, x) )
-                else:
-                    colorDict[bgr] = [ (y, x) ]
-                
-        return len(colorDict.keys())
     
     def __bgr2hex(self, bgr):
         hexColor = ""
