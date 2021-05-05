@@ -2,7 +2,7 @@
 # Image to Painting Process
 
 # Start : 21.04.01
-# Update : 21.05.05
+# Update : 21.05.06
 # Author : Minku Koo
 '''
 
@@ -158,11 +158,12 @@ class Painting:
     def __createPaintingMap(self, colorImage):
         """
         Parameters
-        
+            colorImage <np.ndarray> : Image
         returns
-        
+            img <np.ndarray> : Painted Image
         """
-        map = colorImage.copy()
+        
+        img = colorImage.copy()
         colorCode =  HexColorCode().hexColorCodeList
         HexColor = np.array( [ self.__hex2bgr(hex) for hex in colorCode ] )
         
@@ -171,17 +172,17 @@ class Painting:
             for x, color in enumerate(row):
                 t_color = tuple(color)
                 if t_color in colorDict: 
-                    map[y][x] = colorDict[t_color]
+                    img[y][x] = colorDict[t_color]
                     continue
                     
                 absSum = np.sum( np.abs(HexColor - color) , axis = 1 )
                 index = np.where( absSum ==  np.min( absSum ) )[0]
                 # 여기서 더 비슷한 이미지 2~3개중에 결정하는 코드 삽입
                 
-                map[y][x] = HexColor[index[0] ]
+                img[y][x] = HexColor[index[0] ]
                 colorDict[t_color] = HexColor[index[0] ]
                 
-        return map
+        return img
     
     # BGR Color tuple convert to Hex Color String Code
     def __bgr2hex(self, bgr):
