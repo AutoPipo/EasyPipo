@@ -76,19 +76,19 @@ class Painting:
     def getNumberOfColor(self, image):
         """
         Parameters
-        
+            image <np.ndarray> : image
         returns
-        
+            numbers of color on image <int>
         """
         colorDict = {} # Key : Color Code / Values : Pixel Position
         for y, row in enumerate(image):
             for x, bgr in enumerate(row):
-                bgr = tuple(bgr)
-                if colorDict == {}: 
+                bgr = tuple(bgr) # np.ndarray convert to tuple
+                if colorDict == {}: # if dictionary in empty
                     colorDict[ bgr ] = [ (y, x) ]
                     continue
                 
-                if bgr in colorDict.keys():
+                if bgr in colorDict.keys(): #if pixel color is in dictionary key
                     colorDict[bgr].append( (y, x) )
                 else:
                     colorDict[bgr] = [ (y, x) ]
@@ -98,52 +98,60 @@ class Painting:
     def __kmeansColorCluster(self, image, clusters, rounds):
         """
         Parameters
-        
+            image <np.ndarray> : image
+            clusters <int> : number of clustering
+            rounds <int> : how many iterate kmeans clustering
         returns
-        
+            clustered Image <np.ndarray>
+            SSE <float> : Sum of Squared Error
         """
-        h, w = image.shape[:2]
-        samples = np.zeros([h*w, 3], dtype=np.float32)
+        
+        height, width = image.shape[:2]
+        samples = np.zeros([ height * width, 3 ], dtype=np.float32)
+        
         count = 0
-
         for x in range(h):
             for y in range(w):
                 samples[count] = image[x][y]
                 count += 1
         
         '''
-        compactness : 각 포인트와 군집화를 위한 중심 간의 거리의 제곱의 합
-        labes : 라벨에 대한 배열이며, ‘0’, ‘1’ 등으로 표현
-        centers : 클러스터의 중심이 저장된 배열
+        # compactness : SSE
+        # labels : array about label, show like 0, 1
+        # centers : Cluster centroid Array
         '''
         compactness, labels, centers = cv2.kmeans(
                     samples, # 학습 데이터 정렬, data type = np.float32
                     clusters, # 군집 개수
                     None, # 각 샘플의 군집 번호 정렬
                     
-                    # 종료 기준, tuple 형태 3개 원소
+                    '''
+                    # criteria (종료 기준) : 3 element tuple (method, max_iter, epsilon)
+                    
+                    # method
                     # TERM_CRITERIA_EPS = 특정 정확도에 도달하면 알고리즘 반복 종료
                     # TERM_CRITERIA_MAX_ITER = 특정 반복 횟수 지나면 알고리즘 반복 종료
                     # 두 개 합 = 위 어느 조건이라도 만족하면 종료
-                    # max iter = 최대 반복 횟수 지정
-                    # epsilon 요구되는 특정 정확도
-                    (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 
-                    10000, 
-                    0.0001), 
-                    # 다른 초기 레이블을 이용해 반복 실행할 횟수
-                    rounds, 
-                    # 초기 중앙 설정 방법
-                    # cv2.KMEANS_RANDOM_CENTERS
-                    # cv2.KMEANS_PP_CENTERS
-                    # cv2.KMEANS_USE_INITIAL_LABELS       중 하나.
-                    cv2.KMEANS_PP_CENTERS)
+                    
+                    # max_iter = 최대 반복 횟수 지정
+                    # epsilon = 요구되는 특정 정확도
+                    '''
+                    criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 
+                    10000,
+                    0.0001),
+                    # attempts : 다른 initial centroid 이용해 반복 실행할 횟수
+                    attempts = rounds, 
+                    '''
+                    # flags : To set the Initial Centroids
+                    # cv2.KMEANS_RANDOM_CENTERS > 랜덤 선택
+                    # cv2.KMEANS_PP_CENTERS > K-Means++ 알고리즘
+                    # cv2.KMEANS_USE_INITIAL_LABELS > 사용자 선택
+                    # 중 하나 선택
+                    '''
+                    flags = cv2.KMEANS_PP_CENTERS)
         
         centers = np.uint8(centers)
         res = centers[labels.flatten()]
-        
-        # for j in range(2, 7):
-            # km_temp, sse = kmeans_color_quantization(img, clusters=j*8)
-            # print("클러스터 개수:", j*8, "SSE:", sse)
         
         return res.reshape((image.shape)), round( compactness ** 0.5 // 10, 2 )
     
@@ -188,6 +196,12 @@ class Painting:
 
         
 def imageExpand(image, guessSize=False, size = 3):
+    """
+    Parameters
+    
+    returns
+    
+    """
     if guessSize : size = ( 5000 // image.shape[1] ) + 1
     #       INTER_LANCZOS4
     image = cv2.resize(image, None, fx=size, fy=size, interpolation=cv2.INTER_LINEAR)
