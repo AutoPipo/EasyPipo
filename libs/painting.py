@@ -33,19 +33,29 @@ class Painting:
                 step = 0) :
         """
         Parameters
-        
+            div <int> : Reducing numbers of color on Image (default = 8)
+            radius <int> : bilateralFilter Parameter (default = 10)
+            sigmaColor <int> : bilateralFilter Parameter (default = 20)
+            medianValue <int> : medianBlur Parameter (default = 5)
+            step <int> : Blurring intensity by step size (0<=step<=5, default = 0)
         returns
-        
+            blurring <np.ndarray> : blurred Image
         """
-        qimg = self.image.copy()
+        
+        qimg = self.image.copy() # copy original image
+        
+        step = min(max(0, step), 5) # 1<= step <= 5
         
         imageSize = int( (qimg.shape[1] * qimg.shape[0]) ** 0.5 ) // 100
+        # set sigmaColor, radius by imageSize and step
         sigmaColor += min( int(imageSize * 2.5) , 90) + step * 4
         radius += min( int(imageSize * 1.5) , 40) + step * 2
         
+        # blurring
         blurring = cv2.bilateralFilter(qimg, radius, sigmaColor, 60)
         blurring = cv2.medianBlur(blurring, medianValue)
         
+        # reduce numbers of color
         blurring = blurring // div * div + div // 2
         
         return blurring
