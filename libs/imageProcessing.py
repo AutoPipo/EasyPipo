@@ -180,7 +180,7 @@ def getContoursFromImage(img):
     # 이진화
     # cv2.COLOR_BGR2HSV
 
-    # img = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
+    img = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
     # retval, image_bin = cv2.threshold(img, 254,255, cv2.THRESH_BINARY_INV)
     retval, image_bin = cv2.threshold(img, 127,255, cv2.THRESH_BINARY_INV)
 
@@ -232,15 +232,15 @@ def setColorNumberFromContours(img, thresh, contours, hierarchy, img_lab, lab, c
         # print(f'contours..... {idx} / {len(contours)} \t {round(idx / len(contours)*100, 1)}%', end='\r')
         contour = contours[idx]
 
-        if cv2.isContourConvex(contour):
-            epsilon = 0.05 * cv2.arcLength(contour, True)
-            contour = cv2.approxPolyDP(contour, epsilon, True)
+        # if cv2.isContourConvex(contour):
+        #     epsilon = 0.01 * cv2.arcLength(contour, True)
+        #     contour = cv2.approxPolyDP(contour, epsilon, True)
 
         # print(f'이거 봐라:{img_lab.shape}')
         # print(f'이거 봐라2:{thresh.shape}')
 
         # 면적 
-        # if cv2.contourArea(contour) < 100: continue
+        if cv2.contourArea(contour) < 100: continue
 
         # 둘레
         # if cv2.arcLength(contour)
@@ -263,7 +263,7 @@ def setColorNumberFromContours(img, thresh, contours, hierarchy, img_lab, lab, c
         n_white_pix = np.sum(raw_dist == 255)
 
         # 작은 컨투어 무시
-        # if n_white_pix < 200: continue
+        if n_white_pix < 200: continue
 
         center = getRadiusCenterCircle(raw_dist)
 
