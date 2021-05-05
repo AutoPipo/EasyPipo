@@ -60,16 +60,19 @@ class Painting:
         
         return blurring
    
-    def colorClustering(self, image, cluster = 16, round = 1): #blurImage,
+    # color clustering
+    def colorClustering(self, image, cluster = 16, round = 1): 
         self.colorClusteredMap, sse = self.__kmeansColorCluster(image, 
                                                                 clusters = cluster, 
                                                                 rounds = round)
         return self.colorClusteredMap
-        
+   
+    # color on image match with specified hex colors
     def getPaintingColorMap(self, clusteredImage):
         self.paintingMap = self.__createPaintingMap(clusteredImage)
         return self.paintingMap
     
+    # counting numbers of color
     def getNumberOfColor(self, image):
         """
         Parameters
