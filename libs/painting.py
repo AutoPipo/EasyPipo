@@ -2,7 +2,7 @@
 # Image to Painting Process
 
 # Start : 21.04.01
-# Update : 21.05.04
+# Update : 21.05.05
 # Author : Minku Koo
 '''
 
@@ -16,22 +16,27 @@ from colorCode import HexColorCode
 class Painting:
     def __init__(self, imagepath):
         # K-Means 알고리즘 이용한 색상 군집화 이미지
-        self.colorClusteredMap = np.array([]) 
+        self.colorClusteredMap = np.array([])
         # 지정된 색상과 매칭한 이미지
         self.paintingMap = np.array([])
         
         self.image = cv2.imread(imagepath) # Original Image
         self.fileBasename = os.path.basename(imagepath) # file name
-        self.filename = self.fileBasename.split(".")[0]
+        self.filename = self.fileBasename.split(".")[0] # file base name
     
-    
+    # image blurring
     def blurring(self, 
                 div = 8, 
                 radius = 10, 
                 sigmaColor = 20, 
                 medianValue = 5,
                 step = 0) :
-                
+        """
+        Parameters
+        
+        returns
+        
+        """
         qimg = self.image.copy()
         
         imageSize = int( (qimg.shape[1] * qimg.shape[0]) ** 0.5 ) // 100
@@ -56,6 +61,12 @@ class Painting:
         return self.paintingMap
     
     def getNumberOfColor(self, image):
+        """
+        Parameters
+        
+        returns
+        
+        """
         colorDict = {} # Key : Color Code / Values : Pixel Position
         for y, row in enumerate(image):
             for x, bgr in enumerate(row):
@@ -72,6 +83,12 @@ class Painting:
         return len(colorDict.keys())
     
     def __kmeansColorCluster(self, image, clusters, rounds):
+        """
+        Parameters
+        
+        returns
+        
+        """
         h, w = image.shape[:2]
         samples = np.zeros([h*w, 3], dtype=np.float32)
         count = 0
@@ -97,7 +114,9 @@ class Painting:
                     # 두 개 합 = 위 어느 조건이라도 만족하면 종료
                     # max iter = 최대 반복 횟수 지정
                     # epsilon 요구되는 특정 정확도
-                    (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 10000, 0.0001), 
+                    (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 
+                    10000, 
+                    0.0001), 
                     # 다른 초기 레이블을 이용해 반복 실행할 횟수
                     rounds, 
                     # 초기 중앙 설정 방법
@@ -116,6 +135,12 @@ class Painting:
         return res.reshape((image.shape)), round( compactness ** 0.5 // 10, 2 )
     
     def __createPaintingMap(self, colorImage):
+        """
+        Parameters
+        
+        returns
+        
+        """
         map = colorImage.copy()
         colorCode =  HexColorCode().hexColorCodeList
         HexColor = np.array( [ self.__hex2bgr(hex) for hex in colorCode ] )
@@ -137,11 +162,13 @@ class Painting:
                 
         return map
     
+    # BGR Color tuple convert to Hex Color String Code
     def __bgr2hex(self, bgr):
         hexColor = ""
         for color in bgr: hexColor+= hex(color).split('x')[-1]
         return hexColor
     
+    # Hex Color String Code convert to BGR Color np.array
     def __hex2bgr(self, hex):
         return np.array( [int(hex[i:i+2], 16) for i in (4, 2, 0)] ) 
 
