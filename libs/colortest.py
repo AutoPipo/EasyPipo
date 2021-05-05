@@ -2,8 +2,8 @@
 
 
 import time, os
-from painting import Painting
-from drawLine import DrawLine, imageExpand, leaveOnePixel
+from painting import *
+from drawLine import *
 import cv2
 
 def imageSave(image, directory = "./result-image/", name = "", id=""):
@@ -17,9 +17,9 @@ def imageSave(image, directory = "./result-image/", name = "", id=""):
 # print("비교 시간 :", round((time.time() - start), 3) ,"초.." )
 
 dir = "./test-image/"
-file = "iron"
+file = "lalas"
 base = ".png"
-id = "bfss3"
+id = "clur-pp2"
 
 
 
@@ -34,15 +34,19 @@ imageSave(similarMap, name = file+"-similar", id=id)
 '''
 
 # test
-blurImage = painting.blurring( div = 16, radius = 20, sigmaColor =40, medianValue=7)
+print("========  blurImage =======")
+blurImage = painting.blurring( div = 8, radius = 10, sigmaColor =20, medianValue=5)
 imageSave(blurImage, name = file+"-blur", id=id)
-print("========  blurImage End  =======")
 
+
+'''
+# 이게 원래 로트
 start = time.time()
 similarMap = painting.getSimilarColorMap( blurImage, value = 19, direction = "h" )
 imageSave(similarMap, name = file+"-similar", id=id)
 print("========  Similar Map End  =======")
 print("time :", round((time.time() - start), 3) ,"초 정도.." )
+'''
 
 # time.sleep(5)
 
@@ -52,43 +56,63 @@ print("time :", round((time.time() - start), 3) ,"초 정도.." )
 # print("========  Blur Map End  =======")
 # print("time :", round((time.time() - start), 3) ,"초 정도.." )
 # test finish
+
+
+# print("========  Painting Color Map  =======")
+# start = time.time()
+# paintingMap = painting.getPaintingColorMap(blurImage) # similarMap
+# imageSave(paintingMap, name = file+"-painting", id=id)
+# print("time :", round((time.time() - start), 3) ,"초 정도.." )
+print("========= Expand Process ========")
 start = time.time()
-
-print("========  Merge Color Map End  =======")
-paintingMap = painting.getPaintingColorMap(similarMap)
-# paintingMap = painting.getPaintingColorMap(blurImage)
+blurImage = imageExpand(blurImage, guessSize = True)
+imageSave(blurImage, name = file+"-expand", id=id)
 print("time :", round((time.time() - start), 3) ,"초 정도.." )
-imageSave(paintingMap, name = file+"-painting", id=id)
 
 
+# 바뀐 위치
+print("========  Similar Map =======")
+start = time.time()
+similarMap = painting.colorClustering( blurImage, cluster = 24 )
+imageSave(similarMap, name = file+"-kmeans", id=id)
+print("time :", round((time.time() - start), 3) ,"초 정도.." )
+
+print("========  Painting Color Map  =======")
+paintingMap = painting.getPaintingColorMap(similarMap)
+imageSave(paintingMap, name = file+"-paintings", id=id)
+
+'''
+'''
 # colorDict = painting.getColorDict(paintingMap)
 print("=="*20)
 # print("COLOR NUMBER : ", len(colorDict))
-print("=="*20)
+
+
+print("------ color count -----")
+color_count = painting.getNumberOfColor(paintingMap)
+print(color_count, "개")
+
+
+
+
 
 drawLine = DrawLine(paintingMap)
 
+
+print("========  draw Line  =======")
 start = time.time()
-print("========  draw Line End  =======")
 lineMap = drawLine.getDrawLine()
 imageSave(lineMap, name = file+"-line", id=id)
-
 print("time :", round((time.time() - start), 3) ,"초 정도.." )
 
-print("========= Expand Process ========")
-start = time.time()
-expandImage = imageExpand(lineMap, guessSize = True)
-imageSave(expandImage, name = file+"-expand", id=id)
-print("time :", round((time.time() - start), 3) ,"초 정도.." )
-
-skImage = leaveOnePixel(expandImage)
-imageSave(skImage, name = file+"-skeleton", id=id)
-
-lineImage = drawLine.getLineOnImage()
-imageSave(lineImage, name = file+"-line+image", id=id)
 
 
+# print("========= skeleton ========")
+# skImage = leaveOnePixel(lineMap)
+# imageSave(skImage, name = file+"-skeleton", id=id)
 
+# lineImage = drawLine.getLineOnImage()
+# imageSave(lineImage, name = file+"-line+image", id=id)
 
 
 
