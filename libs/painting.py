@@ -195,11 +195,12 @@ class Painting:
         return np.array( [int(hex[i:i+2], 16) for i in (4, 2, 0)] ) 
 
 
-        
 def imageExpand(image, guessSize=False, size = 3):
     """
     Parameters
-    
+        image <np.ndarray>
+        guessSize <boolean>
+        size <int>
     returns
     
     """
