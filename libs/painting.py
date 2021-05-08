@@ -2,7 +2,7 @@
 # Image to Painting Process
 
 # Start : 21.04.01
-# Update : 21.05.06
+# Update : 21.05.08
 # Author : Minku Koo
 '''
 
@@ -198,11 +198,11 @@ class Painting:
 def imageExpand(image, guessSize=False, size = 3):
     """
     Parameters
-        image <np.ndarray>
-        guessSize <boolean>
-        size <int>
+        image <np.ndarray> : image
+        guessSize <boolean> : expand as appropriate size (default = False)
+        size <int> : Size to expand (default = 3)
     returns
-    
+        image <np.ndarray> : expanded image
     """
     if guessSize : size = ( 5000 // image.shape[1] ) + 1
     #       INTER_LANCZOS4
