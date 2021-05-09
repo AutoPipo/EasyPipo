@@ -136,11 +136,13 @@ class Painting:
                     # max_iter = 최대 반복 횟수 지정
                     # epsilon = 요구되는 특정 정확도
                     '''
+                    
                     criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 
                     10000,
                     0.0001),
                     # attempts : 다른 initial centroid 이용해 반복 실행할 횟수
                     attempts = rounds, 
+                    
                     '''
                     # flags : To set the Initial Centroids
                     # cv2.KMEANS_RANDOM_CENTERS > 랜덤 선택
@@ -148,6 +150,7 @@ class Painting:
                     # cv2.KMEANS_USE_INITIAL_LABELS > 사용자 선택
                     # 중 하나 선택
                     '''
+                    
                     flags = cv2.KMEANS_PP_CENTERS)
         
         centers = np.uint8(centers)
