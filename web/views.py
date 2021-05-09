@@ -14,7 +14,7 @@ from libs.brush import Brush
 from libs.utils import *
 from libs.imageProcessing import *
 from libs.drawLine import *
-from libs.painting2 import *
+from libs.painting import *
 
 import logging
 views = Blueprint("server", __name__)
@@ -57,90 +57,83 @@ def convert():
     # img = getImageFromPath(image_path)
 
 
+    print(f'블러 시작')
 
-    # 색 일반화
-    # image = reducial(img, 64)
-    print(f'색 일반화 시작')
+    
+    # 클래스 선언
     paintingTool = Painting(image_path)
     image = paintingTool.image
     cv2.imwrite(f'./web/static/render_image/working_img0001.png', image)
     cv2.imwrite(f'./web/static/render_image/working_img.png', image)
-    # image = paintingTool.getSimilarColorMap(image)
-    # image = paintingTool.blurring(image)
-    # image = paintingTool.getPaintingColorMap(image)
 
-    def kmeans_color_quantization(image, clusters=8, rounds=1):
-        h, w = image.shape[:2]
-        samples = np.zeros([h*w,3], dtype=np.float32)
-        count = 0
+    # 색 단순화 + 블러 처리
+    blurImage = paintingTool.blurring(  div = 8, 
+                                    radius = 10, 
+                                    sigmaColor =20, 
+                                    medianValue=7)
+    cv2.imwrite(f'./web/static/render_image/working_img.png', blurImage)
+    cv2.imwrite(f'./web/static/render_image/working_img0002.png', blurImage)
+    
+    
+    # Way 2 )
+    print(f'이미지 확장 시작')
+    expandedImage = imageExpand(blurImage, guessSize = True)
+    cv2.imwrite(f'./web/static/render_image/working_img.png', expandedImage)
+    cv2.imwrite(f'./web/static/render_image/working_img0003.png', expandedImage)
+    
+    print(f'컬러 군집화 시작')
+    
+    # K-means 알고리즘을 활용한 컬러 군집화
+    clusteredImage = paintingTool.colorClustering( expandedImage, cluster = 16, round = 1 )
+    cv2.imwrite(f'./web/static/render_image/working_img.png', clusteredImage)
+    cv2.imwrite(f'./web/static/render_image/working_img0004.png', clusteredImage)
 
-        for x in range(h):
-            for y in range(w):
-                samples[count] = image[x][y]
-                count += 1
+    print(f'색상 매칭 시작')
+    # 군집화된 색상을 지정된 색상과 가장 비슷한 색상으로 매칭
+    paintingMap = paintingTool.getPaintingColorMap(clusteredImage)
+    
 
-        compactness, labels, centers = cv2.kmeans(samples,
-                clusters, 
-                None,
-                (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 10000, 0.0001), 
-                rounds, 
-                cv2.KMEANS_RANDOM_CENTERS)
-
-        centers = np.uint8(centers)
-        res = centers[labels.flatten()]
-        return res.reshape((image.shape))
-
-    # image = cv2.GaussianBlur(image, (5,5), 0)
-
-    image = cv2.medianBlur(image, 3)
-    image = kmeans_color_quantization(image, clusters=20)
-
-    cv2.imwrite(f'./web/static/render_image/working_img0002.png', image)
-    cv2.imwrite(f'./web/static/render_image/working_img.png', image)
+    cv2.imwrite(f'./web/static/render_image/working_img.png', paintingMap)
+    cv2.imwrite(f'./web/static/render_image/working_img0005.png', paintingMap)
 
 
+    print(f'색 추출시작')
     # 색 추출
-    colorNames, colors = getColorFromImage(image)
+    colorNames, colors = getColorFromImage(paintingMap)
 
     print(f'색 {len(colorNames)}개')
 
 
     # 선 그리기
     print(f'선 그리기 시작')
-    drawLineTool = DrawLine(image)
-    image2 = drawLineTool.getDrawLine()
+    drawLineTool = DrawLine(paintingMap)
+    lined_image = drawLineTool.getDrawLine()
 
-    cv2.imwrite(f'./web/static/render_image/working_img.png', image2)
-
-    print(f'이미지 확장 시작')
-    image = imageExpand(image, guessSize=True)
-    image2 = imageExpand(image2, guessSize=True)
-    image2 = leaveOnePixel(image2)
-
-    image2 = cv2.convertScaleAbs(image2)
-    cv2.imwrite(f'./web/static/render_image/working_img0003.png', image2)
-    cv2.imwrite(f'./web/static/render_image/working_img.png', image2)
-
-    
-    # 선 합성
-    # image3 = imageMerge(image, image2)
+    cv2.imwrite(f'./web/static/render_image/working_img.png', lined_image)
 
 
-    # 라벨 추출
-    img_lab, lab = getImgLabelFromImage(colors, image)
+    lined_image = cv2.convertScaleAbs(lined_image)
+    cv2.imwrite(f'./web/static/render_image/working_img0006.png', lined_image)
+    cv2.imwrite(f'./web/static/render_image/working_img.png', lined_image)
+
+
+
+    # 레이블 추출
+    img_lab, lab = getImgLabelFromImage(colors, paintingMap)
 
 
     # contour, hierarchy 추출
     print(f'컨투어 추출 시작')
-    contours, hierarchy, thresh = getContoursFromImage(image2.copy())
+    contours, hierarchy, thresh = getContoursFromImage(lined_image.copy())
 
 
     # 결과 이미지 백지화
-    result_img = makeWhiteFromImage(image)
+    result_img = makeWhiteFromImage(expandedImage)
 
     # 결과이미지 렌더링
     # image를 넣으면 원본이미지에 그려주고, result_img에 넣으면 백지에 그려줌
-    result_img = setColorNumberFromContours(result_img, thresh, contours, hierarchy, img_lab, lab, colorNames)
+    # input("넘버링 시작해?")
+    result_img = setColorNumberFromContours2(result_img, thresh, contours, hierarchy, img_lab, lab, colorNames)
 
     cv2.imwrite(f'./web/static/render_image/result_{image_name}', result_img)
     image_name = 'result_'+image_name
