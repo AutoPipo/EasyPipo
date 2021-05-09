@@ -1,6 +1,6 @@
 $(window).on('load', function(){
-    var image_path = '../static/org_image/333.jpg';
-    // var image_path = '../static/org_image/iron.png';
+    // var image_path = '../static/org_image/a3.jpg';
+    var image_path = '../static/org_image/iron.png';
     var pic_size = 600;
 
     var brush_cursor = document.querySelector('.brush_cursor');

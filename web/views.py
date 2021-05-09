@@ -132,7 +132,8 @@ def convert():
 
     # 결과이미지 렌더링
     # image를 넣으면 원본이미지에 그려주고, result_img에 넣으면 백지에 그려줌
-    result_img = setColorNumberFromContours(result_img, thresh, contours, hierarchy, img_lab, lab, colorNames)
+    # input("넘버링 시작해?")
+    result_img = setColorNumberFromContours2(result_img, thresh, contours, hierarchy, img_lab, lab, colorNames)
 
     cv2.imwrite(f'./web/static/render_image/result_{image_name}', result_img)
     image_name = 'result_'+image_name

@@ -12,6 +12,7 @@ import multiprocessing as mp, parmap
 import numba
 from tqdm import trange
 import sys
+from multiprocessing_generator import ParallelGenerator
 
 
 # 색 리스트 반환 함수 (Minku koo)
@@ -48,37 +49,12 @@ def reducial(img, div):
     
 # Contour 영역 내에 텍스트 쓰기
 # https://github.com/bsdnoobz/opencv-code/blob/master/shape-detect.cpp
-def setLabel(image, str, contour, pt):
+def setLabel(image, num, pt):
     fontface = cv2.FONT_HERSHEY_SIMPLEX
     scale = 0.3 # 0.6
     thickness = 1 # 2
 
-
-    ### 정 가운데 ###
-    # size = cv2.getTextSize(str, fontface, scale, thickness)
-    # text_width = size[0][0]
-    # text_height = size[0][1]
-
-    # x, y, width, height = cv2.boundingRect(contour)
-   
-    # pt = (x + int((width - text_width) / 2), y + int((height + text_height) / 2))
-    #################
-
-
-    ### 무게 중심 ###
-    # M = cv2.moments(contour)
-
-    # contour 0인 경우 (예외)
-    # if M['m00'] == 0.0:
-    #     return
-
-    # cx = int( M['m10'] / M['m00'] )
-    # cy = int( M['m01'] / M['m00'] )
-    # pt = (cx, cy)
-    ##################
-
-
-    cv2.putText(image, str, pt, fontface, scale, (0, 0, 0), thickness, 8)
+    cv2.putText(image, num, pt, fontface, scale, (0, 0, 0), thickness, 8)
 
 
 # 컨투어 내부의 색을 평균내서 어느 색인지 체크
@@ -213,38 +189,45 @@ def getImgLabelFromImage(colors, img):
 @numba.jit(forceobj = True)
 def getRadiusCenterCircle(raw_dist):
     dist_transform = cv2.distanceTransform(raw_dist, cv2.DIST_L2, maskSize=5)
-    result = cv2.normalize(dist_transform, None, 255, 0, cv2.NORM_MINMAX, cv2.CV_8UC1)
-    
-    minVal, maxVal, a, center = cv2.minMaxLoc(result)
+    _, radius, _, center = cv2.minMaxLoc(dist_transform)
 
-    return center
+    # result = cv2.normalize(dist_transform, None, 255, 0, cv2.NORM_MINMAX, cv2.CV_8UC1)
+    # minVal, maxVal, a, center = cv2.minMaxLoc(result)
+
+    return radius, center
 
 
+import psutil
+import ray
+import scipy.signal
 
 @numba.jit(forceobj = True)
 def setColorNumberFromContours(img, thresh, contours, hierarchy, img_lab, lab, colorNames):
+    num_cpus = psutil.cpu_count(logical=False)
 
+    ray.init(num_cpus=num_cpus)
+
+    @ray.remote
+    def f(image, random_filter):
+        # Do some image processing.
+        print('h')
+        return scipy.signal.convolve2d(image, random_filter)[::5, ::5]
+
+    image_id = ray.put(image)
+    ray.get([f.remote(image_id, filters[i]) for i in range(num_cpus)])
+
+    return img
+
+@numba.jit(forceobj = True)
+def mp_filter(thresh, splited_contours, contours, hierarchy, img_lab, lab, colorNames):
     k = -1
 
     # 컨투어 별로 체크
-    for idx in trange(len(contours), file=sys.stdout, desc='Set Numbering'):
-    # for idx in range(len(contours)):
-        # print(f'contours..... {idx} / {len(contours)} \t {round(idx / len(contours)*100, 1)}%', end='\r')
+    for idx in trange(len(splited_contours), file=sys.stdout, desc='Set Numbering'):
         contour = contours[idx]
-
-        # if cv2.isContourConvex(contour):
-        #     epsilon = 0.01 * cv2.arcLength(contour, True)
-        #     contour = cv2.approxPolyDP(contour, epsilon, True)
-
-        # print(f'이거 봐라:{img_lab.shape}')
-        # print(f'이거 봐라2:{thresh.shape}')
 
         # 면적 
         if cv2.contourArea(contour) < 100: continue
-
-        # 둘레
-        # if cv2.arcLength(contour)
-        # if contour.shape[0] < 20 : continue
 
         contour_org = contour.copy()
 
@@ -279,6 +262,54 @@ def setColorNumberFromContours(img, thresh, contours, hierarchy, img_lab, lab, c
             center = (center[0], center[1])
             setLabel(img, color_text, contour_org, center)
             cv2.imwrite(f'./web/static/render_image/working_img.png', img)
+
+    return img
+
+
+# @numba.jit(forceobj = True)
+def setColorNumberFromContours2(img, thresh, contours, hierarchy, img_lab, lab, colorNames):
+    # 컨투어 별로 체크
+    for idx in trange(len(contours), file=sys.stdout, desc='Set Numbering'):
+    # for idx in range(len(contours)):
+        # print(f'contours..... {idx} / {len(contours)} \t {round(idx / len(contours)*100, 1)}%', end='\r')
+        contour = contours[idx]
+
+
+        # 면적 
+        if cv2.contourArea(contour) < 100: continue
+
+        # 이거 아마 폐곡선 체크일걸
+        if cv2.isContourConvex(contour):
+            epsilon = 0.1 * cv2.arcLength(contour, True)
+            contour = cv2.approxPolyDP(contour, epsilon, True)
+
+        chlidren = [ i for i, ii in enumerate(hierarchy[0]) if ii[3] == idx ]
+
+
+        raw_dist = np.zeros(thresh.shape, dtype=np.uint8)
+        cv2.drawContours(raw_dist, contour, -1, (255, 255, 255), 1)
+        cv2.fillPoly(raw_dist, pts =[contour], color=(255, 255, 255))
+        cv2.fillPoly(raw_dist, pts =[contours[i] for i in chlidren], color=(0, 0, 0))
+
+
+        # 내접원 반지름, 중심좌표 추출
+        radius, center = getRadiusCenterCircle(raw_dist)
+
+        # 반지름 작은거 무시
+        if radius < 15: continue
+
+        
+        if center is not None:
+            #    컨투어를 그림
+            cv2.drawContours(img, [contour], -1, (0, 0, 0), 1)
+            cv2.circle(img, center, int(radius), (0,0,255), 1, cv2.LINE_8, 0)
+
+            # 컨투어 내부에 검출된 색을 표시
+            color_text = label(img_lab, contour, lab, colorNames)
+
+            center = (center[0], center[1])
+            setLabel(img, color_text, center)
+            # cv2.imwrite(f'./web/static/render_image/working_img.png', img)
 
 
             # contour 1개씩 그려지는거 확인
