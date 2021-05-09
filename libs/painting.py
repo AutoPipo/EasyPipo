@@ -110,8 +110,8 @@ class Painting:
         samples = np.zeros([ height * width, 3 ], dtype=np.float32)
         
         count = 0
-        for x in range(h):
-            for y in range(w):
+        for x in range(height):
+            for y in range(width):
                 samples[count] = image[x][y]
                 count += 1
         
@@ -125,7 +125,7 @@ class Painting:
                     clusters, # 군집 개수
                     None, # 각 샘플의 군집 번호 정렬
                     
-                    '''
+                    
                     # criteria (종료 기준) : 3 element tuple (method, max_iter, epsilon)
                     
                     # method
@@ -135,7 +135,7 @@ class Painting:
                     
                     # max_iter = 최대 반복 횟수 지정
                     # epsilon = 요구되는 특정 정확도
-                    '''
+                    
                     
                     criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 
                     10000,
@@ -143,13 +143,13 @@ class Painting:
                     # attempts : 다른 initial centroid 이용해 반복 실행할 횟수
                     attempts = rounds, 
                     
-                    '''
+                    
                     # flags : To set the Initial Centroids
                     # cv2.KMEANS_RANDOM_CENTERS > 랜덤 선택
                     # cv2.KMEANS_PP_CENTERS > K-Means++ 알고리즘
                     # cv2.KMEANS_USE_INITIAL_LABELS > 사용자 선택
                     # 중 하나 선택
-                    '''
+                    
                     
                     flags = cv2.KMEANS_PP_CENTERS)
         
