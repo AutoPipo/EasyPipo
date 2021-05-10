@@ -68,9 +68,9 @@ def convert():
 
     # 색 단순화 + 블러 처리
     blurImage = paintingTool.blurring(  div = 8, 
-                                    radius = 10, 
-                                    sigmaColor =20, 
-                                    medianValue=7)
+                                        radius = 10, 
+                                        sigmaColor =20, 
+                                        medianValue=7)
     cv2.imwrite(f'./web/static/render_image/working_img.png', blurImage)
     cv2.imwrite(f'./web/static/render_image/working_img0002.png', blurImage)
     
