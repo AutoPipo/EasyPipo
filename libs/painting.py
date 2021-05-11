@@ -143,13 +143,11 @@ class Painting:
                     # attempts : 다른 initial centroid 이용해 반복 실행할 횟수
                     attempts = rounds, 
                     
-                    
                     # flags : To set the Initial Centroids
                     # cv2.KMEANS_RANDOM_CENTERS > 랜덤 선택
                     # cv2.KMEANS_PP_CENTERS > K-Means++ 알고리즘
                     # cv2.KMEANS_USE_INITIAL_LABELS > 사용자 선택
                     # 중 하나 선택
-                    
                     
                     flags = cv2.KMEANS_PP_CENTERS)
         
