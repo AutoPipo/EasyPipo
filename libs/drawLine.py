@@ -5,6 +5,7 @@
 # Update : 21.05.11
 # Author : Minku Koo
 '''
+
 import cv2
 import numpy as np
 from skimage.morphology import skeletonize
