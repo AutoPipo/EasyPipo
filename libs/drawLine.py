@@ -2,7 +2,7 @@
 # Draw Line on Image
 
 # Start : 21.04.01
-# Update : 21.05.04
+# Update : 21.05.11
 # Author : Minku Koo
 '''
 import cv2
@@ -43,7 +43,11 @@ class DrawLine:
         new_map = self.colorImage.copy()
         lineMap = self.lineMap // 255
         return np.multiply(new_map, lineMap) 
-        
+    
+    def drawOutline(self, image):
+        image[0], image[-1], image[:,0], image[:,-1] = 0, 0, 0, 0
+        return image
+    
 
 def leaveOnePixel(lineImage):
     image = lineImage.copy()
@@ -64,9 +68,11 @@ if __name__ == "__main__":
     
     drawLine = DrawLine(image)
     lineMap = drawLine.getDrawLine()
+    outlines = drawLine.drawOutline(lineMap)
     lineOnImage = drawLine.getLineOnImage()
     
     onePixelMap = leaveOnePixel(expandImage)
+    
     
     '''
     pass
