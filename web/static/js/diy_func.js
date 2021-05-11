@@ -1,5 +1,5 @@
 $(window).on('load', function(){
-    var image_path = '../static/org_image/111.jpg';
+    var image_path = '../static/org_image/lala.jpg';
     // var image_path = '../static/org_image/iron.png';
     var pic_size = 600;
 

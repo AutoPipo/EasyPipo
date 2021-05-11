@@ -84,11 +84,11 @@ def convert():
     print(f'컬러 군집화 시작')
     
     # K-means 알고리즘을 활용한 컬러 군집화
-    clusteredImage = paintingTool.colorClustering( expandedImage, cluster = 16, round = 1 )
+    clusteredImage = paintingTool.colorClustering( expandedImage, cluster = 36, round = 1 )
     cv2.imwrite(f'./web/static/render_image/working_img.png', clusteredImage)
     cv2.imwrite(f'./web/static/render_image/working_img0004.png', clusteredImage)
 
-    print(f'색상 매칭 시작')
+    print(f'컬러 매칭 시작')
     # 군집화된 색상을 지정된 색상과 가장 비슷한 색상으로 매칭
     paintingMap = paintingTool.getPaintingColorMap(clusteredImage)
     
@@ -97,11 +97,11 @@ def convert():
     cv2.imwrite(f'./web/static/render_image/working_img0005.png', paintingMap)
 
 
-    print(f'색 추출시작')
+    print(f'컬러 추출 시작', end='\t')
     # 색 추출
     colorNames, colors = getColorFromImage(paintingMap)
 
-    print(f'색 {len(colorNames)}개')
+    print(f'→\t컬러 {len(colorNames)}개')
 
 
     # 선 그리기
@@ -132,13 +132,16 @@ def convert():
 
     # 결과이미지 렌더링
     # image를 넣으면 원본이미지에 그려주고, result_img에 넣으면 백지에 그려줌
-    # input("넘버링 시작해?")
+    print(f'넘버링 시작')
     result_img = setColorNumberFromContours2(result_img, thresh, contours, hierarchy, img_lab, lab, colorNames)
 
-    cv2.imwrite(f'./web/static/render_image/result_{image_name}', result_img)
-    image_name = 'result_'+image_name
+    print(f'컬러 레이블링 시작')
+    result_img = setColorLabel(result_img, colorNames, colors)
 
-    for i in range(len(colors)):
-        print(f'{colorNames[i]}\t{colors[i]}')
+    cv2.imwrite(f'./web/static/render_image/result_{image_name}', result_img)
+    cv2.imwrite(f'./web/static/render_image/working_img0007.png', result_img)
+    image_name = 'result_'+image_name
+    print(f'작업 완료')
+
 
     return jsonify(img_name=image_name, area_arr=area_arr)
