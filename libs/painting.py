@@ -26,6 +26,7 @@ class Painting:
         self.filename = self.fileBasename.split(".")[0] # file base name
     
     # image blurring
+    @numba.jit(forceobj = True)
     def blurring(self, 
                 div = 8, 
                 radius = 10, 
@@ -75,6 +76,7 @@ class Painting:
         return self.paintingMap
     
     # counting numbers of color
+    @numba.jit(forceobj = True)
     def getNumberOfColor(self, image):
         """
         Parameters
@@ -200,6 +202,7 @@ class Painting:
         return np.array( [int(hex[i:i+2], 16) for i in (4, 2, 0)] ) 
 
 
+@numba.jit(forceobj = True)
 def imageExpand(image, guessSize=False, size = 3):
     """
     Parameters

@@ -108,6 +108,7 @@ def convert():
     print(f'선 그리기 시작')
     drawLineTool = DrawLine(paintingMap)
     lined_image = drawLineTool.getDrawLine()
+    lined_image = drawLineTool.drawOutline(lined_image)
 
     cv2.imwrite(f'./web/static/render_image/working_img.png', lined_image)
 
