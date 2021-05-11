@@ -266,7 +266,7 @@ def mp_filter(thresh, splited_contours, contours, hierarchy, img_lab, lab, color
     return img
 
 
-# @numba.jit(forceobj = True)
+@numba.jit(forceobj = True)
 def setColorNumberFromContours2(img, thresh, contours, hierarchy, img_lab, lab, colorNames):
     # 컨투어 별로 체크
     for idx in trange(len(contours), file=sys.stdout, desc='Set Numbering'):
@@ -276,12 +276,12 @@ def setColorNumberFromContours2(img, thresh, contours, hierarchy, img_lab, lab, 
 
 
         # 면적 
-        if cv2.contourArea(contour) < 100: continue
+        if cv2.contourArea(contour) < 80: continue
 
         # 이거 아마 폐곡선 체크일걸
-        if cv2.isContourConvex(contour):
-            epsilon = 0.1 * cv2.arcLength(contour, True)
-            contour = cv2.approxPolyDP(contour, epsilon, True)
+        # if cv2.isContourConvex(contour):
+        #     epsilon = 0.1 * cv2.arcLength(contour, True)
+        #     contour = cv2.approxPolyDP(contour, epsilon, True)
 
         chlidren = [ i for i, ii in enumerate(hierarchy[0]) if ii[3] == idx ]
 
@@ -296,7 +296,7 @@ def setColorNumberFromContours2(img, thresh, contours, hierarchy, img_lab, lab, 
         radius, center = getRadiusCenterCircle(raw_dist)
 
         # 반지름 작은거 무시
-        if radius < 15: continue
+        if radius < 10: continue
 
         
         if center is not None:
@@ -315,5 +315,19 @@ def setColorNumberFromContours2(img, thresh, contours, hierarchy, img_lab, lab, 
             # contour 1개씩 그려지는거 확인
             # cv2.imshow('draw_contour', img)
             # cv2.waitKey(0)
+
+    return img
+
+    
+@numba.jit(forceobj = True)
+def setColorLabel(img, colorNames, colors):
+    fontface = cv2.FONT_HERSHEY_SIMPLEX
+    scale = 1 # 0.6
+    thickness = 2 # 2
+
+    for idx in range(len(colors)):
+        cv2.putText(img, colorNames[idx], (20, 40*(idx+1)), fontface, scale, (0, 0, 0), thickness, 8)
+        cv2.rectangle(img, (60, 40*(idx+1)-20), (90, 40*(idx+1)), tuple([int(i) for i in colors[idx]]), -1, 8)
+        # cv2.imwrite(f'./web/static/render_image/working_img.png', img)
 
     return img
