@@ -304,13 +304,13 @@ def setColorNumberFromContours2(img, thresh, contours, hierarchy, img_lab, lab, 
         
         if center is not None:
             #    컨투어를 그림
-            cv2.drawContours(img, [contour], -1, (0, 0, 0), 1)
-            # cv2.circle(img, center, int(radius), (0,0,255), 1, cv2.LINE_8, 0)
+            cv2.drawContours(img, [contour], -1, (100, 100, 100), 1)
+            cv2.circle(img, center, int(radius), (0, 0, 255), 1, cv2.LINE_8, 0)
 
             # 컨투어 내부에 검출된 색을 표시
             color_text = label(img_lab, contour, lab, colorNames)
 
-            center = (center[0], center[1])
+            center = (center[0]-3, center[1])
             setLabel(img, color_text, center)
             # cv2.imwrite(f'./web/static/render_image/working_img.png', img)
 
@@ -329,7 +329,7 @@ def setColorLabel(img, colorNames, colors):
     thickness = 2 # 2
 
     for idx in range(len(colors)):
-        cv2.putText(img, colorNames[idx], (20, 40*(idx+1)), fontface, scale, (0, 0, 0), thickness, 8)
+        cv2.putText(img, colorNames[idx], (20, 40*(idx+1)), fontface, scale, (50, 50, 50), thickness, 8)
         cv2.rectangle(img, (60, 40*(idx+1)-20), (90, 40*(idx+1)), tuple([int(i) for i in colors[idx]]), -1, 8)
         # cv2.imwrite(f'./web/static/render_image/working_img.png', img)
 
