@@ -11,6 +11,7 @@ import cv2
 import os
 import numpy as np
 from libs.colorCode import HexColorCode
+import numba
 # from colorCode import HexColorCode
 
 class Painting:
@@ -61,6 +62,7 @@ class Painting:
         return blurring
    
     # color clustering
+    @numba.jit(forceobj = True)
     def colorClustering(self, image, cluster = 16, round = 1): 
         self.colorClusteredMap, sse = self.__kmeansColorCluster(image, 
                                                                 clusters = cluster, 
@@ -95,6 +97,7 @@ class Painting:
                 
         return len(colorDict.keys())
     
+    @numba.jit(forceobj = True)
     def __kmeansColorCluster(self, image, clusters, rounds):
         """
         Parameters
@@ -158,6 +161,7 @@ class Painting:
         
         return res.reshape((image.shape)), round( compactness ** 0.5 // 10, 2 )
     
+    @numba.jit(forceobj = True)
     def __createPaintingMap(self, colorImage):
         """
         Parameters

@@ -16,6 +16,7 @@ from multiprocessing_generator import ParallelGenerator
 
 
 # 색 리스트 반환 함수 (Minku koo)
+@numba.jit(forceobj = True)
 def createColorDict(image):
     colorDict = {}
     for y, row in enumerate(image):
@@ -58,6 +59,7 @@ def setLabel(image, num, pt):
 
 
 # 컨투어 내부의 색을 평균내서 어느 색인지 체크
+@numba.jit(forceobj = True)
 def label(image, contour, lab, colorNames):
     mask = np.zeros(image.shape[:2], dtype="uint8")
 
@@ -168,6 +170,7 @@ def getContoursFromImage(img):
     return contours, hierarchy, image_bin
 
 
+@numba.jit(forceobj = True)
 def makeWhiteFromImage(img):
     return np.zeros(img.copy().shape) + 255
 

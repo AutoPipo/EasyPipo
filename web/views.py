@@ -84,7 +84,7 @@ def convert():
     print(f'컬러 군집화 시작')
     
     # K-means 알고리즘을 활용한 컬러 군집화
-    clusteredImage = paintingTool.colorClustering( expandedImage, cluster = 36, round = 1 )
+    clusteredImage = paintingTool.colorClustering( expandedImage, cluster = 48, round = 1 )
     cv2.imwrite(f'./web/static/render_image/working_img.png', clusteredImage)
     cv2.imwrite(f'./web/static/render_image/working_img0004.png', clusteredImage)
 
