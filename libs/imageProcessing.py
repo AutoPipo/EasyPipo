@@ -13,6 +13,7 @@ import numba
 from tqdm import trange
 import sys
 from multiprocessing_generator import ParallelGenerator
+from matplotlib import pyplot as plt
 
 
 # 색 리스트 반환 함수 (Minku koo)
@@ -54,6 +55,10 @@ def setLabel(image, num, pt):
     fontface = cv2.FONT_HERSHEY_SIMPLEX
     scale = 0.3 # 0.6
     thickness = 1 # 2
+
+    textsize = cv2.getTextSize(num, fontface, scale, thickness)[0]
+    pt = (int(pt[0]-(textsize[0]/2)), int(pt[1]+(textsize[1]/2)))
+
 
     cv2.putText(image, num, pt, fontface, scale, (0, 0, 0), thickness, 8)
 
@@ -295,6 +300,17 @@ def setColorNumberFromContours2(img, thresh, contours, hierarchy, img_lab, lab, 
         cv2.fillPoly(raw_dist, pts =[contours[i] for i in chlidren], color=(0, 0, 0))
 
 
+        # fig = plt.figure()
+
+        # a = np.copy(255-raw_dist)
+        # a = cv2.resize(a, dsize=(900, 1186), interpolation=cv2.INTER_AREA)
+        # cv2.imshow('hierarchy', a)
+        # cv2.waitKey(0)
+        # ax1 = fig.add_subplot(1, 2, 1)
+        # ax1.imshow(raw_dist)
+        # ax1.set_title('hierarchy')
+        # ax1.axis("off")
+
         # 내접원 반지름, 중심좌표 추출
         radius, center = getRadiusCenterCircle(raw_dist)
 
@@ -310,14 +326,22 @@ def setColorNumberFromContours2(img, thresh, contours, hierarchy, img_lab, lab, 
             # 컨투어 내부에 검출된 색을 표시
             color_text = label(img_lab, contour, lab, colorNames)
 
-            center = (center[0]-3, center[1])
+            center = (center[0], center[1])
             setLabel(img, color_text, center)
             # cv2.imwrite(f'./web/static/render_image/working_img.png', img)
 
 
             # contour 1개씩 그려지는거 확인
-            # cv2.imshow('draw_contour', img)
+            # b = np.copy(255-raw_dist)
+            # b = cv2.resize(b, dsize=(900, 1186), interpolation=cv2.INTER_AREA)
+            # cv2.imshow('draw_contour', b)
             # cv2.waitKey(0)
+            
+            # ax2 = fig.add_subplot(1, 2, 2)
+            # ax2.imshow(img)
+            # ax2.set_title('draw_contour')
+            # ax2.axis("off")
+            # plt.show()
 
     return img
 
