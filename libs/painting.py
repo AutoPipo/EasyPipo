@@ -2,7 +2,7 @@
 # Image to Painting Process
 
 # Start : 21.04.01
-# Update : 21.05.09
+# Update : 21.05.12
 # Author : Minku Koo
 '''
 
@@ -15,8 +15,8 @@ import numba
 # from colorCode import HexColorCode
 
 '''
-1. 색상 거리 좀 더 정확한 값 반환하기
-2. kmeans 이후, k개 색상 : 지정 색상 매칭 함수
+1. 색상 거리 좀 더 정확한 값 반환하기 > clear
+2. kmeans 속도
 
 '''
 
@@ -225,6 +225,7 @@ class Painting:
     def __hex2bgr(self, hex):
         return np.array( [int(hex[i:i+2], 16) for i in (4, 2, 0)] ) 
     
+    # convert BGR to HSV
     def __bgr_to_hsv(self, color):
         b, g, r = tuple( color )
         r, g, b = r/255.0, g/255.0, b/255.0
@@ -240,7 +241,8 @@ class Painting:
         
         v = mx*100
         return h, s, v
-        
+    
+    # calc HSV Color Distatnce
     def __hsvDistance(self, h1, h2):
         h0, s0, v0 = h1
         h1, s1, v1 = h2
