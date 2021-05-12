@@ -14,6 +14,12 @@ from libs.colorCode import HexColorCode
 import numba
 # from colorCode import HexColorCode
 
+'''
+1. 색상 거리 좀 더 정확한 값 반환하기
+2. kmeans 이후, k개 색상 : 지정 색상 매칭 함수
+
+'''
+
 class Painting:
     def __init__(self, imagepath):
         # K-Means 알고리즘 이용한 색상 군집화 이미지
@@ -63,7 +69,6 @@ class Painting:
         return blurring
    
     # color clustering
-    @numba.jit(forceobj = True)
     def colorClustering(self, image, cluster = 16, round = 1): 
         self.colorClusteredMap, sse = self.__kmeansColorCluster(image, 
                                                                 clusters = cluster, 
@@ -98,6 +103,7 @@ class Painting:
                     colorDict[bgr] = [ (y, x) ]
                 
         return len(colorDict.keys())
+    
     
     @numba.jit(forceobj = True)
     def __kmeansColorCluster(self, image, clusters, rounds):
@@ -140,11 +146,9 @@ class Painting:
                     
                     # max_iter = 최대 반복 횟수 지정
                     # epsilon = 요구되는 특정 정확도
-                    
-                    
                     criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 
-                    10000,
-                    0.0001),
+                                10000, # max_iter 
+                                0.0001), # epsilon 
                     # attempts : 다른 initial centroid 이용해 반복 실행할 횟수
                     attempts = rounds, 
                     
@@ -178,29 +182,74 @@ class Painting:
         for y, row in enumerate(colorImage):
             for x, color in enumerate(row):
                 t_color = tuple(color)
-                if t_color in colorDict: 
+                if t_color in colorDict:
                     img[y][x] = colorDict[t_color]
                     continue
-                    
-                absSum = np.sum( np.abs(HexColor - color) , axis = 1 )
-                index = np.where( absSum ==  np.min( absSum ) )[0]
+                
+                color = np.array( [int(x) for x in color] )
+                absSum = np.sum( np.square( np.abs(HexColor - color) ) , axis = 1 )
+                indexs = np.where( absSum ==  np.min( absSum ) )[0]
+                #      colorsys.rgb_to_hsv(0.2, 0.4, 0.4)
                 # 여기서 더 비슷한 이미지 2~3개중에 결정하는 코드 삽입
                 
-                img[y][x] = HexColor[index[0] ]
-                colorDict[t_color] = HexColor[index[0] ]
+                # bgr 색상 거리가 같은 색상 존재할 경우
+                # hsv로 판단
+                if len(indexs)>1: 
+                    hsv_dists = []
+                    nowHSV = self.__bgr_to_hsv(t_color)
+                    for index in indexs:
+                        similarColor = HexColor[ index ]
+                        hsvValue = self.__bgr_to_hsv(similarColor)
+                        hsvDist = self.__hsvDistance( hsvValue, nowHSV )
+                        hsv_dists.append( hsvDist )
+                        
+                    index  = indexs[hsv_dists.index(min(hsv_dists)) ]
+                    
+                else:
+                    index = indexs[0]
+                    
+                img[y][x] = HexColor[ index ]
+                colorDict[t_color] = HexColor[ index ]
                 
         return img
     
     # BGR Color tuple convert to Hex Color String Code
     def __bgr2hex(self, bgr):
-        hexColor = ""
-        for color in bgr: hexColor+= hex(color).split('x')[-1]
-        return hexColor
+        b, g, r = bgr
+        return ('%02x%02x%02x' % (b, g, r)).upper()
+        # hexColor = ""
+        # for color in bgr: hexColor += hex(color).split('x')[-1]
+        # return hexColor
     
     # Hex Color String Code convert to BGR Color np.array
     def __hex2bgr(self, hex):
         return np.array( [int(hex[i:i+2], 16) for i in (4, 2, 0)] ) 
-
+    
+    def __bgr_to_hsv(self, color):
+        b, g, r = tuple( color )
+        r, g, b = r/255.0, g/255.0, b/255.0
+        mx = max(r, g, b)
+        mn = min(r, g, b)
+        df = mx-mn
+        if mx == mn: h = 0
+        elif mx == r: h = (60 * ((g-b)/df) + 360) % 360
+        elif mx == g: h = (60 * ((b-r)/df) + 120) % 360
+        elif mx == b: h = (60 * ((r-g)/df) + 240) % 360
+        if mx == 0: s = 0
+        else: s = (df/mx)*100
+        
+        v = mx*100
+        return h, s, v
+        
+    def __hsvDistance(self, h1, h2):
+        h0, s0, v0 = h1
+        h1, s1, v1 = h2
+        
+        dh = min(abs(h1-h0), 360-abs(h1-h0)) / 180.0
+        ds = abs(s1-s0)
+        dv = abs(v1-v0) / 255.0
+        return (dh*dh+ds*ds+dv*dv) ** 0.5
+        
 
 @numba.jit(forceobj = True)
 def imageExpand(image, guessSize=False, size = 3):
