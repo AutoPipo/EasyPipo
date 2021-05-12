@@ -17,9 +17,9 @@ def imageSave(image, directory = "./result-image/", name = "", id=""):
 # print("비교 시간 :", round((time.time() - start), 3) ,"초.." )
 
 dir = "./test-image/"
-file = "lalas"
-base = ".png"
-id = "clur-pp2"
+file = "a5"
+base = ".jpg"
+id = "colorcount32"
 
 
 
@@ -63,36 +63,47 @@ print("time :", round((time.time() - start), 3) ,"초 정도.." )
 # paintingMap = painting.getPaintingColorMap(blurImage) # similarMap
 # imageSave(paintingMap, name = file+"-painting", id=id)
 # print("time :", round((time.time() - start), 3) ,"초 정도.." )
+
+
 print("========= Expand Process ========")
 start = time.time()
-blurImage = imageExpand(blurImage, guessSize = True)
-imageSave(blurImage, name = file+"-expand", id=id)
+similarMap = imageExpand(blurImage, guessSize = False, size=1)
+imageSave(similarMap, name = file+"-expand", id=id)
 print("time :", round((time.time() - start), 3) ,"초 정도.." )
+
 
 
 # 바뀐 위치
 print("========  Similar Map =======")
 start = time.time()
-similarMap = painting.colorClustering( blurImage, cluster = 24 )
+similarMap = painting.colorClustering( similarMap, cluster = 32 )
 imageSave(similarMap, name = file+"-kmeans", id=id)
 print("time :", round((time.time() - start), 3) ,"초 정도.." )
 
+# print("------ color count after cluster -----")
+# color_count = painting.getNumberOfColor(similarMap)
+# print(color_count, "개")
+
+
+print("type of similar", type(similarMap))
+# print(similarMap)
 print("========  Painting Color Map  =======")
+start = time.time()
 paintingMap = painting.getPaintingColorMap(similarMap)
 imageSave(paintingMap, name = file+"-paintings", id=id)
+print("time :", round((time.time() - start), 3) ,"초 정도.." )
 
 '''
+
 '''
 # colorDict = painting.getColorDict(paintingMap)
 print("=="*20)
 # print("COLOR NUMBER : ", len(colorDict))
 
 
-print("------ color count -----")
-color_count = painting.getNumberOfColor(paintingMap)
-print(color_count, "개")
-
-
+# print("------ color count -----")
+# color_count = painting.getNumberOfColor(paintingMap)
+# print(color_count, "개")
 
 
 
