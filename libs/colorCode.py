@@ -266,9 +266,9 @@ F4A460,DAA520,
 472B09,683B04,432F16,65441C,492902,5D3A0F,
 076C0E,104913,17731D,1F6724,24782A,06B912,1E6723,
 0E0F58,06086D,040695,090A56,1A1A42,14154B,
-610B0B,8A0808,B40404,3B170B,61210B,3B240B,61380B,
-3B240B,61380B,0B173B,0B2161,3B0B17,610B21,2E2E2E,0B3B17,0B6138,
-0B610B,0B3B0B,0B0B3B,0B0B61,0B173B,0B2161,3B0B0B
+610B0B,8A0808,B40404,3B170B,61210B,
+3B240B,61380B,0B173B,3B0B17,610B21,2E2E2E,0B3B17,0B6138,
+0B610B,0B3B0B,0B0B3B,0B0B61,0B2161,3B0B0B
 """
         
         self.hexColorCodeList = self.hexColorCode.replace("\n", "").split(",")
@@ -276,15 +276,6 @@ F4A460,DAA520,
 if __name__ == "__main__":
     code = HexColorCode().hexColorCodeList
     print(len(code))
+    
             
-            
-            
-            
-            
-            
-            
-            
-            
-            
-        
         
