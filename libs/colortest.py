@@ -17,8 +17,8 @@ def imageSave(image, directory = "./result-image/", name = "", id=""):
 # print("비교 시간 :", round((time.time() - start), 3) ,"초.." )
 
 dir = "./test-image/"
-file = "a5"
-base = ".jpg"
+file = "iron"
+base = ".png"
 id = "colorcount32"
 
 
@@ -76,7 +76,7 @@ print("time :", round((time.time() - start), 3) ,"초 정도.." )
 # 바뀐 위치
 print("========  Similar Map =======")
 start = time.time()
-similarMap = painting.colorClustering( similarMap, cluster = 32 )
+similarMap = painting.colorClustering( similarMap, cluster = 24 )
 imageSave(similarMap, name = file+"-kmeans", id=id)
 print("time :", round((time.time() - start), 3) ,"초 정도.." )
 
@@ -97,7 +97,7 @@ print("time :", round((time.time() - start), 3) ,"초 정도.." )
 
 '''
 # colorDict = painting.getColorDict(paintingMap)
-print("=="*20)
+# print("=="*20)
 # print("COLOR NUMBER : ", len(colorDict))
 
 
