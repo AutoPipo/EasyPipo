@@ -17,7 +17,6 @@ import numba
 '''
 1. 색상 거리 좀 더 정확한 값 반환하기 > clear
 2. kmeans 속도
-
 '''
 
 class Painting:
@@ -30,6 +29,8 @@ class Painting:
         self.image = cv2.imread(imagepath) # Original Image
         self.fileBasename = os.path.basename(imagepath) # file name
         self.filename = self.fileBasename.split(".")[0] # file base name
+        
+        self.clusteredColors = []
     
     # image blurring
     @numba.jit(forceobj = True)
@@ -217,15 +218,13 @@ class Painting:
     def __bgr2hex(self, bgr):
         b, g, r = bgr
         return ('%02x%02x%02x' % (b, g, r)).upper()
-        # hexColor = ""
-        # for color in bgr: hexColor += hex(color).split('x')[-1]
-        # return hexColor
-    
+        
     # Hex Color String Code convert to BGR Color np.array
     def __hex2bgr(self, hex):
         return np.array( [int(hex[i:i+2], 16) for i in (4, 2, 0)] ) 
     
     # convert BGR to HSV
+    # https://www.w3resource.com/python-exercises/math/python-math-exercise-77.php
     def __bgr_to_hsv(self, color):
         b, g, r = tuple( color )
         r, g, b = r/255.0, g/255.0, b/255.0
@@ -243,6 +242,7 @@ class Painting:
         return h, s, v
     
     # calc HSV Color Distatnce
+    # https://stackoverflow.com/questions/35113979/calculate-distance-between-colors-in-hsv-space
     def __hsvDistance(self, h1, h2):
         h0, s0, v0 = h1
         h1, s1, v1 = h2
