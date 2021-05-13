@@ -2,7 +2,7 @@
 # Image to Painting Process
 
 # Start : 21.04.01
-# Update : 21.05.12
+# Update : 21.05.13
 # Author : Minku Koo
 '''
 
@@ -14,10 +14,6 @@ from libs.colorCode import HexColorCode
 import numba
 # from colorCode import HexColorCode
 
-'''
-1. 색상 거리 좀 더 정확한 값 반환하기 > clear
-2. kmeans 속도
-'''
 
 class Painting:
     def __init__(self, imagepath):
@@ -30,7 +26,8 @@ class Painting:
         self.fileBasename = os.path.basename(imagepath) # file name
         self.filename = self.fileBasename.split(".")[0] # file base name
         
-        self.clusteredColors = []
+        self.hexColorCode =  HexColorCode().hexColorCodeList
+        self.clusteredColors = np.array([])
     
     # image blurring
     @numba.jit(forceobj = True)
@@ -76,9 +73,21 @@ class Painting:
                                                                 rounds = round)
         return self.colorClusteredMap
    
+    def allColorMatcing(self, image):
+        hexColors = np.array( [ self.__hex2bgr(hex) for hex in self.hexColorCode ] )
+        self.paintingMap = self.__matchColors(image, self.clusteredColors, hexColors)
+        #  파라미터 순서 꼭 지켜야함
+        return self.paintingMap
+   
+    # 여기에 확장한 이미지랑 클러스터 칼라 매칭 
+    def expandImageColorMatch(self, expandImage):
+        self.colorClusteredMap =  self.__matchColors(expandImage, self.clusteredColors)
+        return self.colorClusteredMap
+    
     # color on image match with specified hex colors
     def getPaintingColorMap(self, clusteredImage):
-        self.paintingMap = self.__createPaintingMap(clusteredImage)
+        hexColors = np.array( [ self.__hex2bgr(hex) for hex in self.hexColorCode ] )
+        self.paintingMap = self.__matchColors(clusteredImage, hexColors)
         return self.paintingMap
     
     # counting numbers of color
@@ -106,7 +115,7 @@ class Painting:
         return len(colorDict.keys())
     
     
-    @numba.jit(forceobj = True)
+    # @numba.jit(forceobj = True)
     def __kmeansColorCluster(self, image, clusters, rounds):
         """
         Parameters
@@ -162,22 +171,48 @@ class Painting:
                     flags = cv2.KMEANS_PP_CENTERS)
         
         centers = np.uint8(centers)
+        self.clusteredColors = centers
         res = centers[labels.flatten()]
         
         return res.reshape((image.shape)), round( compactness ** 0.5 // 10, 2 )
     
-    @numba.jit(forceobj = True)
-    def __createPaintingMap(self, colorImage):
+    # @numba.jit(forceobj = True)
+    def __matchColors(self, colorImage, *matchColors):
         """
         Parameters
             colorImage <np.ndarray> : Image
+            matchColors 
         returns
             img <np.ndarray> : Painted Image
         """
         
+        def getSimilarColor(color, colors):
+            absSum = np.sum( np.square( np.abs(colors - color) ) , axis = 1 )
+            indexs = np.where( absSum ==  np.min( absSum ) )[0]
+            if len(indexs)>1: 
+                hsv_dists = []
+                nowHSV = self.__bgr_to_hsv(t_color)
+                
+                for index in indexs:
+                    similarColor = colors[ index ]
+                    hsvValue = self.__bgr_to_hsv(similarColor)
+                    hsvDist = self.__hsvDistance( hsvValue, nowHSV )
+                    hsv_dists.append( hsvDist )
+                    
+                index  = indexs[hsv_dists.index(min(hsv_dists)) ]
+            else:
+                index = indexs[0]
+                
+            return colors[ index ]
+        
         img = colorImage.copy()
-        colorCode =  HexColorCode().hexColorCodeList
-        HexColor = np.array( [ self.__hex2bgr(hex) for hex in colorCode ] )
+        
+        if len(matchColors)==1:
+            oneProcess = False
+            clusteredColor = matchColors[0]
+        else:
+            oneProcess = True
+            clusteredColor, paintingColor = matchColors
         
         colorDict = {}
         for y, row in enumerate(colorImage):
@@ -188,7 +223,8 @@ class Painting:
                     continue
                 
                 color = np.array( [int(x) for x in color] )
-                absSum = np.sum( np.square( np.abs(HexColor - color) ) , axis = 1 )
+                '''
+                absSum = np.sum( np.square( np.abs(matchColor - color) ) , axis = 1 )
                 indexs = np.where( absSum ==  np.min( absSum ) )[0]
                 #      colorsys.rgb_to_hsv(0.2, 0.4, 0.4)
                 # 여기서 더 비슷한 이미지 2~3개중에 결정하는 코드 삽입
@@ -198,19 +234,27 @@ class Painting:
                 if len(indexs)>1: 
                     hsv_dists = []
                     nowHSV = self.__bgr_to_hsv(t_color)
+                    
                     for index in indexs:
-                        similarColor = HexColor[ index ]
+                        similarColor = matchColor[ index ]
                         hsvValue = self.__bgr_to_hsv(similarColor)
                         hsvDist = self.__hsvDistance( hsvValue, nowHSV )
                         hsv_dists.append( hsvDist )
                         
                     index  = indexs[hsv_dists.index(min(hsv_dists)) ]
-                    
                 else:
                     index = indexs[0]
                     
-                img[y][x] = HexColor[ index ]
-                colorDict[t_color] = HexColor[ index ]
+                img[y][x] = matchColor[ index ]
+                '''
+                similarColor = getSimilarColor(color, clusteredColor)
+                
+                # painting까지 같이하는지
+                if oneProcess:
+                    similarColor = getSimilarColor(similarColor, paintingColor)
+                
+                img[y][x] = similarColor
+                colorDict[t_color] = similarColor
                 
         return img
     
@@ -253,7 +297,7 @@ class Painting:
         return (dh*dh+ds*ds+dv*dv) ** 0.5
         
 
-@numba.jit(forceobj = True)
+# @numba.jit(forceobj = True)
 def imageExpand(image, guessSize=False, size = 3):
     """
     Parameters
@@ -283,17 +327,23 @@ if __name__ == "__main__":
                                     sigmaColor =20, 
                                     medianValue=7)
     
+    # K-means 알고리즘을 활용한 컬러 군집화
+    clusteredImage = painting.colorClustering( blurImage, cluster = 16)
     
     # Way 1 )
-    expandedImage = imageExpand(blurImage, size = 4)
+    expandedImage = imageExpand(clusteredImage, size = 4)
     # Way 2 )
-    expandedImage = imageExpand(blurImage, guessSize = True)
+    expandedImage = imageExpand(clusteredImage, guessSize = True)
     
-    
-    # K-means 알고리즘을 활용한 컬러 군집화
-    clusteredImage = painting.colorClustering( expandedImage, cluster = 16, round = 1 )
+    # Way 1 )
+    # 확장된 이미지에서 변형된 색상을 군집화된 색상과 매칭
+    similarMap = painting.expandImageColorMatch(expandedImage)
     # 군집화된 색상을 지정된 색상과 가장 비슷한 색상으로 매칭
-    paintingMap = painting.getPaintingColorMap(clusteredImage)
+    paintingMap = painting.getPaintingColorMap(similarMap)
+    
+    # Way 2 )
+    # Way 1의 과정을 하나로 합침
+    paintingMap = painting.allColorMatcing(expandedImage)
     
     # 이미지 색상 개수 확인
     number_of_color = painting.getNumberOfColor(paintingMap)
