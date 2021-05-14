@@ -76,22 +76,30 @@ def convert():
     
     
     # Way 2 )
-    print(f'이미지 확장 시작')
-    expandedImage = imageExpand(blurImage, guessSize = True)
-    cv2.imwrite(f'./web/static/render_image/working_img.png', expandedImage)
-    cv2.imwrite(f'./web/static/render_image/working_img0003.png', expandedImage)
     
     print(f'컬러 군집화 시작')
     
     # K-means 알고리즘을 활용한 컬러 군집화
-    clusteredImage = paintingTool.colorClustering( expandedImage, cluster = 48, round = 1 )
+    clusteredImage = paintingTool.colorClustering( blurImage, cluster = 32 )
     cv2.imwrite(f'./web/static/render_image/working_img.png', clusteredImage)
-    cv2.imwrite(f'./web/static/render_image/working_img0004.png', clusteredImage)
+    cv2.imwrite(f'./web/static/render_image/working_img0003.png', clusteredImage)
+
+    
+    print(f'이미지 확장 시작')
+    expandedImage = imageExpand(clusteredImage, guessSize = True)
+    cv2.imwrite(f'./web/static/render_image/working_img.png', expandedImage)
+    cv2.imwrite(f'./web/static/render_image/working_img0004.png', expandedImage)
+
+
 
     print(f'컬러 매칭 시작')
     # 군집화된 색상을 지정된 색상과 가장 비슷한 색상으로 매칭
-    paintingMap = paintingTool.getPaintingColorMap(clusteredImage)
-    
+    # paintingMap = paintingTool.getPaintingColorMap(clusteredImage)
+
+    # 클러스터 이후, 확장된 이미지에서 색상 동일하게 매칭
+    paintingMap = paintingTool.expandImageColorMatch(expandedImage)
+    # 요게 지정된 색상과 매칭
+    # paintingMap = paintingTool.getPaintingColorMap(paintingMap)
 
     cv2.imwrite(f'./web/static/render_image/working_img.png', paintingMap)
     cv2.imwrite(f'./web/static/render_image/working_img0005.png', paintingMap)
@@ -129,7 +137,8 @@ def convert():
 
 
     # 결과 이미지 백지화
-    result_img = makeWhiteFromImage(expandedImage)
+    # result_img = makeWhiteFromImage(expandedImage)
+    result_img = paintingMap
 
     # 결과이미지 렌더링
     # image를 넣으면 원본이미지에 그려주고, result_img에 넣으면 백지에 그려줌
