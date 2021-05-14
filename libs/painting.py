@@ -10,10 +10,9 @@ import matplotlib.pyplot as plt
 import cv2
 import os
 import numpy as np
-from libs.colorCode import HexColorCode
+# from libs.colorCode import HexColorCode
 import numba
-# from colorCode import HexColorCode
-
+from colorCode import HexColorCode
 
 class Painting:
     def __init__(self, imagepath):
@@ -26,7 +25,9 @@ class Painting:
         self.fileBasename = os.path.basename(imagepath) # file name
         self.filename = self.fileBasename.split(".")[0] # file base name
         
+        # 지정된 hex color 리스트
         self.hexColorCode =  HexColorCode().hexColorCodeList
+        # clustered color list
         self.clusteredColors = np.array([])
     
     # image blurring
@@ -73,6 +74,7 @@ class Painting:
                                                                 rounds = round)
         return self.colorClusteredMap
    
+   # 클러스터 칼라 매칭 + 지정된 색상과 매칭 > 한번에 해결
     def allColorMatcing(self, image):
         hexColors = np.array( [ self.__hex2bgr(hex) for hex in self.hexColorCode ] )
         self.paintingMap = self.__matchColors(image, self.clusteredColors, hexColors)
@@ -181,25 +183,38 @@ class Painting:
         """
         Parameters
             colorImage <np.ndarray> : Image
-            matchColors 
+            matchColors <np.ndarray in tuple> : matching color list (BGR type)
         returns
             img <np.ndarray> : Painted Image
         """
         
+        # 여러 색상 리스트중에서 해당 색상과 가장 비슷한 색상을 반환
         def getSimilarColor(color, colors):
+            """
+            Parameters
+                color <np.ndarray> : one color (BGR type)
+                colors <np.ndarray> : matching color list
+            returns
+                similarColor <np.ndarray> : most similar color (BGR type)
+            """
             absSum = np.sum( np.square( np.abs(colors - color) ) , axis = 1 )
             indexs = np.where( absSum ==  np.min( absSum ) )[0]
+            
+            # bgr 색상 거리가 같은 색상이2 개 이상 존재할 경우
+            # HSV 거리를 계산해서 판단
             if len(indexs)>1: 
-                hsv_dists = []
+                hsv_distances = []
                 nowHSV = self.__bgr_to_hsv(t_color)
                 
                 for index in indexs:
                     similarColor = colors[ index ]
+                    # HSV로 변환
                     hsvValue = self.__bgr_to_hsv(similarColor)
+                    # HSV 거리 계산
                     hsvDist = self.__hsvDistance( hsvValue, nowHSV )
-                    hsv_dists.append( hsvDist )
-                    
-                index  = indexs[hsv_dists.index(min(hsv_dists)) ]
+                    hsv_distances.append( hsvDist )
+                # HSV 거리 최솟값 = 가장 비슷한 색상
+                index  = indexs[ hsv_distances.index(min(hsv_distances)) ]
             else:
                 index = indexs[0]
                 
@@ -223,34 +238,13 @@ class Painting:
                     continue
                 
                 color = np.array( [int(x) for x in color] )
-                '''
-                absSum = np.sum( np.square( np.abs(matchColor - color) ) , axis = 1 )
-                indexs = np.where( absSum ==  np.min( absSum ) )[0]
-                #      colorsys.rgb_to_hsv(0.2, 0.4, 0.4)
-                # 여기서 더 비슷한 이미지 2~3개중에 결정하는 코드 삽입
                 
-                # bgr 색상 거리가 같은 색상 존재할 경우
-                # hsv로 판단
-                if len(indexs)>1: 
-                    hsv_dists = []
-                    nowHSV = self.__bgr_to_hsv(t_color)
-                    
-                    for index in indexs:
-                        similarColor = matchColor[ index ]
-                        hsvValue = self.__bgr_to_hsv(similarColor)
-                        hsvDist = self.__hsvDistance( hsvValue, nowHSV )
-                        hsv_dists.append( hsvDist )
-                        
-                    index  = indexs[hsv_dists.index(min(hsv_dists)) ]
-                else:
-                    index = indexs[0]
-                    
-                img[y][x] = matchColor[ index ]
-                '''
+                # clustered color와 매칭
                 similarColor = getSimilarColor(color, clusteredColor)
                 
                 # painting까지 같이하는지
                 if oneProcess:
+                    # clustered color를 지정된 color와 매칭
                     similarColor = getSimilarColor(similarColor, paintingColor)
                 
                 img[y][x] = similarColor
