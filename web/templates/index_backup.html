@@ -1,0 +1,89 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>DIY Maker</title>
+
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/moonspam/NanumBarunGothic@1.0/nanumbarungothicsubset.css">
+
+    <!-- import jquery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <!------------------->
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <!-- local js & css file import start -->
+    <script src="{{ url_for('static', filename='js/diy_func.js') }}"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/diy_styles.css') }}">
+    <!-------------------------------------->
+
+    <!-- CSS Loader -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='dist/css-loader.css') }}">
+    <!---------------->
+</head>
+
+<body>
+    <div class="loader loader-default" data-text="Converting..."></div>
+
+
+    <h1 class="index_title">PIPO SKETCHER</h1>
+
+    <div class="canvas_box">
+        <div id='brush_slider_box'>
+            <label for="brush">Brush<br>Size</label>
+            <br>
+            <input name="brush" id="brush_size" type="range" value="20"  min="5" max="60" />
+        </div>
+        
+        <div id='line_detail_box'>
+            <label for="brush">Line Detail</label><br>
+            <input name="line" id="line_detail" type="range" value="8"  min="0" max="20" />
+        </div>
+		
+		<!-- koo -->
+		<div id='blur_box' >  
+            <label for="brush">Blur Size</label><br>
+            <input name="blur" id="blur_size" type="range" value="3"  min="0" max="12" />
+        </div>
+
+
+        <canvas class="canvas_size" id="canvas_pic"></canvas>
+
+        
+        <span class='img_url' id='target_img_url'></span>
+
+        <input type="button" id="pic_clear_btn" class="btn" value="Clear">
+    </div>
+
+    <div class='convert_box'>
+        <p>▶</p>
+        CONVERT
+    </div>
+
+    <div class="canvas_box">
+        
+        <div id='eraser_slider_box'>
+            <label for="eraser">Eraser<br>Size</label>
+            <br>
+            <input name="eraser" id="eraser_size" type="range" value="8"  min="1" max="20" />
+        </div>
+
+        <button id="result_eraser" class="btn">
+            <i class="fa fa-eraser" style='text-decoration: underline;'></i>
+        </button>
+
+        <input type="button" id="result_clear_btn" class="btn" value="Clear" onclick="">
+        
+        <br>
+
+        <canvas class="canvas_size" id="canvas_result"></canvas>
+        
+        <span class='img_url' id='result_img_url'></span>
+        <button id="result_download_btn" class="btn" style='visibility: hidden'>
+            <i class="fa fa-download"></i>
+        </button>
+        
+    </div>
+    <div class="brush_cursor"></div>
+</body>
+</html>

@@ -1,41 +1,187 @@
+function close_btn(target){
+    // alert(target);
+    $(".fileBox").remove();
+    $("#file").val(null);
+}
+
 $(window).on('load', function(){
-    // var image_path = '../static/org_image/111.jpg';
-    var image_path = '../static/org_image/iron.png';
-    var pic_size = 600;
+    var ori_image_path = null;
+    var ren_image_path = null;
 
-    var brush_cursor = document.querySelector('.brush_cursor');
-    var brush_size = 20;
-    var area_arr = [];
-    var img_size_origin = {};
-    var img_size = {};
-
-    
-    var pic_canvas = document.getElementById('canvas_pic');
-    var result_canvas = document.getElementById('canvas_result');
-
-    var ctx = '';
-    var result_ctx = '';
-    
-    make_base(image_path);
-
-
-    // diy makers Javascript
-    function clearit() {
-        // ctx.clearRect(0,0, 1000, 1000);
-        make_base(image_path);
-        brush_size = 20;
-		
-    }
-
-    // 슬라이드 조절 시 브러시 사이즈 변경
-    $('#brush_size').change(function(e){
-        brush_size = $(this).val();
-        
-        $(brush_cursor).css('width', brush_size*2);
-        $(brush_cursor).css('height', brush_size*2);
+    $('.zone').on("dragover", dragOver).on("drop", uploadFiles);
+                
+    $("#file").change(function(e){
+        uploadFiles(e);
     });
 
-    $('.convert_box p').click(function(){
+    function dragOver(e) {
+        if($(e.target).get(0) != $('#file').get(0)){
+            e.stopPropagation();
+            e.preventDefault();
+        }
+
+        var dropZone = $('.zone'),
+            timeout = window.dropZoneTimeout;
+        if (!timeout) {
+            dropZone.addClass('in');
+        }
+        else {
+            clearTimeout(timeout);
+        }
+        var found = false,
+            node = e.target;
+
+        do {
+            if (node === dropZone[0]) {
+                found = true;
+                break;
+            }
+            node = node.parentNode;
+        } while (node != null);
+
+        if (found) {
+            dropZone.addClass('hover');
+        }
+        else {
+            dropZone.removeClass('hover');
+        }
+        window.dropZoneTimeout = setTimeout(function () {
+            window.dropZoneTimeout = null;
+            dropZone.removeClass('in hover');
+        }, 100);
+    }
+
+    function uploadFiles(e) {
+        if($(e.target).get(0) != $('#file').get(0)){
+            e.stopPropagation();
+            e.preventDefault();
+            dragOver(e);
+        }
+        
+        e.dataTransfer = e.originalEvent.dataTransfer;
+        var files = e.target.files || e.dataTransfer.files;
+
+        selectFile(files, e);
+    }
+
+
+    function do_image_job(job){
+        console.log('ren_image_path', ren_image_path);
+        $.ajax({
+            url: '/convert',
+            data: {"job":job, "image_path": ren_image_path},
+            dataType:'json',
+            type: 'POST',
+            success: function (data) {
+                $(data.target+'_box').show();
+
+                var time = new Date().getTime();
+                $(data.target).attr('src', '/static/render_image/'+data.img_name+'?time='+time);
+
+                $('html,body').animate({ scrollTop: 9999 }, 'slow');
+            },
+            error: function (error) {
+                console.error(error);
+            }
+        });
+    }
+    
+    
+    function selectFile(fileObject, e){
+        var files = null;
+
+        if(fileObject == undefined){
+
+        }
+
+        if(fileObject != null){
+            files = fileObject;
+        }
+        else{
+            files = $("#file").files;
+        }
+
+        if(files != null && files[0] != undefined){
+            if (files.length > 1){
+                alert('파일은 1개만 업로드할 수 있습니다.');
+                return;
+            }
+
+            if (files[0].type==='image/jpeg' || files[0].type==='image/png') {
+                $(".zone").css({"outline": "none"});
+
+                var tag = '';
+                var f = files[0];
+                var fileName = f.name;
+                var fileSize = f.size / 1024 / 1024;
+                fileSize = fileSize < 1 ? fileSize.toFixed(3) : fileSize.toFixed(1);
+
+                        // "<image src=\'{{url_for('static',filename='css/icon/preview_image.png')}}\'>" +
+                tag += 
+                    "<div class='fileBox'>" +
+                        "<image id='thumbnail'>" +
+                        "<span class='x_btn' onclick='close_btn(this);'>x</span>" +
+                        "<div class='filename_text'>"+fileName+"<br>"+fileSize+" MB</div>" +
+                    "</div>";
+
+                $("#non-upload-box").css("display", "none");
+                $("#dropZ").append(tag);
+
+                $('html,body').animate({ scrollTop: 9999 }, 'slow');
+
+                var reader = new FileReader();
+                reader.onload = function(e){
+                    $("#thumbnail").attr("src", e.target.result);
+                }
+                reader.readAsDataURL(f);
+
+                $('.go_btn').click(function(){
+                    var formData = new FormData();
+                    formData.append("file", f);
+                    ori_image_path = '../static/org_image/'+fileName;
+                    ren_image_path = '../static/render_image/'+fileName;
+
+                    $.ajax({
+                        type: 'POST',
+                        url: '/uploadIMG',
+                        processData: false,
+                        contentType: false,
+                        xhrFields: {
+                            withCredentials: true
+                        },
+                        data: formData,
+                        success: function (data) {
+                            do_image_job("start");
+                            $("#reduce_btn").show();
+                        },
+                        error: function (error) {
+                            console.error(error);
+                        }
+                    });
+                });
+
+                $("#reduce_btn").click(function(){
+                    do_image_job("reduce_color");
+                    $("#drawline_btn").show();
+                })
+
+                $("#drawline_btn").click(function(){
+                    do_image_job("draw_line");
+                    // $("#drawline_btn").show();
+                })
+            }
+            else{
+                alert('이미지 파일만 업로드할 수 있습니다.');
+                $("#file").val(null);
+                return;
+            }
+        }
+    }
+
+
+    $('.go_btn22').click(function(){
+    // $('.convert_box p').click(function(){
+        $("#original_img_box").show();
         $('.loader').addClass('is-active');
         $('.is-active').attr('style', 'background-color:rgba(0,0,0,.15);');
 
@@ -46,13 +192,6 @@ $(window).on('load', function(){
                 var time = new Date().getTime();
                 image.src = '../static/render_image/working_img.png?time='+time;
                 
-                $(image).on('load', function(){
-                    var width_set = pic_size;
-                    var height_set = pic_size * image.height / image.width;
-            
-                    result_ctx.drawImage( image, 0, 0, width_set, height_set );
-                });
-
             }
             catch (e) {
             }
@@ -63,12 +202,7 @@ $(window).on('load', function(){
 
         $.ajax({
             url: '/convert',
-            data: {
-                "image_path":image_path,
-                "area_arr":JSON.stringify(area_arr),
-                "line_detail":$("#line_detail").val(),
-				"blur_size":$("#blur_size").val() // koo
-            },
+            data: {"image_path":image_path},
             dataType:'json',
             type: 'POST',
             success: function (data) {
@@ -78,133 +212,15 @@ $(window).on('load', function(){
                 var time = new Date().getTime();
 
                 image.src = '/static/render_image/'+data.img_name+'?time='+time;
-                
-                $(image).on('load', function(){
-                    var width_set = pic_size;
-                    var height_set = pic_size * image.height / image.width;
 
-                    result_ctx.drawImage( image, 0, 0, width_set, height_set );
-
-                    $("#result_img_url").text(data.img_name);
-                    $('#result_download_btn').css('visibility', 'visible');
-                });
-				area_arr = []; // koo
                 $('.loader').removeClass('is-active');
             },
             error: function (error) {
                 console.error(error);
             }
         });
-
-        clearit();
     });
 
-
-    // 캔버스 기본 세팅
-    function make_base(path) {
-        image = new Image();
-        image.src = path;
-
-        $(image).on('load', function(){
-            var width_set = pic_size;
-            var height_set = pic_size * image.height / image.width;
-
-            pic_canvas.width = width_set;
-            pic_canvas.height = height_set;
-
-            pic_canvas.style.width = width_set;
-            pic_canvas.style.height = height_set;
-
-            result_canvas.width = width_set;
-            result_canvas.height = height_set;
-
-            img_size = {width:width_set, height:height_set};
-            img_size_origin = {width:image.width, height:image.height};
-
-
-            ctx = pic_canvas.getContext('2d');
-            result_ctx = result_canvas.getContext('2d');
-
-            ctx.fillStyle = "rgba(255, 0, 0, 0.05)";
-            
-            // ctx.globalAlpha = "0.5";
-            ctx.lineWidth = 0;
-            ctx.globalCompositeOperation = "source-over"; 
-
-            
-            //drawImage(이미지객체, 
-            //  이미지의 왼위 부분x, 이미지의 왼위 부분y, 이미지의 원하는 가로크기, 
-            //  이미지의 원하는 세로크기,
-            //  사각형 부분x, 사각형 부분y, 가로크기, 세로크기)
-            ctx.drawImage( image, 0, 0, width_set, height_set );
-
-            $("#target_img_url").text(path);
-            $(".canvas_box, .convert_box").css('height', height_set + 90);
-
-            
-            var isDrawing, lastPoint;
-
-            
-            pic_canvas.onmousedown = function(e) {
-                isDrawing = true;
-                lastPoint = { x: e.offsetX, y: e.offsetY }; // 왼쪽 위
-            };
-
-            pic_canvas.onmousemove = function(e) {
-                var x = e.clientX;
-                var y = e.clientY;
-                brush_cursor.style.left = x + "px";
-                brush_cursor.style.top = y + "px";
-
-
-                if (!isDrawing){
-                    return;
-                }
-                
-                var currentPoint = { x: e.offsetX, y: e.offsetY }; // 왼쪽 위
-
-                var dist = distanceBetween(lastPoint, currentPoint);
-                var angle = angleBetween(lastPoint, currentPoint);
-                
-                var x_value = 0; // x좌표
-                var y_value = 0; // y좌표
-
-                for (i = 0; i < dist; i += 3) {
-                    x = lastPoint.x + (Math.sin(angle) * i);
-                    y = lastPoint.y + (Math.cos(angle) * i);
-
-                    ctx.beginPath();
-                    // x좌표, y좌표, 반지름
-                    ctx.arc(x + x_value, y + y_value, brush_size, false, Math.PI * 2, false);
-                    ctx.closePath();
-                    ctx.fill();
-
-
-                    scalingFactorX = img_size_origin['width'] / img_size['width'];
-                    scalingFactorY = img_size_origin['height'] / img_size['height'];
-                    
-                    x1 = (x + x_value) * scalingFactorX;
-                    y1 = (y + y_value) * scalingFactorY;
-
-                    area_arr.push({x:x1, y:y1, radius:brush_size * scalingFactorX});
-                }
-                
-                lastPoint = currentPoint;
-            };
-            
-            pic_canvas.onmouseup = function() {
-                isDrawing = false;
-            };
-
-
-            
-            $("#pic_clear_btn").click(function(){
-                clearit();
-            });
-        });
-
-        
-    }
 });
 
 

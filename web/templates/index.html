@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>DIY Maker</title>
+    <title>EASY PIPO</title>
 
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/moonspam/NanumBarunGothic@1.0/nanumbarungothicsubset.css">
 
@@ -25,65 +25,56 @@
 <body>
     <div class="loader loader-default" data-text="Converting..."></div>
 
+    <header>
+        <img id='logo_img' src="{{ url_for('static', filename='icon/logo.png') }}">
+        <h1 class="index_title">EASY PIPO</h1>
 
-    <h1 class="index_title">PIPO SKETCHER</h1>
-
-    <div class="canvas_box">
-        <div id='brush_slider_box'>
-            <label for="brush">Brush<br>Size</label>
-            <br>
-            <input name="brush" id="brush_size" type="range" value="20"  min="5" max="60" />
+        <div class="top_menu_box">
+            <div class="top_menu_item" >How to Use?</div>
+            <div class="top_menu_item" >What is Pipo Painting?</div>
+            <div class="top_menu_item" >My Color Setting</div>
         </div>
-        
-        <div id='line_detail_box'>
-            <label for="brush">Line Detail</label><br>
-            <input name="line" id="line_detail" type="range" value="8"  min="0" max="20" />
-        </div>
-		
-		<!-- koo -->
-		<div id='blur_box' >  
-            <label for="brush">Blur Size</label><br>
-            <input name="blur" id="blur_size" type="range" value="3"  min="0" max="12" />
-        </div>
+    </header>
+
+    <h1 class="sub_title" >Painting easier what you want !</h1>
 
 
-        <canvas class="canvas_size" id="canvas_pic"></canvas>
+    <div class="zone">
+        <div id="dropZ">
+                <div class="selectFile">       
+                    <label for="file">Browse file</label>                   
+                    <input type="file" name="files[]" id="file" accept='application/pdf'>
+                </div>
 
-        
-        <span class='img_url' id='target_img_url'></span>
-
-        <input type="button" id="pic_clear_btn" class="btn" value="Clear">
+                <div class='upload_text'><b>Choose a file</b> or drag it here.</div>
+            </div>
     </div>
 
-    <div class='convert_box'>
-        <p>▶</p>
-        CONVERT
+
+    <div class="go_btn">GO→</div>
+
+    <div id='original_img_box' class="view_image_box" style='display: none'>
+        <img id='original_img' class='view_image'>
     </div>
 
-    <div class="canvas_box">
-        
-        <div id='eraser_slider_box'>
-            <label for="eraser">Eraser<br>Size</label>
-            <br>
-            <input name="eraser" id="eraser_size" type="range" value="8"  min="1" max="20" />
-        </div>
 
-        <button id="result_eraser" class="btn">
-            <i class="fa fa-eraser" style='text-decoration: underline;'></i>
-        </button>
 
-        <input type="button" id="result_clear_btn" class="btn" value="Clear" onclick="">
-        
-        <br>
-
-        <canvas class="canvas_size" id="canvas_result"></canvas>
-        
-        <span class='img_url' id='result_img_url'></span>
-        <button id="result_download_btn" class="btn" style='visibility: hidden'>
-            <i class="fa fa-download"></i>
-        </button>
-        
+    <div id='reduce_btn' class='btn_box' style='display: none'>
+        ▼ Reduce Color
     </div>
-    <div class="brush_cursor"></div>
+
+    <div id='reduce_img_box' class="view_image_box" style='display: none'>
+        <img id='reduce_img' class='view_image'>
+    </div>
+
+
+
+    <div id='drawline_btn' class='btn_box' style='display: none'>
+        ▼ Draw Line
+    </div>
+
+    <div id='linedraw_img_box' class="view_image_box" style='display: none'>
+        <img id='linedraw_img' class='view_image'>
+    </div>
 </body>
 </html>

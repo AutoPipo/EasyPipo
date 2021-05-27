@@ -1,4 +1,24 @@
 /********* Index Page *********/
+@font-face{
+    font-family: pangolin;
+    src: url('/static/font/Pangolin-Regular.ttf');
+}
+@font-face{
+    font-family: indieflower;
+    src: url('/static/font/IndieFlower-Regular.ttf');
+}
+@font-face{
+    font-family: corbellight;
+    src: url('/static/font/corbel-light.ttf');
+}
+@font-face{
+    font-family: arialblack;
+    src: url('/static/font/ariblk.ttf');
+}
+
+
+
+
 *{
     box-sizing: border-box;
     font-family:'Malgun Gothic';
@@ -14,12 +34,251 @@ body{
 }
 
 /*main page title*/
-.index_title{
-    width: fit-content;
-    margin: 30px auto;
-    font-size: 35px;
-    box-shadow: 0 2px 0 blue;
+header{
+    position: relative;
+    height: 150px;
+    /* margin: 0 20px; */
+    padding-top: 60px;
+    border-bottom: solid 2px #7c7c7c;
+    background: rgb(255, 245, 245);
 }
+
+#logo_img{
+    position: absolute;
+    display: inline-block;
+    height: 50px;
+    left: 0;
+    bottom: 10px;
+    vertical-align: middle;
+    border: 1px solid black;
+    cursor: pointer;
+}
+
+.index_title{
+    position: absolute;
+    display: inline-block;
+    width: fit-content;
+    height: 50px;
+    line-height: 50px;
+    left: 90px;
+    bottom: 10px;
+    vertical-align: middle;
+    font-family: pangolin;
+    font-size: 32px;
+    cursor: pointer;
+    /* box-shadow: 0 2px 0 blue; */
+}
+.top_menu_box{
+    position: absolute;
+    display: inline-block;
+    right: 0;
+    bottom: 15px;
+}
+.top_menu_item{
+    display: inline-block;
+    margin: 0 20px;
+    font-family: pangolin;
+    font-weight: bold;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.sub_title{
+    margin: 70px;
+    font-family: indieflower;
+    font-size: 42px;
+    font-weight: bold;
+}
+
+
+
+
+
+.zone {
+    position: relative;
+    margin: auto;
+    width: 600px;
+    height: fit-content;
+    border: 2px solid rgb(237, 125, 49);
+    border-radius: 25px;
+    text-align:center;
+    z-index: 20;
+    transition: all 0.3s ease-out;
+    box-shadow: 0 0 0 1px rgba(255,255,255,.05),inset 0 0 .25em 0 rgba(0,0,0,.25);
+}
+.zone #dropZ{
+    position: relative;
+    height: 100%;
+}
+.zone .btnCompression .active{
+    background: rgb(237, 125, 49);
+    color:white;
+}
+.zone i{
+    text-align: center;
+    font-size: 10em;  
+    color:#fff;
+    margin-top: 50px;
+}
+.zone .selectFile {
+    position: relative;
+    display: inline-block;
+    width: 150px;
+    height: 100px;
+    margin: 0 auto;
+}
+.zone .upload_text{
+    display: inline-block;
+    height: 100px;
+    line-height: 100px;
+    margin: 0 40px;
+    vertical-align: top;
+    font-size: 24px;
+    font-family: corbellight;
+    font-weight: bold;
+}
+.zone label, input {
+    position: absolute;
+    display: inline-block;
+    width: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 0;
+    border-radius: 5px;
+    cursor: pointer;  
+}
+.zone label {
+    position: absolute;
+    display: inline-block;
+    width: 150px;
+    height: 40px;
+    padding: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgb(237, 125, 49);
+    color: white;
+    border-radius: 10px;
+    line-height: 40px;
+    text-align: center;
+    font-size: 18px;
+    white-space: nowrap;
+    box-shadow: 0 1px 1px gray;
+}
+
+.zone input[type=file] {
+    opacity: 0;
+}
+.zone .in {
+    color:white;
+    border-color:white;
+    background: radial-gradient(ellipse at center,rgb(237, 125, 49) 0,rgb(237, 125, 49) 100%);
+}
+.zone .in i {          
+    color:#fff;
+}
+.zone .in label {
+    background: #fff;
+    color: rgb(237, 125, 49);
+}
+.zone.hover {
+    color:gray;
+    border-color:white;
+    background:#fff;
+    border:5px dashed gray;
+}
+.zone.hover i {          
+    color:rgb(237, 125, 49);
+}
+.zone.hover label {
+    background: #fff;
+    color:rgb(237, 125, 49);
+}
+.zone.fade {
+    transition: all 0.3s ease-out;
+    opacity: 1;
+}
+
+
+.fileBox{
+    position: relative;
+    width: 560px;
+    height: 300px;
+    margin: 30px auto;
+    padding: 15px;
+    
+    border: 2px solid rgb(237, 125, 49);
+
+    border-radius: 20px;
+    background: white;
+    font-size: 12px;
+    font-weight: bold;
+    color: rgb(237, 125, 49);
+
+    box-shadow: 3px 3px #a8a8a8;
+}
+.fileBox span:not(.x_btn):not(.filename_text){
+    position: absolute;
+    text-align: left;
+    left: 50%;
+    top: 50%;
+    transform: translate(-40%, -50%);
+}
+.fileBox img{
+    height: 85%;
+}
+.x_btn{
+    position: absolute;
+    top: 0;
+    right: 10px;
+    font-size: 24px;
+    cursor: pointer;
+}
+.filename_text{
+    width: 500px;
+    margin: auto;
+    font-size: 18px;
+    text-overflow: ellipsis;
+    overflow:hidden;
+}
+
+
+
+
+
+.go_btn{
+    width: 100px;
+    height: 100px;
+    background: rgba(255, 144, 69);
+    border-radius: 50px;
+    line-height: 100px;
+    font-size: 28px;
+    font-family: arialblack;
+    color: white;
+    margin: 50px auto;
+    cursor: pointer;
+}
+
+.view_image_box{
+    margin: 50px auto;
+}
+
+.view_image{
+    width: 800px;
+}
+
+.btn_box{
+    width: 200px;
+    height: 50px;
+    line-height: 50px;
+    margin: 0 auto;
+    border: 2px solid rgb(237, 125, 49);
+    border-radius: 10px;
+    font-size: 16pt;
+    text-align:center;
+    cursor: pointer;
+}
+
+
 
 .canvas_box{
     position: relative;
