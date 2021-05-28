@@ -65,18 +65,22 @@ $(window).on('load', function(){
     }
 
 
-    function do_image_job(job){
-        console.log('ren_image_path', ren_image_path);
+    function do_image_job(job, next_btn){
+        $('.loader').addClass('is-active');
         $.ajax({
             url: '/convert',
             data: {"job":job, "image_path": ren_image_path},
             dataType:'json',
             type: 'POST',
             success: function (data) {
+                console.log("반환 받음", data);
                 $(data.target+'_box').show();
 
                 var time = new Date().getTime();
                 $(data.target).attr('src', '/static/render_image/'+data.img_name+'?time='+time);
+
+                $(next_btn).show();
+                $('.loader').removeClass('is-active');
 
                 $('html,body').animate({ scrollTop: 9999 }, 'slow');
             },
@@ -151,8 +155,7 @@ $(window).on('load', function(){
                         },
                         data: formData,
                         success: function (data) {
-                            do_image_job("start");
-                            $("#reduce_btn").show();
+                            do_image_job("start", "#reduce_btn");
                         },
                         error: function (error) {
                             console.error(error);
@@ -161,13 +164,16 @@ $(window).on('load', function(){
                 });
 
                 $("#reduce_btn").click(function(){
-                    do_image_job("reduce_color");
-                    $("#drawline_btn").show();
+                    do_image_job("reduce_color", "#drawline_btn");
                 })
 
                 $("#drawline_btn").click(function(){
-                    do_image_job("draw_line");
-                    // $("#drawline_btn").show();
+                    do_image_job("draw_line", "#numbering_btn");
+                })
+
+                $("#numbering_btn").click(function(){
+                    do_image_job("numbering", null);
+                    // $("#numbering_btn").show();
                 })
             }
             else{

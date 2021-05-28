@@ -78,6 +78,12 @@ def upload_img():
 
 @views.route("/convert", methods=["POST"])
 def convert():
+    global colorNames
+    global colors
+    global img_lab
+    global lab
+    global paintingMap
+
     # line_detail = json.loads(request.form['line_detail'])
     # blur_size = json.loads(request.form['blur_size'])
     # area_arr = json.loads(request.form['area_arr'])
@@ -86,15 +92,22 @@ def convert():
     
     image_path = './web'+image_path[2:]
     image_name = os.path.basename(image_path)
-
+    
     paintingTool = Painting(image_path)
-    image = paintingTool.image
 
     if job == "start":
+        image = paintingTool.image
+
+        image_name2 = image_name.split('.')[0]+"_origin." + image_name.split('.')[1]
+        print(f"image_name2:{image_name2}")
         cv2.imwrite(f'./web/static/render_image/{image_name}', image)
-        return jsonify(target="#original_img", img_name=image_name)
+        cv2.imwrite(f'./web/static/render_image/{image_name2}', image)
+        return jsonify(target="#original_img", img_name=image_name2)
 
     elif job == "reduce_color":
+        paintingTool.image = cv2.imread(f'./web/static/render_image/{image_name}')
+        image = paintingTool.image
+
         print(f'블러 시작')
 
 
@@ -116,15 +129,8 @@ def convert():
         print(f'이미지 확장 시작')
         expandedImage = imageExpand(clusteredImage, guessSize = True)
 
-        image_name2 = image_name.split('.')[0]+"_reduce." + image_name.split('.')[1]
-        cv2.imwrite(f'./web/static/render_image/{image_name2}', expandedImage)
 
-
-        return jsonify(target="#reduce_img", img_name=image_name2)
-
-
-    elif job == "draw_line":
-        expandedImage = paintingTool.image
+        
 
         print(f'컬러 매칭 시작')
         # 군집화된 색상을 지정된 색상과 가장 비슷한 색상으로 매칭
@@ -132,6 +138,7 @@ def convert():
 
         # 클러스터 이후, 확장된 이미지에서 색상 동일하게 매칭
         paintingMap = paintingTool.expandImageColorMatch(expandedImage)
+
         # 요게 지정된 색상과 매칭
         # paintingMap = paintingTool.getPaintingColorMap(paintingMap)
 
@@ -143,11 +150,28 @@ def convert():
         print(f'→\t컬러 {len(colorNames)}개')
 
 
+
+        image_name2 = image_name.split('.')[0]+"_reduce." + image_name.split('.')[1]
+
+        cv2.imwrite(f'./web/static/render_image/{image_name2}', paintingMap)
+        return jsonify(target="#reduce_img", img_name=image_name2)
+
+
+    elif job == "draw_line":
+        image_name2 = image_name.split('.')[0]+"_reduce." + image_name.split('.')[1]
+        paintingTool.image = cv2.imread(f'./web/static/render_image/{image_name2}')
+        paintingMap = paintingTool.image
+
+
         # 선 그리기
         print(f'선 그리기 시작')
         drawLineTool = DrawLine(paintingMap)
         lined_image = drawLineTool.getDrawLine()
         lined_image = drawLineTool.drawOutline(lined_image)
+
+        # 레이블 추출
+        img_lab, lab = getImgLabelFromImage(colors, paintingMap)
+
 
         image_name2 = image_name.split('.')[0]+"_linedraw." + image_name.split('.')[1]
         cv2.imwrite(f'./web/static/render_image/{image_name2}', lined_image)
@@ -158,29 +182,34 @@ def convert():
 
 
 
-    # 레이블 추출
-    img_lab, lab = getImgLabelFromImage(colors, paintingMap)
+    elif job == "numbering":
+        image_name2 = image_name.split('.')[0]+"_reduce." + image_name.split('.')[1]
+        paintingTool.image = cv2.imread(f'./web/static/render_image/{image_name2}')
+        lined_image = paintingTool.image
 
 
-    # contour, hierarchy 추출
-    print(f'컨투어 추출 시작')
-    contours, hierarchy, thresh = getContoursFromImage(lined_image.copy())
+
+        # contour, hierarchy 추출
+        print(f'컨투어 추출 시작')
+        contours, hierarchy, thresh = getContoursFromImage(lined_image.copy())
 
 
-    # 결과 이미지 백지화
-    # result_img = makeWhiteFromImage(expandedImage)
-    result_img = paintingMap
+        # 결과 이미지 백지화
+        # result_img = makeWhiteFromImage(expandedImage)
+        result_img = paintingMap
 
-    # 결과이미지 렌더링
-    # image를 넣으면 원본이미지에 그려주고, result_img에 넣으면 백지에 그려줌
-    print(f'넘버링 시작')
-    result_img = setColorNumberFromContours2(result_img, thresh, contours, hierarchy, img_lab, lab, colorNames)
+        # 결과이미지 렌더링
+        # image를 넣으면 원본이미지에 그려주고, result_img에 넣으면 백지에 그려줌
+        print(f'넘버링 시작')
+        result_img = setColorNumberFromContours2(result_img, thresh, contours, hierarchy, img_lab, lab, colorNames)
 
-    print(f'컬러 레이블링 시작')
-    result_img = setColorLabel(result_img, colorNames, colors)
+        print(f'컬러 레이블링 시작')
+        result_img = setColorLabel(result_img, colorNames, colors)
 
-    image_name = 'result_'+image_name
-    print(f'작업 완료')
+        print(f'작업 완료')
 
+        image_name2 = image_name.split('.')[0]+"_numbering." + image_name.split('.')[1]
+        cv2.imwrite(f'./web/static/render_image/{image_name2}', result_img)
+        return jsonify(target="#numbering_img", img_name=image_name2)
 
-    return jsonify(img_name=image_name, area_arr=area_arr)
+    return jsonify(img_name=image_name)
