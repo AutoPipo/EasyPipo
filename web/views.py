@@ -133,10 +133,12 @@ def convert():
 
 
         # 색 단순화 + 블러 처리
-        blurImage = paintingTool.blurring(  div = 8, 
-                                            radius = 10, 
-                                            sigmaColor =20, 
-                                            medianValue=7)
+        blurImage = paintingTool.blurring(
+            div = 8, 
+            radius = 10, 
+            sigmaColor =20, 
+            medianValue=7
+        )
         
         
         # Way 2 )
@@ -169,7 +171,6 @@ def convert():
         colorNames, colors = getColorFromImage(paintingMap)
 
         print(f'→\t컬러 {len(colorNames)}개')
-
 
 
         image_name2 = image_name.split('.')[0]+"_reduce." + image_name.split('.')[1]
@@ -216,8 +217,8 @@ def convert():
 
 
         # 결과 이미지 백지화
-        # result_img = makeWhiteFromImage(expandedImage)
-        result_img = paintingMap
+        result_img = makeWhiteFromImage(expandedImage)
+        # result_img = paintingMap
 
         # 결과이미지 렌더링
         # image를 넣으면 원본이미지에 그려주고, result_img에 넣으면 백지에 그려줌
