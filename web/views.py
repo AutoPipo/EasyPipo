@@ -29,6 +29,27 @@ def index():
     
     # session.pop("id")
     return render_template("index.html")
+    
+@views.route("/howToUse", methods=["GET"])
+def howToUse():
+    if "id" not in session:
+        session["id"] = get_job_id()
+    
+    return render_template("how_to_use.html")
+    
+@views.route("/whatIsPipo", methods=["GET"])
+def whatIsPipo():
+    if "id" not in session:
+        session["id"] = get_job_id()
+    
+    return render_template("what_is_pipo.html")
+    
+@views.route("/ColorSetting", methods=["GET"])
+def ColorSetting():
+    if "id" not in session:
+        session["id"] = get_job_id()
+    
+    return render_template("color_setting.html")
 
 @views.route("/uploadIMG", methods=["POST"])
 def upload_img():

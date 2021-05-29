@@ -24,17 +24,7 @@
 
 <body>
     <div class="loader loader-default" data-text="Converting..."></div>
-
-    <header>
-        <img id='logo_img' src="{{ url_for('static', filename='icon/logo.png') }}">
-        <h1 class="index_title">EASY PIPO</h1>
-
-        <div class="top_menu_box">
-            <div class="top_menu_item" >How to Use?</div>
-            <div class="top_menu_item" >What is Pipo Painting?</div>
-            <div class="top_menu_item" >My Color Setting</div>
-        </div>
-    </header>
+    {% include "menu_template.html" %}
 
     <h1 class="sub_title" >Painting easier what you want !</h1>
 
