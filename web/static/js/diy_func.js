@@ -65,11 +65,11 @@ $(window).on('load', function(){
     }
 
 
-    function do_image_job(job, next_btn){
+    function do_image_job(job, next_btn, image_path){
         $('.loader').addClass('is-active');
         $.ajax({
             url: '/convert',
-            data: {"job":job, "image_path": ren_image_path},
+            data: {"job":job, "image_path": image_path},
             dataType:'json',
             type: 'POST',
             success: function (data) {
@@ -120,7 +120,7 @@ $(window).on('load', function(){
                 var fileSize = f.size / 1024 / 1024;
                 fileSize = fileSize < 1 ? fileSize.toFixed(3) : fileSize.toFixed(1);
 
-                        // "<image src=\'{{url_for('static',filename='css/icon/preview_image.png')}}\'>" +
+                // "<image src=\'{{url_for('static',filename='css/icon/preview_image.png')}}\'>" +
                 tag += 
                     "<div class='fileBox'>" +
                         "<image id='thumbnail'>" +
@@ -155,7 +155,7 @@ $(window).on('load', function(){
                         },
                         data: formData,
                         success: function (data) {
-                            do_image_job("start", "#reduce_btn");
+                            do_image_job("start", "#reduce_btn", ori_image_path);
                         },
                         error: function (error) {
                             console.error(error);
@@ -164,15 +164,15 @@ $(window).on('load', function(){
                 });
 
                 $("#reduce_btn").click(function(){
-                    do_image_job("reduce_color", "#drawline_btn");
+                    do_image_job("reduce_color", "#drawline_btn", ren_image_path);
                 })
 
                 $("#drawline_btn").click(function(){
-                    do_image_job("draw_line", "#numbering_btn");
+                    do_image_job("draw_line", "#numbering_btn", ren_image_path);
                 })
 
                 $("#numbering_btn").click(function(){
-                    do_image_job("numbering", null);
+                    do_image_job("numbering", null, ren_image_path);
                     // $("#numbering_btn").show();
                 })
             }
