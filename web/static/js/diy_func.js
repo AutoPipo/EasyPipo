@@ -114,6 +114,8 @@ $(window).on('load', function(){
             if (files[0].type==='image/jpeg' || files[0].type==='image/png') {
                 $(".zone").css({"outline": "none"});
 
+                $('.view_image_box,.view_image_box').hide();
+
                 var tag = '';
                 var f = files[0];
                 var fileName = f.name;
