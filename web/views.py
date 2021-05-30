@@ -217,7 +217,7 @@ def convert():
 
 
         # 결과 이미지 백지화
-        result_img = makeWhiteFromImage(expandedImage)
+        result_img = makeWhiteFromImage(lined_image)
         # result_img = paintingMap
 
         # 결과이미지 렌더링
