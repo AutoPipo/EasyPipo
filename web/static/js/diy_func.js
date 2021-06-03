@@ -73,13 +73,23 @@ $(window).on('load', function(){
             dataType:'json',
             type: 'POST',
             success: function (data) {
-                console.log("반환 받음", data);
                 $(data.target+'_box').show();
 
                 var time = new Date().getTime();
-                $(data.target).attr('src', '/static/render_image/'+data.img_name+'?time='+time);
+
+
+                if(job == "reduce_color"){
+                    var img_name = data.img_name.split(".")[0];
+                    $(data.target+"_16").attr('src', '/static/render_image/'+img_name+'_16.png?time='+time);
+                    $(data.target+"_24").attr('src', '/static/render_image/'+img_name+'_24.png?time='+time);
+                    $(data.target+"_32").attr('src', '/static/render_image/'+img_name+'_32.png?time='+time);
+                }
+                else{
+                    $(data.target).attr('src', '/static/render_image/'+data.img_name+'?time='+time);
+                }
 
                 $(next_btn).show();
+
                 $('.loader').removeClass('is-active');
 
                 $('html,body').animate({ scrollTop: 9999 }, 'slow');

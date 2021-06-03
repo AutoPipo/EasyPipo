@@ -47,7 +47,7 @@ header{
     position: absolute;
     display: inline-block;
     height: 50px;
-    left: 0;
+    left: 50px;
     bottom: 10px;
     vertical-align: middle;
     border: 1px solid black;
@@ -60,7 +60,7 @@ header{
     width: fit-content;
     height: 50px;
     line-height: 50px;
-    left: 90px;
+    left: 120px;
     bottom: 10px;
     vertical-align: middle;
     font-family: pangolin;
@@ -224,7 +224,8 @@ header{
     transform: translate(-40%, -50%);
 }
 .fileBox img{
-    height: 85%;
+    width: 90%;
+    /* height: 85%; */
 }
 .x_btn{
     position: absolute;
@@ -263,6 +264,7 @@ header{
 }
 
 .view_image{
+    display: inline-block;
     width: 800px;
 }
 
