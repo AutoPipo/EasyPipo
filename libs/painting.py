@@ -2,7 +2,7 @@
 # Image to Painting Process
 
 # Start : 21.04.01
-# Update : 21.05.13
+# Update : 21.06.03
 # Author : Minku Koo
 '''
 
@@ -178,7 +178,7 @@ class Painting:
         
         return res.reshape((image.shape)), round( compactness ** 0.5 // 10, 2 )
     
-    # @numba.jit(forceobj = True)
+    # @numba.jit(forceobj = True) 
     def __matchColors(self, colorImage, *matchColors):
         """
         Parameters
