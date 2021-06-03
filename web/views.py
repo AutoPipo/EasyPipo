@@ -199,7 +199,6 @@ def convert():
 
         return jsonify(target="#reduce_img", img_name=image_name2)
 
-
     elif job == "draw_line":
         image_name2 = image_name.split('.')[0]+"_reduce." + image_name.split('.')[1]
         paintingTool.image = cv2.imread(f'./web/static/render_image/{image_name2}')
@@ -222,8 +221,6 @@ def convert():
 
         # lined_image = cv2.convertScaleAbs(lined_image)
         return jsonify(target="#linedraw_img", img_name=image_name2)
-
-
 
     elif job == "numbering":
         image_name2 = image_name.split('.')[0]+"_reduce." + image_name.split('.')[1]
