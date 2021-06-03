@@ -70,7 +70,7 @@ def upload_img():
     for file in files:
         if file:
             # filename = secure_filename(file.filename) # secure_filename은 한글명을 지원하지 않음
-            filename = file.filename
+            filename = file.filename 
             filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
             file_page_path = os.path.splitext(filepath)[0]
             
@@ -99,42 +99,45 @@ def upload_img():
         return resp
 
 
+colorNames = {}
+colors = {}
 
-def reduce_img_process(paintingTool, img, cluster, result):
-    print(f"안녕 난 reduce_img {cluster} 프로세스야 ")
-    result.put( paintingTool.colorClustering( img, cluster = cluster ) )
-    return
+def reduce_color_process(idx, image_path, img, cluster, result):
+    global colorNames
+    global colors
 
-def expand_img_process(img, result):
-    print(f"안녕 난 expand_img_process 프로세스야 ")
-    result.put( imageExpand(img, guessSize = True) )
-    return
+    paintingTool = Painting(image_path)
 
-def color_match_process(paintingTool, img, result):
-    print(f"안녕 난 color_match_process 프로세스야 ")
-    result.put( paintingTool.expandImageColorMatch(img) )
-    return
+    print(f'{idx}번 프로세스 컬러 군집화 시작')
+    clusteredImage = paintingTool.colorClustering( img, cluster = cluster )
+    
+    print(f'{idx}번 프로세스 이미지 확장')
+    expandedImage = imageExpand(clusteredImage, guessSize = True)
+    
+    print(f'{idx}번 프로세스 컬러 매칭 시작')
+    paintingMap = paintingTool.expandImageColorMatch(expandedImage)
 
-def get_color_process(img, result):
-    print(f"안녕 난 get_color_process 프로세스야 ")
-    result.put( getColorFromImage(img) )
+    print(f'{idx}번 프로세스 컬러 추출 시작')
+    colorNames_, colors_ = getColorFromImage(paintingMap)
+
+    print(f'{idx}번 프로세스 컬러 {len(colorNames_)}개')
+
+    colorNames[cluster] = colorNames_
+    colors[cluster] = colors_
+
+    result.put(paintingMap)
+
     return
 
 
 @views.route("/convert", methods=["POST"])
 def convert():
-    global colorNames_16
-    global colors_16
-    global colorNames_24
-    global colors_24
-    global colorNames_32
-    global colors_32
+    global colorNames
+    global colors
 
     global img_lab
-    global labz
-    global painting_map_16
-    global painting_map_24
-    global painting_map_32
+    global labs
+    global painting_map
 
 
     job = request.form['job']
@@ -159,7 +162,6 @@ def convert():
 
         print(f'블러 시작')
 
-
         # 색 단순화 + 블러 처리
         blurImage = paintingTool.blurring(
             div = 8, 
@@ -167,136 +169,30 @@ def convert():
             sigmaColor =20, 
             medianValue=7
         )
-        
-        
-        # Way 2 )
-        
-        print(f'컬러 군집화 시작')
-        
-        # K-means 알고리즘을 활용한 컬러 군집화
-        
-        # result_list = Queue()
+
         manager = Manager()
         result_list = manager.Queue()
         clusters = [16, 24, 32]
         processes = []
 
         for idx, cluster in enumerate(clusters):
-            process = Process(target=reduce_img_process, args=(paintingTool, blurImage, cluster, result_list))
-            processes.append(process)
-            process.start()
-            print("프로세스 시작")
-
-        for process in processes:
-            print("조인 시작")
-            process.join()
-            print("조인 끝")
-
-        # clusteredImage = paintingTool.colorClustering( blurImage, cluster = 32 )
-
-        reduce_img_list = []
-        qsize = result_list.qsize()
-        while qsize>0:
-            reduce_img_list.append( result_list.get() )
-            qsize = qsize-1
-     
-
-        print(reduce_img_list[0])
-
-
-
-        result_list2 = manager.Queue()
-        processes = []
-
-        for idx, cluster in enumerate(clusters):
-            process = Process(target=expand_img_process, args=(reduce_img_list[idx], result_list2))
+            process = Process(target=reduce_color_process, args=(idx+1, image_path, blurImage, cluster, result_list))
             processes.append(process)
             process.start()
 
         for process in processes:
             process.join()
-            process.terminate()
-        
-        # expandedImage = imageExpand(clusteredImage_32, guessSize = True)
 
-        expand_img_list = []
-        qsize = result_list2.qsize()
-        while qsize>0:
-            expand_img_list.append( result_list2.get() )
-            qsize = qsize-1
-
-        print(f'expand_img_list작업 완료 : {expand_img_list}')
-
-
-        print(f'컬러 매칭 시작')
-        # 군집화된 색상을 지정된 색상과 가장 비슷한 색상으로 매칭
-        # paintingMap = paintingTool.getPaintingColorMap(clusteredImage)
-
-        # 클러스터 이후, 확장된 이미지에서 색상 동일하게 매칭
-        # paintingMap = paintingTool.expandImageColorMatch(expandedImage)
-        # paintingMap = paintingTool.getPaintingColorMap(paintingMap)
-
-
-        result_list3 = manager.Queue()
-        processes = []
-
-        # 요게 지정된 색상과 매칭
-        for idx, cluster in enumerate(clusters):
-            process = Process(target=color_match_process, args=(paintingTool, expand_img_list[idx], result_list3))
-            processes.append(process)
-            process.start()
-
-        for process in processes:
-            process.join()
-            process.terminate()
-
-
-        painting_map_list = []
-        qsize = result_list3.qsize()
-        while qsize>0:
-            painting_map_list.append( result_list3.get() )
-            qsize = qsize-1
-
-        painting_map_16 = painting_map_list[0]
-        painting_map_24 = painting_map_list[1]
-        painting_map_32 = painting_map_list[2]
-
-
-        print(f'컬러 추출 시작', end='\t')
-        # 색 추출
-        result_list4 = manager.Queue()
-        processes = []
-
-        for idx, cluster in enumerate(clusters):
-            process = Process(target=get_color_process, args=(painting_map_list[idx], result_list4))
-            processes.append(process)
-            process.start()
-
-        for process in processes:
-            process.join()
-            process.terminate()
-        
-        # colorNames, colors = getColorFromImage(painting_map_list[0])
-
-        color_name_list = []
-        qsize = result_list4.qsize()
-        while qsize>0:
-            color_name_list.append( result_list4.get() )
-            qsize = qsize-1
-
-        # print(f'→\t컬러 {len(colorNames)}개')
-        
-
-        colorNames_16, colors_16 = color_name_list[0]
-        colorNames_24, colors_24 = color_name_list[1]
-        colorNames_32, colors_32 = color_name_list[2]
+        painting_map_16 = result_list.get()
+        painting_map_24 = result_list.get()
+        painting_map_32 = result_list.get()
 
 
         image_name2 = image_name.split('.')[0]+"_reduce." + image_name.split('.')[1]
         image_name2_16 = image_name.split('.')[0]+"_reduce_16." + image_name.split('.')[1]
         image_name2_24 = image_name.split('.')[0]+"_reduce_24." + image_name.split('.')[1]
         image_name2_32 = image_name.split('.')[0]+"_reduce_32." + image_name.split('.')[1]
-
+        
         cv2.imwrite(f'./web/static/render_image/{image_name2_16}', painting_map_16)
         cv2.imwrite(f'./web/static/render_image/{image_name2_24}', painting_map_24)
         cv2.imwrite(f'./web/static/render_image/{image_name2_32}', painting_map_32)
