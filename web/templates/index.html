@@ -48,15 +48,48 @@
     </div>
 
 
-
-    <div id='reduce_btn' class='btn_box' style='display: none'>
-        ▼ Reduce Color
+    <div id='reduce_box' style='display: none'>
+        <table>
+            <tr>
+                <td>You can set the number of colors</td>
+                <td rowspan=2>
+                    <div id='reduce_btn' class='btn_box'>
+                        ▼ Reduce Color
+                    </div>
+                </td>
+                <td>Color numbering with my color</td>
+            </tr>
+            <tr>
+                <td>
+                    <input class='cluster_number_input' type='text' value=16>
+                    <input class='cluster_number_input' type='text' value=24>
+                    <input class='cluster_number_input' type='text' value=32>
+                </td>
+                <td>
+                    <input id='mycolor_check' type='checkbox'>
+                    <label for='mycolor_check'></label>
+                </td>
+            </tr>
+        </table>
     </div>
 
     <div id='reduce_img_box' class="view_image_box" style='display: none'>
-        <img id='reduce_img_16' class='view_image'>
-        <img id='reduce_img_24' class='view_image'>
-        <img id='reduce_img_32' class='view_image'>
+        
+        <input type="radio" id='reduce_input_1' class="reduce_img_select" name="reduce_img_select" value="1"/>
+        <label id='reduce_img_1' class="reduce_radio_btn" for="reduce_input_1">
+            <img id='reduce_img_1' class='view_image view_image_reduce' style="visibility: hidden;" >
+        </label>
+        
+        <input type="radio" id='reduce_input_2' class="reduce_img_select" name="reduce_img_select" value="2" checked/>
+        <label id='reduce_img_2' class="reduce_radio_btn" for="reduce_input_2">
+            <img id='reduce_img_2' class='view_image view_image_reduce' style="visibility: hidden;" >
+        </label>
+        
+        <input type="radio" id='reduce_input_3' class="reduce_img_select" name="reduce_img_select" value="3"/>
+        <label id='reduce_img_3' class="reduce_radio_btn" for="reduce_input_3">
+            <img id='reduce_img_3' class='view_image view_image_reduce' style="visibility: hidden;" >
+        </label>
+
     </div>
 
 

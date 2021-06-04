@@ -37,7 +37,6 @@ body{
 header{
     position: relative;
     height: 150px;
-    /* margin: 0 20px; */
     padding-top: 60px;
     border-bottom: solid 2px #7c7c7c;
     background: rgb(255, 245, 245);
@@ -64,7 +63,8 @@ header{
     bottom: 10px;
     vertical-align: middle;
     font-family: pangolin;
-    font-size: 32px;
+    font-size: 32pt;
+    font-weight: bold;
     cursor: pointer;
     /* box-shadow: 0 2px 0 blue; */
 }
@@ -79,14 +79,14 @@ header{
     margin: 0 20px;
     font-family: pangolin;
     font-weight: bold;
-    font-size: 18px;
+    font-size: 14pt;
     cursor: pointer;
 }
 
 .sub_title{
     margin: 70px;
     font-family: indieflower;
-    font-size: 42px;
+    font-size: 42pt;
     font-weight: bold;
 }
 
@@ -97,7 +97,7 @@ header{
 .zone {
     position: relative;
     margin: auto;
-    width: 600px;
+    width: 750px;
     height: fit-content;
     border: 2px solid rgb(237, 125, 49);
     border-radius: 25px;
@@ -126,6 +126,7 @@ header{
     width: 150px;
     height: 100px;
     margin: 0 auto;
+    margin-right: 60px;
 }
 .zone .upload_text{
     display: inline-block;
@@ -133,11 +134,11 @@ header{
     line-height: 100px;
     margin: 0 40px;
     vertical-align: top;
-    font-size: 24px;
+    font-size: 24pt;
     font-family: corbellight;
     font-weight: bold;
 }
-.zone label, input {
+.zone label input {
     position: absolute;
     display: inline-block;
     width: 100%;
@@ -252,7 +253,7 @@ header{
     background: rgba(255, 144, 69);
     border-radius: 50px;
     line-height: 100px;
-    font-size: 28px;
+    font-size: 20pt;
     font-family: arialblack;
     color: white;
     margin: 50px auto;
@@ -265,7 +266,13 @@ header{
 
 .view_image{
     display: inline-block;
-    width: 800px;
+    width: 750px;
+}
+.view_image_reduce{
+    display: inline-block;
+    width: 245px;
+    height: auto;
+    overflow:auto;
 }
 
 .btn_box{
@@ -276,146 +283,80 @@ header{
     border: 2px solid rgb(237, 125, 49);
     border-radius: 10px;
     font-size: 16pt;
-    text-align:center;
+    text-align: center;
     cursor: pointer;
 }
 
-
-
-.canvas_box{
+#reduce_box{
+    position: relative;
+    width: 750px;
+    height: 70px;
+    margin: 15px auto;
+}
+#reduce_box table{
+    width: 100%;
+    height: 100%;
+    border-collapse: collapse;
+}
+#reduce_box td{
+    /* border: 1px solid black; */
+    width: 250px;
+}
+.cluster_number_input{
     position: relative;
     display: inline-block;
-    width: 650px;
-    /* border: 2px solid red; */
-    vertical-align: top;
-}
-
-.canvas_title{
-    margin: 10px auto;
-    font-size: 22px;
-}
-
-#line_detail_box{
-    display: inline-block;
-    height: 40px;
-    font-size: 12px;
-    font-weight: bold;
-}
-
-#blur_box{
-    display: inline-block;
-    height: 40px;
-    font-size: 12px;
-    font-weight: bold;
-}
-
-#brush_slider_box{
-    float: left;
-    margin-left: 7px;
-    font-size: 12px;
-    font-weight: bold;
-    text-align: center;
-}
-#brush_size{
-    width: 10px;
-    writing-mode: bt-lr; /* IE */
-    -webkit-appearance: slider-vertical; /* WebKit */
-}
-
-
-#eraser_slider_box{
-    float: right;
-    margin-left: 7px;
-    font-size: 12px;
-    font-weight: bold;
-    text-align: center;
-}
-#eraser_size{
-    width: 10px;
-    writing-mode: bt-lr; /* IE */
-    -webkit-appearance: slider-vertical; /* WebKit */
-}
-
-#canvas_pic{
-    display: inline-block;
-    float: right;
-    width: 600px;
-    border: 1px solid #ccc;
-    cursor: none;
-}
-
-#canvas_result{
-    float: left;
-    width: 600px;
-    height: auto;
-    border: 1px solid #ccc;
-}
-
-.img_url{
-    position: absolute;
-    left: 50px;
-    bottom: 0;
-    font-weight: bold;
-}
-.btn{
     width: 80px;
-    height: 30px;
+    border: 2px solid rgb(237, 125, 49);
+    text-align: center;
     font-size: 18px;
-    font-weight: bold;
-    margin-bottom: 10px;
-    cursor: pointer;
-}
-#pic_clear_btn{
-    position: absolute;
-    right: 0;
-    bottom: 0;
-}
-#undo_btn{
-    float: left;
-    font-size: 24px;
-    line-height: 6px;
-}
-#result_clear_btn{
-    float: right;
-}
-#result_eraser{
-    float: right;
-    margin-left: 10px;
-    margin-right: 10px;
-    font-size: 22px;
-    line-height: 6px;
-}
-#result_download_btn{
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    margin-right: 50px;
-    font-size: 30px;
-    line-height: 6px;
 }
 
-.convert_box{
+#mycolor_check + label{
     display: inline-block;
-    width: 160px;
-    vertical-align: top;
-    font-weight: bold;
-}
-.convert_box p{
-    margin-top: 130px;
-    font-size: 100px;
-    color: blue;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid rgb(237, 125, 49);
     cursor: pointer;
 }
+#mycolor_check:checked + label{
+    background: blue;
+}
+#mycolor_check{
+    display: none;
+}
 
+#reduce_img_box input{
+    margin: 0;
+    padding: 0;
+    -webkit-appearance: none;
+       -moz-appearance: none;
+            appearance: none;
+}
+.reduce_img_select{
+    display:none;
+    visibility:hidden;
+}
+.reduce_img_select:checked + label{
+    border: 3px solid rgb(237, 125, 49);
+}
 
-.brush_cursor {
-    width: 16px;
-    height: 16px;
-    border-radius: 100%;
-    background-color: red;
-    opacity: .3;
-    position: fixed;
-    transform: translate(-50%, -50%);
-    pointer-events: none;
-    transition: width .3s, height .3s, opacity .3s;
-  }
+.reduce_radio_btn{
+    cursor:pointer;
+    background-size:cover;
+    background-repeat:no-repeat;
+    overflow: auto;
+    
+    display:inline-block;
+    -webkit-transition: all 100ms ease-in;
+       -moz-transition: all 100ms ease-in;
+            transition: all 100ms ease-in;
+    -webkit-filter: brightness(1.8) grayscale(1) opacity(.7);
+       -moz-filter: brightness(1.8) grayscale(1) opacity(.7);
+            filter: brightness(1.8) grayscale(1) opacity(.7);
+}
+.reduce_radio_btn{
+    -webkit-filter: brightness(1.2) grayscale(.5) opacity(.9);
+    -moz-filter: brightness(1.2) grayscale(.5) opacity(.9);
+         filter: brightness(1.2) grayscale(.5) opacity(.9);
+}

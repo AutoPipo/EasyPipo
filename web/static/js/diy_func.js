@@ -67,9 +67,25 @@ $(window).on('load', function(){
 
     function do_image_job(job, next_btn, image_path){
         $('.loader').addClass('is-active');
+        var reduce_data = "";
+
+        if(job == "reduce_color"){
+            $('.cluster_number_input').each(function(){
+                reduce_data += $(this).val()+",";
+            });
+            reduce_data += $("#mycolor_check").is(":checked");
+        }
+        else if(job == "draw_line"){
+            reduce_data = $("input[name='reduce_img_select']:checked").val();
+            
+        }
+        else{
+            reduce_data = -1;
+        }
+
         $.ajax({
             url: '/convert',
-            data: {"job":job, "image_path": image_path},
+            data: {"job":job, "image_path": image_path, "reduce_data":reduce_data},
             dataType:'json',
             type: 'POST',
             success: function (data) {
@@ -77,12 +93,15 @@ $(window).on('load', function(){
 
                 var time = new Date().getTime();
 
-
                 if(job == "reduce_color"){
                     var img_name = data.img_name.split(".")[0];
-                    $(data.target+"_16").attr('src', '/static/render_image/'+img_name+'_16.png?time='+time);
-                    $(data.target+"_24").attr('src', '/static/render_image/'+img_name+'_24.png?time='+time);
-                    $(data.target+"_32").attr('src', '/static/render_image/'+img_name+'_32.png?time='+time);
+                    $(data.target+"_1"+" img").attr('src', '/static/render_image/'+img_name+'_1.png?time='+time);
+                    $(data.target+"_2"+" img").attr('src', '/static/render_image/'+img_name+'_2.png?time='+time);
+                    $(data.target+"_3"+" img").attr('src', '/static/render_image/'+img_name+'_3.png?time='+time);
+                    
+                    $(data.target+"_1").css('background-image', 'url(/static/render_image/'+img_name+'_1.png?time='+time+')');
+                    $(data.target+"_2").css('background-image', 'url(/static/render_image/'+img_name+'_2.png?time='+time+')');
+                    $(data.target+"_3").css('background-image', 'url(/static/render_image/'+img_name+'_3.png?time='+time+')');
                 }
                 else{
                     $(data.target).attr('src', '/static/render_image/'+data.img_name+'?time='+time);
@@ -116,7 +135,7 @@ $(window).on('load', function(){
         }
 
         if(files != null && files[0] != undefined){
-            if (files.length > 1){
+            if (files.length > 1 || $("#dropZ .fileBox").length>0 ){
                 alert('파일은 1개만 업로드할 수 있습니다.');
                 return;
             }
@@ -168,6 +187,7 @@ $(window).on('load', function(){
                         data: formData,
                         success: function (data) {
                             do_image_job("start", "#reduce_btn", ori_image_path);
+                            $("#reduce_box").show();
                         },
                         error: function (error) {
                             console.error(error);
@@ -195,50 +215,6 @@ $(window).on('load', function(){
             }
         }
     }
-
-
-    $('.go_btn22').click(function(){
-    // $('.convert_box p').click(function(){
-        $("#original_img_box").show();
-        $('.loader').addClass('is-active');
-        $('.is-active').attr('style', 'background-color:rgba(0,0,0,.15);');
-
-        
-        var working = setInterval(function(){
-            try { // statements to try
-                image = new Image();
-                var time = new Date().getTime();
-                image.src = '../static/render_image/working_img.png?time='+time;
-                
-            }
-            catch (e) {
-            }
-
-        }, 1000);
-        
-        
-
-        $.ajax({
-            url: '/convert',
-            data: {"image_path":image_path},
-            dataType:'json',
-            type: 'POST',
-            success: function (data) {
-                clearInterval(working);
-
-                image = new Image();
-                var time = new Date().getTime();
-
-                image.src = '/static/render_image/'+data.img_name+'?time='+time;
-
-                $('.loader').removeClass('is-active');
-            },
-            error: function (error) {
-                console.error(error);
-            }
-        });
-    });
-
 });
 
 

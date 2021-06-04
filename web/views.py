@@ -101,10 +101,11 @@ def upload_img():
 
 colorNames = {}
 colors = {}
+img_lab = None
+lab = None
 
-def reduce_color_process(idx, image_path, img, cluster, result):
-    global colorNames
-    global colors
+def reduce_color_process(idx, image_path, img, cluster, result, colorNames, colors):
+    idx = str(idx)
 
     paintingTool = Painting(image_path)
 
@@ -122,8 +123,8 @@ def reduce_color_process(idx, image_path, img, cluster, result):
 
     print(f'{idx}번 프로세스 컬러 {len(colorNames_)}개')
 
-    colorNames[cluster] = colorNames_
-    colors[cluster] = colors_
+    colorNames[idx] = colorNames_
+    colors[idx] = colors_
 
     result.put(paintingMap)
 
@@ -136,12 +137,12 @@ def convert():
     global colors
 
     global img_lab
-    global labs
-    global painting_map
+    global lab
 
 
     job = request.form['job']
     image_path = request.form['image_path']
+    reduce_data = request.form['reduce_data']
     
     image_path = './web'+image_path[2:]
     image_name = os.path.basename(image_path)
@@ -170,40 +171,47 @@ def convert():
             medianValue=7
         )
 
+        clusters = [int(i) for i in reduce_data.split(',')[:3]]
+
         manager = Manager()
         result_list = manager.Queue()
-        clusters = [16, 24, 32]
+        colorNames_ = manager.dict()
+        colors_ = manager.dict()
         processes = []
 
         for idx, cluster in enumerate(clusters):
-            process = Process(target=reduce_color_process, args=(idx+1, image_path, blurImage, cluster, result_list))
+            process = Process(target=reduce_color_process, args=(idx+1, image_path, blurImage, cluster, result_list, colorNames_, colors_))
             processes.append(process)
             process.start()
 
         for process in processes:
             process.join()
 
-        painting_map_16 = result_list.get()
-        painting_map_24 = result_list.get()
-        painting_map_32 = result_list.get()
+        painting_map_1 = result_list.get()
+        painting_map_2 = result_list.get()
+        painting_map_3 = result_list.get()
+
+        colorNames = dict(colorNames_)
+        colors = dict(colors_)
 
 
         image_name2 = image_name.split('.')[0]+"_reduce." + image_name.split('.')[1]
-        image_name2_16 = image_name.split('.')[0]+"_reduce_16." + image_name.split('.')[1]
-        image_name2_24 = image_name.split('.')[0]+"_reduce_24." + image_name.split('.')[1]
-        image_name2_32 = image_name.split('.')[0]+"_reduce_32." + image_name.split('.')[1]
+        image_name2_1 = image_name.split('.')[0]+"_reduce_1." + image_name.split('.')[1]
+        image_name2_2 = image_name.split('.')[0]+"_reduce_2." + image_name.split('.')[1]
+        image_name2_3 = image_name.split('.')[0]+"_reduce_3." + image_name.split('.')[1]
         
-        cv2.imwrite(f'./web/static/render_image/{image_name2_16}', painting_map_16)
-        cv2.imwrite(f'./web/static/render_image/{image_name2_24}', painting_map_24)
-        cv2.imwrite(f'./web/static/render_image/{image_name2_32}', painting_map_32)
+        cv2.imwrite(f'./web/static/render_image/{image_name2_1}', painting_map_1)
+        cv2.imwrite(f'./web/static/render_image/{image_name2_2}', painting_map_2)
+        cv2.imwrite(f'./web/static/render_image/{image_name2_3}', painting_map_3)
 
         return jsonify(target="#reduce_img", img_name=image_name2)
 
     elif job == "draw_line":
-        image_name2 = image_name.split('.')[0]+"_reduce." + image_name.split('.')[1]
+        session['reduce_idx'] = reduce_data
+
+        image_name2 = image_name.split('.')[0]+f"_reduce_{reduce_data}." + image_name.split('.')[1]
         paintingTool.image = cv2.imread(f'./web/static/render_image/{image_name2}')
         paintingMap = paintingTool.image
-
 
         # 선 그리기
         print(f'선 그리기 시작')
@@ -212,7 +220,7 @@ def convert():
         lined_image = drawLineTool.drawOutline(lined_image)
 
         # 레이블 추출
-        img_lab, lab = getImgLabelFromImage(colors, paintingMap)
+        img_lab, lab = getImgLabelFromImage(colors[reduce_data], paintingMap)
 
 
         image_name2 = image_name.split('.')[0]+"_linedraw." + image_name.split('.')[1]
@@ -223,11 +231,11 @@ def convert():
         return jsonify(target="#linedraw_img", img_name=image_name2)
 
     elif job == "numbering":
-        image_name2 = image_name.split('.')[0]+"_reduce." + image_name.split('.')[1]
+        reduce_idx = session['reduce_idx']
+
+        image_name2 = image_name.split('.')[0]+"_linedraw." + image_name.split('.')[1]
         paintingTool.image = cv2.imread(f'./web/static/render_image/{image_name2}')
         lined_image = paintingTool.image
-
-
 
         # contour, hierarchy 추출
         print(f'컨투어 추출 시작')
@@ -241,10 +249,10 @@ def convert():
         # 결과이미지 렌더링
         # image를 넣으면 원본이미지에 그려주고, result_img에 넣으면 백지에 그려줌
         print(f'넘버링 시작')
-        result_img = setColorNumberFromContours2(result_img, thresh, contours, hierarchy, img_lab, lab, colorNames)
+        result_img = setColorNumberFromContours2(result_img, thresh, contours, hierarchy, img_lab, lab, colorNames[reduce_idx])
 
         print(f'컬러 레이블링 시작')
-        result_img = setColorLabel(result_img, colorNames, colors)
+        result_img = setColorLabel(result_img, colorNames[reduce_idx], colors[reduce_idx])
 
         print(f'작업 완료')
 
