@@ -46,7 +46,8 @@ class DrawLine:
         return np.multiply(new_map, lineMap) 
     
     def drawOutline(self, image):
-        image[0], image[-1], image[:,0], image[:,-1] = 0, 0, 0, 0
+        # image[0], image[-1], image[:,0], image[:,-1] = 0, 0, 0, 0
+        image[0:2], image[-3:-1], image[:,0:2], image[:,-3:-1] = 0, 0, 0, 0
         return image
     
 

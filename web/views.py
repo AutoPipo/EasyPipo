@@ -113,7 +113,8 @@ def reduce_color_process(idx, image_path, img, cluster, result, colorNames, colo
     clusteredImage = paintingTool.colorClustering( img, cluster = cluster )
     
     print(f'{idx}번 프로세스 이미지 확장')
-    expandedImage = imageExpand(clusteredImage, guessSize = True)
+    # expandedImage = imageExpand(clusteredImage, guessSize = True)
+    expandedImage = imageExpand(clusteredImage, guessSize = False, size=2)
     
     print(f'{idx}번 프로세스 컬러 매칭 시작')
     paintingMap = paintingTool.expandImageColorMatch(expandedImage)

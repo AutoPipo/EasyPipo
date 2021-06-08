@@ -286,7 +286,7 @@ def setColorNumberFromContours2(img, thresh, contours, hierarchy, img_lab, lab, 
         # 면적 
         if cv2.contourArea(contour) < 80: continue
 
-        # 이거 아마 폐곡선 체크일걸
+        # 이거 아마 폐곡선 체크
         # if cv2.isContourConvex(contour):
         #     epsilon = 0.1 * cv2.arcLength(contour, True)
         #     contour = cv2.approxPolyDP(contour, epsilon, True)
@@ -310,7 +310,7 @@ def setColorNumberFromContours2(img, thresh, contours, hierarchy, img_lab, lab, 
         if center is not None:
             #    컨투어를 그림
             cv2.drawContours(img, [contour], -1, (100, 100, 100), 1)
-            cv2.circle(img, center, int(radius), (0, 255, 0), 1, cv2.LINE_8, 0)
+            # cv2.circle(img, center, int(radius), (0, 255, 0), 1, cv2.LINE_8, 0)
 
             # 컨투어 내부에 검출된 색을 표시
             color_text = label(img_lab, contour, lab, colorNames)
