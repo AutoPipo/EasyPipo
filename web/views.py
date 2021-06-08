@@ -122,6 +122,9 @@ def reduce_color_process(idx, image_path, img, cluster, result, colorNames, colo
     colorNames_, colors_ = getColorFromImage(paintingMap)
 
     print(f'{idx}번 프로세스 컬러 {len(colorNames_)}개')
+    
+    number_of_color = paintingTool.getNumberOfColor(paintingMap)
+    print("Number of Color :", number_of_color)
 
     colorNames[idx] = colorNames_
     colors[idx] = colors_
@@ -131,6 +134,8 @@ def reduce_color_process(idx, image_path, img, cluster, result, colorNames, colo
     return
 
 
+img_list = []
+
 @views.route("/convert", methods=["POST"])
 def convert():
     global colorNames
@@ -138,6 +143,8 @@ def convert():
 
     global img_lab
     global lab
+
+    global img_list
 
 
     job = request.form['job']
@@ -158,6 +165,8 @@ def convert():
         return jsonify(target="#original_img", img_name=image_name2)
 
     elif job == "reduce_color":
+        img_list = []
+
         paintingTool.image = cv2.imread(f'./web/static/render_image/{image_name}')
         image = paintingTool.image
 
@@ -191,6 +200,9 @@ def convert():
         painting_map_2 = result_list.get()
         painting_map_3 = result_list.get()
 
+        for img in [painting_map_1, painting_map_2, painting_map_3]:
+            img_list.append(img)
+
         colorNames = dict(colorNames_)
         colors = dict(colors_)
 
@@ -204,17 +216,28 @@ def convert():
         cv2.imwrite(f'./web/static/render_image/{image_name2_2}', painting_map_2)
         cv2.imwrite(f'./web/static/render_image/{image_name2_3}', painting_map_3)
 
+        print(f'./web/static/render_image/{image_name2_2}')
+
         return jsonify(target="#reduce_img", img_name=image_name2)
 
     elif job == "draw_line":
         session['reduce_idx'] = reduce_data
 
         image_name2 = image_name.split('.')[0]+f"_reduce_{reduce_data}." + image_name.split('.')[1]
-        paintingTool.image = cv2.imread(f'./web/static/render_image/{image_name2}')
-        paintingMap = paintingTool.image
+        print(f'./web/static/render_image/{image_name2}')
+
+        # paintingMap = cv2.imread(f'./web/static/render_image/{image_name2}')
+
+        paintingMap = img_list[int(reduce_data)-1]
+
+        number_of_color = paintingTool.getNumberOfColor(paintingMap)
+        print("Number of Color :", number_of_color)
 
         # 선 그리기
         print(f'선 그리기 시작')
+
+
+
         drawLineTool = DrawLine(paintingMap)
         lined_image = drawLineTool.getDrawLine()
         lined_image = drawLineTool.drawOutline(lined_image)

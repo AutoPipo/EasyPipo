@@ -18,7 +18,6 @@
 
 
 
-
 *{
     box-sizing: border-box;
     font-family:'Malgun Gothic';
@@ -26,12 +25,122 @@
     padding: 0;
     white-space: nowrap;
     border-spacing: 0;
+    transition: all 1000ms;
+    -webkit-transition: all 1000ms;
 }
 body{
     width: 100vw;
     height: 95vh;
     text-align: center;
 }
+
+
+
+
+
+
+
+
+
+
+
+/* Form Progress */
+.vprogress {
+    width: 1000px;
+    margin: 20px auto;
+    text-align: center;
+  }
+  .vprogress .bar {
+    display: block;
+   
+  }
+  .vprogress .circle{
+    display: block;
+    margin-bottom: 0px;
+     background: #fff;
+    width: 40px; height: 40px;
+    border-radius: 40px;
+    border: 1px solid #d5d5da;
+  }
+  .vprogress .bar {
+    position: relative;
+    width: 6px;
+    height: 52px;
+    top: 0px;
+    margin-left: 17px;
+    margin-right: -5px;
+    border-left: none;
+    border-right: none;
+    border-radius: 0;
+  }
+  .vprogress .circle .label {
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+    line-height: 32px;
+    border-radius: 32px;
+    margin-top: 3px;
+    color: #b5b5ba;
+    font-size: 17px;
+  }
+  .vprogress .circle .title {
+    color: #b5b5ba;
+    font-size: 13px;
+    line-height: 30px;
+    margin-left: 45px;
+    position: relative;
+    top: -28px;
+  }
+  
+  /* Done / Active */
+  .vprogress .bar.done,
+  .vprogress .circle.done {
+    background: green;
+  }
+  .vprogress .bar.failed,
+  .vprogress .circle.failed {
+    background: red;
+  }
+  .vprogress .bar.active {
+    background: linear-gradient(to right, #EEE 40%, #FFF 60%);
+  }
+  .vprogress .circle.done .label {
+    color: #FFF;
+    background: #8bc435;
+    box-shadow: inset 0 0 2px rgba(0,0,0,.2);
+  }
+  .vprogress .circle.done .title {
+    color: #444;
+  }
+  .vprogress .circle.active .label {
+    color: #FFF;
+    background: #0c95be;
+    box-shadow: inset 0 0 2px rgba(0,0,0,.2);
+  }
+  .vprogress .circle.active .title {
+    color: #0c95be;
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /*main page title*/
 header{
@@ -228,7 +337,10 @@ header{
     transform: translate(-40%, -50%);
 }
 .fileBox img{
-    width: 90%;
+    display: inline-block;
+    width: 100px;
+    margin-right: 20px;
+    left: 0;
     /* height: 85%; */
 }
 .x_btn{
@@ -239,9 +351,11 @@ header{
     cursor: pointer;
 }
 .filename_text{
-    width: 500px;
+    display: inline-block;
+    width: 480px;
     margin: auto;
-    font-size: 18px;
+    font-size: 14px;
+    text-align: left;
     text-overflow: ellipsis;
     overflow:hidden;
 }

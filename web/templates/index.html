@@ -15,6 +15,9 @@
     <!-- local js & css file import start -->
     <script src="{{ url_for('static', filename='js/diy_func.js') }}"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/diy_styles.css') }}">
+
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+   <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
     <!-------------------------------------->
 
     <!-- CSS Loader -->
@@ -26,7 +29,9 @@
     <div class="loader loader-default" data-text="Converting..."></div>
     {% include "menu_template.html" %}
 
+
     <h1 class="sub_title" >Painting easier what you want !</h1>
+
 
 
     <div class="zone">
@@ -42,6 +47,21 @@
 
 
     <div class="go_btn">GO→</div>
+
+
+
+
+
+    <!-- <div class="vprogress">
+        <div class="circle"><span class="label" title="Popover Header" data-toggle="popover" data-content="Some content inside the popover">1</span> <span class="title">Origin Image</span></div>
+        <div class="circle"><span class="label" title="Popover Header" data-toggle="popover" data-content="Some content inside the popover">2</span> <span class="title">Painting Image</span></div>
+        <div class="circle"><span class="label" title="Popover Header" data-toggle="popover" data-content="Some content inside the popover">3</span> <span class="title">Line Image</span></div>
+        <div class="circle"><span class="label" title="Popover Header" data-toggle="popover" data-content="Some content inside the popover">4</span> <span class="title">Pipo Painting</span></div>
+    </div> -->
+
+
+
+
 
     <div id='original_img_box' class="view_image_box" style='display: none'>
         <img id='original_img' class='view_image'>

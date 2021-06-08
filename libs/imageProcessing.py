@@ -300,17 +300,6 @@ def setColorNumberFromContours2(img, thresh, contours, hierarchy, img_lab, lab, 
         cv2.fillPoly(raw_dist, pts =[contours[i] for i in chlidren], color=(0, 0, 0))
 
 
-        # fig = plt.figure()
-
-        # a = np.copy(255-raw_dist)
-        # a = cv2.resize(a, dsize=(900, 1186), interpolation=cv2.INTER_AREA)
-        # cv2.imshow('hierarchy', a)
-        # cv2.waitKey(0)
-        # ax1 = fig.add_subplot(1, 2, 1)
-        # ax1.imshow(raw_dist)
-        # ax1.set_title('hierarchy')
-        # ax1.axis("off")
-
         # 내접원 반지름, 중심좌표 추출
         radius, center = getRadiusCenterCircle(raw_dist)
 
