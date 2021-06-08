@@ -1,0 +1,124 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>EASY PIPO</title>
+
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/moonspam/NanumBarunGothic@1.0/nanumbarungothicsubset.css">
+
+    <!-- import jquery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <!------------------->
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <!-- local js & css file import start -->
+    <script src="{{ url_for('static', filename='js/diy_func.js') }}"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/diy_styles.css') }}">
+    <!-------------------------------------->
+
+    <!-- CSS Loader -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='dist/css-loader.css') }}">
+    <!---------------->
+</head>
+
+<body>
+    <div class="loader loader-default" data-text="Converting..."></div>
+    {% include "menu_template.html" %}
+
+
+    <div id="steps">
+        <div data-step="1" class="active">Origin Image</div>
+        <div data-step="2">Painting Image</div>
+        <div data-step="3">Line Image</div>
+        <div data-step="4">Pipo Painting</div>
+    </div>
+
+
+    <h1 class="sub_title" >Painting easier what you want !</h1>
+
+
+    <div class="zone">
+        <div id="dropZ">
+            <div class="selectFile">       
+                <label for="file">Browse file</label>                   
+                <input type="file" name="files[]" id="file" accept='image/jpeg,image/png'>
+            </div>
+
+            <div class='upload_text'><b>Choose a file</b> or drag it here.</div>
+        </div>
+    </div>
+
+
+    <div class="go_btn">GO→</div>
+
+    <div id='original_img_box' class="view_image_box" style='display: none'>
+        <img id='original_img' class='view_image'>
+    </div>
+
+
+    <div id='reduce_box' style='display: none'>
+        <table>
+            <tr>
+                <td>You can set the number of colors</td>
+                <td rowspan=2>
+                    <div id='reduce_btn' class='btn_box'>
+                        ▼ Reduce Color
+                    </div>
+                </td>
+                <td>Color numbering with my color</td>
+            </tr>
+            <tr>
+                <td>
+                    <input class='cluster_number_input' type='text' value=16>
+                    <input class='cluster_number_input' type='text' value=24>
+                    <input class='cluster_number_input' type='text' value=32>
+                </td>
+                <td>
+                    <input id='mycolor_check' type='checkbox'>
+                    <label for='mycolor_check'></label>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <div id='reduce_img_box' class="view_image_box" style='display: none'>
+        
+        <input type="radio" id='reduce_input_1' class="reduce_img_select" name="reduce_img_select" value="1"/>
+        <label id='reduce_img_1' class="reduce_radio_btn" for="reduce_input_1">
+            <img id='reduce_img_1' class='view_image view_image_reduce' style="visibility: hidden;" >
+        </label>
+        
+        <input type="radio" id='reduce_input_2' class="reduce_img_select" name="reduce_img_select" value="2" checked/>
+        <label id='reduce_img_2' class="reduce_radio_btn" for="reduce_input_2">
+            <img id='reduce_img_2' class='view_image view_image_reduce' style="visibility: hidden;" >
+        </label>
+        
+        <input type="radio" id='reduce_input_3' class="reduce_img_select" name="reduce_img_select" value="3"/>
+        <label id='reduce_img_3' class="reduce_radio_btn" for="reduce_input_3">
+            <img id='reduce_img_3' class='view_image view_image_reduce' style="visibility: hidden;" >
+        </label>
+
+    </div>
+
+
+
+    <div id='drawline_btn' class='btn_box' style='display: none'>
+        ▼ Draw Line
+    </div>
+
+    <div id='linedraw_img_box' class="view_image_box" style='display: none'>
+        <img id='linedraw_img' class='view_image'>
+    </div>
+
+    
+
+    <div id='numbering_btn' class='btn_box' style='display: none'>
+        ▼ Numbering
+    </div>
+
+    <div id='numbering_img_box' class="view_image_box" style='display: none'>
+        <img id='numbering_img' class='view_image'>
+    </div>
+</body>
+</html>
