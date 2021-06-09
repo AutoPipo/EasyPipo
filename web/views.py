@@ -125,8 +125,8 @@ def reduce_color_process(idx, image_path, img, cluster, result, colorNames, colo
 
     print(f'{idx}번 프로세스 컬러 {len(colorNames_)}개')
     
-    number_of_color = paintingTool.getNumberOfColor(paintingMap)
-    print("Number of Color :", number_of_color)
+    # number_of_color = paintingTool.getNumberOfColor(paintingMap)
+    # print("Number of Color :", number_of_color)
 
     colorNames[idx] = colorNames_
     colors[idx] = colors_
@@ -232,8 +232,8 @@ def convert():
 
         paintingMap = img_list[int(reduce_data)-1]
 
-        number_of_color = paintingTool.getNumberOfColor(paintingMap)
-        print("Number of Color :", number_of_color)
+        # number_of_color = paintingTool.getNumberOfColor(paintingMap)
+        # print("Number of Color :", number_of_color)
 
         # 선 그리기
         print(f'선 그리기 시작')
