@@ -8,7 +8,7 @@
 
 import cv2
 import numpy as np
-from skimage.morphology import skeletonize
+# from skimage.morphology import skeletonize
 
 class DrawLine:
     def __init__(self, image):

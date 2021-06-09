@@ -194,20 +194,23 @@ def getImgLabelFromImage(colors, img):
     return img_lab, lab
 
 
-@numba.jit(forceobj = True)
+# @numba.jit(forceobj = True)
 def getRadiusCenterCircle(raw_dist):
     dist_transform = cv2.distanceTransform(raw_dist, cv2.DIST_L2, maskSize=5)
+    # points = [list(dist_transform)[i] for i in range(0, len(dist_transform), 300) if list(dist_transform)[i] > 50]
+    # print(type(list(dist_transform)[50]), list(dist_transform)[50])
+    points = 1
     _, radius, _, center = cv2.minMaxLoc(dist_transform)
 
     # result = cv2.normalize(dist_transform, None, 255, 0, cv2.NORM_MINMAX, cv2.CV_8UC1)
     # minVal, maxVal, a, center = cv2.minMaxLoc(result)
 
-    return radius, center
+    return radius, center, points
 
 
-import psutil
-import ray
-import scipy.signal
+# import psutil
+# import ray
+# import scipy.signal
 
 @numba.jit(forceobj = True)
 def setColorNumberFromContours(img, thresh, contours, hierarchy, img_lab, lab, colorNames):
@@ -274,7 +277,7 @@ def mp_filter(thresh, splited_contours, contours, hierarchy, img_lab, lab, color
     return img
 
 
-@numba.jit(forceobj = True)
+# @numba.jit(forceobj = True)
 def setColorNumberFromContours2(img, thresh, contours, hierarchy, img_lab, lab, colorNames):
     # 컨투어 별로 체크
     for idx in trange(len(contours), file=sys.stdout, desc='Set Numbering'):
@@ -301,7 +304,11 @@ def setColorNumberFromContours2(img, thresh, contours, hierarchy, img_lab, lab, 
 
 
         # 내접원 반지름, 중심좌표 추출
-        radius, center = getRadiusCenterCircle(raw_dist)
+        radius, center, points = getRadiusCenterCircle(raw_dist)
+
+        # for i in points:
+        #     print(i)
+        # print("@"*30)
 
         # 반지름 작은거 무시
         if radius < 10: continue
