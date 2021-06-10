@@ -2,6 +2,7 @@ function close_btn(target){
     // alert(target);
     $(".fileBox").remove();
     $("#file").val(null);
+    $(".go_btn").hide();
 }
 
 
@@ -136,6 +137,10 @@ $(window).on('load', function(){
                     $(data.target+"_1").css('background-image', 'url(/static/render_image/'+img_name+'_1.'+data.img_name.split(".")[1]+'?time='+time+')');
                     $(data.target+"_2").css('background-image', 'url(/static/render_image/'+img_name+'_2.'+data.img_name.split(".")[1]+'?time='+time+')');
                     $(data.target+"_3").css('background-image', 'url(/static/render_image/'+img_name+'_3.'+data.img_name.split(".")[1]+'?time='+time+')');
+                    
+                    $(".color_text").each(function(i){
+                        $(this).text(data.clusters[i] + " Color");
+                    });
                 }
                 else{
                     $(data.target).attr('src', '/static/render_image/'+data.img_name+'?time='+time);
@@ -145,7 +150,7 @@ $(window).on('load', function(){
 
                 $('.loader').removeClass('is-active');
 
-                $('html,body').animate({ scrollTop: 9999 }, 'slow');
+                $('html,body').animate({ scrollBottom: 300 }, 'slow'); // 9999
             },
             error: function (error) {
                 console.error(error);
@@ -175,6 +180,12 @@ $(window).on('load', function(){
             }
 
             if (files[0].type==='image/jpeg' || files[0].type==='image/png') {
+                $(".go_btn").show();
+                $(".view_image_box").hide();
+                $(".btn_box").hide();
+
+
+
                 $(".zone").css({"outline": "none"});
 
                 $('.view_image_box,.view_image_box').hide();
@@ -186,6 +197,7 @@ $(window).on('load', function(){
                 fileSize = fileSize < 1 ? fileSize.toFixed(3) : fileSize.toFixed(1);
 
                 // "<image src=\'{{url_for('static',filename='css/icon/preview_image.png')}}\'>" +
+
                 tag += 
                     "<div class='fileBox'>" +
                         "<image id='thumbnail'>" +
@@ -222,6 +234,7 @@ $(window).on('load', function(){
                         success: function (data) {
                             do_image_job("start", "#reduce_btn", ori_image_path);
                             $("#reduce_box").show();
+                            $(".download_btn").eq(0).attr("href", ori_image_path);
                         },
                         error: function (error) {
                             console.error(error);
@@ -230,16 +243,58 @@ $(window).on('load', function(){
                 });
 
                 $("#reduce_btn").click(function(){
+                    var time = new Date().getTime();
+
                     do_image_job("reduce_color", "#drawline_btn", ren_image_path);
+
+                    var temp = ren_image_path.split(".");
+
+                    $(".download_btn").eq(1).attr("href", ".."+temp[2]+"_reduce_1."+temp[3]);
+                    $(".download_btn").eq(2).attr("href", ".."+temp[2]+"_reduce_2."+temp[3]);
+                    $(".download_btn").eq(3).attr("href", ".."+temp[2]+"_reduce_3."+temp[3]);
+                    
+                    $("#a_reduce_input_1").attr("href", ".."+temp[2]+"_reduce_1."+temp[3]+'?time='+time);
+                    $("#a_reduce_input_2").attr("href", ".."+temp[2]+"_reduce_2."+temp[3]+'?time='+time);
+                    $("#a_reduce_input_3").attr("href", ".."+temp[2]+"_reduce_3."+temp[3]+'?time='+time);
+                    
+                    baguetteBox.run('.reduce_img_baguette', {
+                        noScrollbars: true
+                    });
                 })
 
                 $("#drawline_btn").click(function(){
                     do_image_job("draw_line", "#numbering_btn", ren_image_path);
+
+                    var temp = ren_image_path.split(".");
+                    $(".download_btn").eq(4).attr("href", ren_image_path);
+                    $(".download_btn").eq(4).attr("href", ".."+temp[2]+"_linedraw."+temp[3]);
                 })
 
                 $("#numbering_btn").click(function(){
                     do_image_job("numbering", null, ren_image_path);
-                    // $("#numbering_btn").show();
+                    
+                    var temp = ren_image_path.split(".");
+                    $(".download_btn").eq(5).attr("href", ".."+temp[2]+"_numbering."+temp[3]);
+
+                    $("#input_color_label_btn").show();
+
+                    $("#input_color_label_btn").click(
+                        function(){
+                            var time = new Date().getTime();
+
+                            var state = $(this).data('toggleState');
+
+                            if(state){
+                                $("#numbering_img").attr('src', ".."+temp[2]+"_numbering_label."+temp[3])+'?time='+time;
+                                $(".download_btn").eq(5).attr("href", ".."+temp[2]+"_numbering_label."+temp[3]);
+                            }
+                            else{
+                                $("#numbering_img").attr('src', ".."+temp[2]+"_numbering."+temp[3])+'?time='+time;
+                                $(".download_btn").eq(5).attr("href", ".."+temp[2]+"_numbering."+temp[3]);
+                            }
+                            $(this).data('toggleState', !state);
+                        }
+                    );
                 })
             }
             else{

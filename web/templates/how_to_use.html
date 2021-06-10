@@ -15,7 +15,6 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/diy_styles.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/how_to_use.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/fullpage.css') }}">
-    </style>
 
     <!-- font -->
     
@@ -111,7 +110,7 @@
                 <label class='switch-button' >
                     <span class='kor'>한국어</span>
                     <span class='eng'> English</span>
-                    <input type='checkbox' id='btn'>
+                    <input type='checkbox' id='btn' checked>
                     <span class='onoff-switch'></span>               
                 </label>
                 <span class='early'>
@@ -202,9 +201,35 @@
                 autoScrolling: true,
                 scrollHorizontally: true
             });
+            
+            $(document).on("click", "#btn", function(){
+                var state = $("#btn").data('toggleState');
+
+                fullpage_api.destroy('all');
+
+                if(state){
+                    $("#fullpage").html(eng_contain);
+                    $('#fullpage').fullpage({
+                        licenseKey: 'OPEN-SOURCE-GPLV3-LICENSE',
+                        autoScrolling: true,
+                        scrollHorizontally: true
+                    });
+                }
+                else{
+                    $("#fullpage").html(kor_contain);
+                    $('#fullpage').fullpage({
+                        licenseKey: 'OPEN-SOURCE-GPLV3-LICENSE',
+                        autoScrolling: true,
+                        scrollHorizontally: true
+                    });
+                }
+
+                $("#btn").data('toggleState', !state);
+            })
         });
         
-        var check = document.getElementById('btn');
+            
+        
 
     </script>
     

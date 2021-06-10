@@ -72,6 +72,7 @@ def upload_img():
             # filename = secure_filename(file.filename) # secure_filename은 한글명을 지원하지 않음
             filename = file.filename 
             filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
+            filepath = filepath.replace("\\", "/")
             file_page_path = os.path.splitext(filepath)[0]
             
             # pdf file save (with uploaded)
@@ -219,7 +220,7 @@ def convert():
 
         print(f'./web/static/render_image/{image_name2_2}')
 
-        return jsonify(target="#reduce_img", img_name=image_name2)
+        return jsonify(target="#reduce_img", img_name=image_name2, clusters=clusters)
 
     elif job == "draw_line":
         session['reduce_idx'] = reduce_data
@@ -276,12 +277,14 @@ def convert():
         result_img = setColorNumberFromContours2(result_img, thresh, contours, hierarchy, img_lab, lab, colorNames[reduce_idx])
 
         print(f'컬러 레이블링 시작')
-        result_img = setColorLabel(result_img, colorNames[reduce_idx], colors[reduce_idx])
+        result_img2 = setColorLabel(result_img.copy(), colorNames[reduce_idx], colors[reduce_idx])
 
         print(f'작업 완료')
 
         image_name2 = image_name.split('.')[0]+"_numbering." + image_name.split('.')[1]
+        image_name2_2 = image_name.split('.')[0]+"_numbering_label." + image_name.split('.')[1]
         cv2.imwrite(f'./web/static/render_image/{image_name2}', result_img)
+        cv2.imwrite(f'./web/static/render_image/{image_name2_2}', result_img2)
         return jsonify(target="#numbering_img", img_name=image_name2)
 
     return jsonify(img_name=image_name)

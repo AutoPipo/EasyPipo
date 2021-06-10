@@ -367,13 +367,33 @@ header{
 .go_btn{
     width: 100px;
     height: 100px;
-    background: rgba(255, 144, 69);
+    border: 5px solid rgba(255, 144, 69);
     border-radius: 50px;
-    line-height: 100px;
+    line-height: 90px;
     font-size: 20pt;
     font-family: arialblack;
-    color: white;
     margin: 50px auto;
+    cursor: pointer;
+}
+.go_btn:hover{
+    background: rgb(237, 125, 49);
+    color: white;
+}
+
+.download_btn{
+    height: 20px;
+    vertical-align: top;
+}
+img + .download_btn{
+    vertical-align: middle;
+}
+.download_btn img{
+    vertical-align: middle;
+}
+
+.download_btn_img{
+    width: 50px;
+    margin-left: 20px;
     cursor: pointer;
 }
 
@@ -392,16 +412,31 @@ header{
     overflow:auto;
 }
 
+
+#baguetteBox-overlay .full-image img{
+    max-width: 70%;
+    max-height: 70%;
+}
+
+
 .btn_box{
     width: 200px;
     height: 50px;
-    line-height: 50px;
+    line-height: 40px;
     margin: 0 auto;
     border: 2px solid rgb(237, 125, 49);
     border-radius: 10px;
     font-size: 16pt;
     text-align: center;
     cursor: pointer;
+}
+.btn_box:hover{
+    background: rgb(237, 125, 49);
+    color: white;
+}
+
+.a_reduce_input{
+    margin: 0 150px;
 }
 
 #reduce_box{
@@ -426,6 +461,26 @@ header{
     border: 2px solid rgb(237, 125, 49);
     text-align: center;
     font-size: 18px;
+}
+
+#reduce_img_privew_table{
+    width: 800px;
+    margin: 0 auto;
+}
+#reduce_img_privew_table .download_btn_img,.preview_btn{
+    width: 20px;
+    cursor: pointer;
+}
+.color_text{
+    display: inline-block;
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    line-height: 20px;
+}
+.color_text + .download_btn_img,.preview_btn{
+    width: 20px;
+    cursor: pointer;
 }
 
 #mycolor_check + label{
@@ -476,4 +531,8 @@ header{
     -webkit-filter: brightness(1.2) grayscale(.5) opacity(.9);
     -moz-filter: brightness(1.2) grayscale(.5) opacity(.9);
          filter: brightness(1.2) grayscale(.5) opacity(.9);
+}
+
+#input_color_label_btn{
+    display: inline-block;
 }
