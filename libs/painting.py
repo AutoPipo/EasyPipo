@@ -2,7 +2,7 @@
 # Image to Painting Process
 
 # Start : 21.04.01
-# Update : 21.06.03
+# Update : 21.06.12
 # Author : Minku Koo
 '''
 
@@ -22,8 +22,8 @@ class Painting:
         self.paintingMap = np.array([])
         
         self.image = cv2.imread(imagepath) # Original Image
-        self.fileBasename = os.path.basename(imagepath) # file name
-        self.filename = self.fileBasename.split(".")[0] # file base name
+        self.fileBasename = os.path.basename(imagepath) # file base name
+        self.filename = self.fileBasename.split(".")[0] # file name
         
         # 지정된 hex color 리스트
         self.hexColorCode =  HexColorCode().hexColorCodeList
@@ -78,7 +78,7 @@ class Painting:
     def allColorMatcing(self, image):
         hexColors = np.array( [ self.__hex2bgr(hex) for hex in self.hexColorCode ] )
         self.paintingMap = self.__matchColors(image, self.clusteredColors, hexColors)
-        #  파라미터 순서 꼭 지켜야함
+        #  파라미터 순서 꼭 지켜야함   !!!
         return self.paintingMap
    
     # 여기에 확장한 이미지랑 클러스터 칼라 매칭 
@@ -304,7 +304,7 @@ def imageExpand(image, guessSize=False, size = 3):
     if guessSize : size = ( 5000 // image.shape[1] ) + 1
     #       INTER_LANCZOS4
     image = cv2.resize(image, None, fx=size, fy=size, interpolation=cv2.INTER_LINEAR)
-    # _, image = cv2.threshold(image, 200, 255, cv2.THRESH_BINARY)
+    
     return  image
     
         
@@ -315,29 +315,32 @@ if __name__ == "__main__":
     # 클래스 선언
     painting = Painting( "./imagePath/image.jpg")
     
-    # 색 단순화 + 블러 처리
+    # Reduce Color and Blurring
     blurImage = painting.blurring(  div = 8, 
                                     radius = 10, 
                                     sigmaColor =20, 
                                     medianValue=7)
     
-    # K-means 알고리즘을 활용한 컬러 군집화
+    # Color Clustering using K-Means
     clusteredImage = painting.colorClustering( blurImage, cluster = 16)
     
-    # Way 1 )
+    # 이미지 확장, Way 1 or 2 < Select one
+    # ===== Way 1 ===== ) 
     expandedImage = imageExpand(clusteredImage, size = 4)
-    # Way 2 )
-    expandedImage = imageExpand(clusteredImage, guessSize = True)
     
-    # Way 1 )
     # 확장된 이미지에서 변형된 색상을 군집화된 색상과 매칭
     similarMap = painting.expandImageColorMatch(expandedImage)
     # 군집화된 색상을 지정된 색상과 가장 비슷한 색상으로 매칭
     paintingMap = painting.getPaintingColorMap(similarMap)
+    # ==== Way 1 End ==== ) 
     
-    # Way 2 )
+    
+    # ===== Way 2 ===== ) 
+    expandedImage = imageExpand(clusteredImage, guessSize = True)
+    
     # Way 1의 과정을 하나로 합침
     paintingMap = painting.allColorMatcing(expandedImage)
+    # ==== Way 2 End ==== ) 
     
     # 이미지 색상 개수 확인
     number_of_color = painting.getNumberOfColor(paintingMap)
