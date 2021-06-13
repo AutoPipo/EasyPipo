@@ -9,13 +9,12 @@
 📌 Authors : [Minku Koo](https://github.com/Minku-Koo) &nbsp; [Jiyong Park](https://github.com/Ji-yong219)    
 📌 Period : Feb.2021 ~ Jun.2021   
 📌 Keyword : "Computer Vision", "Image Processing", "OpenCV", "Pipo Painting", "Line Detection", "Color Numbering"    
-📧 Contact : corleone@kakao.com &nbsp; wldydslapjyy@naver.com   
 
 *****
 
 ## 📝 Discription  
 
-<img src="/about_project/pipo-example.jpg" width="40%" title="pipopainting-example" style="float: right;" ></img>
+<img src="/about_project/pipo-example.jpg" width="40%" title="pipopainting-example" style="float: right;" ></img>    
 Here is discriptions    
 Here is discriptions    
 Here is discriptions   
@@ -44,12 +43,17 @@ Here is discriptions
   <img src="/about_project/test-image/lala-lainedraw.jpg" width="50%" title="line drawing"></img>
 </p>
 
-<h3 align="center" >Step 3. Set Color Numbering (Color Label Included or Not)</h3>
+<h3 align="center" >Step 3. Remove noise line and Set Color Numbering (Color Label Included or Not)</h3>
 <!--<h3  align="center">Color Label Included&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Unincluded
 </h3>-->
 <p align="center">
   <img src="/about_project/test-image/lala-numbering-label.jpg" width="40%" title="numbering+label"></img>
   <img src="/about_project/test-image/lala-numbering.jpg" width="40%" title="numbering+non_label"></img>
+</p>
+
+<h3 align="center" >You can see Number</h3>
+<p align="center">
+  <img src="/about_project/test-image/lala-numbering-expand.jpg" width="50%" title="numbering-expand"></img>
 </p>
 
 *****
@@ -60,4 +64,10 @@ Here is discriptions
 ### 📍 DrawLine()
 
 ### 📍 Numbering()
+
+
+*****
+## 📧 Contact
+- corleone@kakao.com
+- wldydslapjyy@naver.com   
 
