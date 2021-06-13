@@ -10,15 +10,17 @@
 📌 Period : Feb.2021 ~ Jun.2021   
 📌 Keyword : "Computer Vision", "Image Processing", "OpenCV", "Pipo Painting", "Line Detection", "Color Numbering"    
 
-*****
 
-## 📝 Discription  
+## ⚙ Our System is...
+### Using Image Processing, the real image is automatically converted to a "Pipo Painting" canvas.
 
-<img src="/about_project/pipo-example.jpg" width="40%" title="pipopainting-example" style="float: right;" ></img>    
-Here is discriptions    
-Here is discriptions    
-Here is discriptions   
-*****
+## 🤔 What is Pipo Painting?
+<img src="/about_project/pipo-example.jpg" width="40%" title="pipopainting-example" style="float: left" ></img> 
+"Pipo Painting" is also called "Paint by Number" or "Painting by Numbers".    
+It is a kit having a board on which light markings to indicate areas to paint, and each area has a number and a corresponding numbered paint to use. The kits come with little compartmentalised boxes where the numbered colour pigments are stored. The users are encouraged to wash the paintbrush every time a new numbered colour is being used. The kits were invented, developed and marketed in 1950 by Max S. Klein, an engineer and owner of the Palmer Paint Company of Detroit, Michigan, and Dan Robbins, a commercial artist.
+
+[Wikipedia Discription](https://en.wikipedia.org/wiki/Paint_by_number)   
+[Search on Amazon](https://www.amazon.com/Pipo-Painting/s?k=Pipo+Painting)   
 
 ## 🛠💡 Working Steps
 
@@ -56,7 +58,6 @@ Here is discriptions
   <img src="/about_project/test-image/lala-numbering-expand.jpg" width="50%" title="numbering-expand"></img>
 </p>
 
-*****
 ## 📚 Python Modules
 
 ### 📍 Painting()
@@ -65,9 +66,7 @@ Here is discriptions
 
 ### 📍 Numbering()
 
-
-*****
 ## 📧 Contact
 - corleone@kakao.com
-- wldydslapjyy@naver.com   
+- wldydslapjyy@naver.com 
 
