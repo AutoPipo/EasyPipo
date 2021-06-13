@@ -12,8 +12,8 @@
 📌 **Keyword** : "Computer Vision", "Image Processing", "OpenCV", "Pipo Painting", "Line Detection", "Color Numbering"       <br><br>
 
 ## Contents
-[1. Our System is ...](#https://github.com/AutoPipo/Auto-create-Pipo-Painting#-our-system-is)    
-[2. What is Pipo Painting?](#https://github.com/AutoPipo/Auto-create-Pipo-Painting#-what-is-pipo-painting)    
+[1. Our System is ...](#-our-system-is)    
+[2. What is Pipo Painting?](#-what-is-pipo-painting)    
 [3. Working Steps](#https://github.com/AutoPipo/Auto-create-Pipo-Painting#-working-steps)    
 [4. Python Modules](#https://github.com/AutoPipo/Auto-create-Pipo-Painting#-python-modules)    
 [5. Contact to us](#https://github.com/AutoPipo/Auto-create-Pipo-Painting#-contact-to-us)    
