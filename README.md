@@ -1,5 +1,6 @@
 # Easy Pipo
 ## "Pipo Painting" Auto Creation System
+### Using Image Processing, the real image is automatically converted to a "Pipo Painting" canvas.   
 
 <h3 align="center">Our Icon</h3>
 <p align="center">
@@ -8,14 +9,13 @@
 
 📌 **Authors** :  [Minku Koo](https://github.com/Minku-Koo) &nbsp;[Jiyong Park](https://github.com/Ji-yong219)      <br><br>
 📌 **Development Period** : Feb.2021 ~ Jun.2021     <br><br>
-📌 **Main Library** : [cv2](https://docs.opencv.org/master/) &nbsp;[numpy](https://numpy.org/doc/) &nbsp;[Flask](https://flask.palletsprojects.com/en/2.0.x/)     <br><br>
+📌 **Main Library** : [cv2](https://docs.opencv.org/master/), [numpy](https://numpy.org/doc/), [Flask](https://flask.palletsprojects.com/en/2.0.x/)     <br><br>
 📌 **Keyword** : "Computer Vision", "Image Processing", "OpenCV", "Pipo Painting", "Line Detection", "Color Numbering"       <br><br>
 
 ## 📃 Contents
 - [Introduction](#pipo-painting-auto-creation-system)
-- [Our System is ...](#-our-system-is)    
 - [What is Pipo Painting?](#-what-is-pipo-painting)    
-- - [How to Use?](#-how-to-use)    
+- [How to Use?](#-how-to-use)    
 - [Working Steps](#-working-steps)    
   * [Original Image](#original-image)     
   * [Step 1](#step-1-color-clustering-8-16-32-colors)    
@@ -26,10 +26,6 @@
   + [DrawLine()](#-drawline)
   + [Numbering()](#-numbering)
 - [Contact to us](#-contact-to-us)    
-
-
-## ⚙ Our System is ...
-#### Using Image Processing, the real image is automatically converted to a "Pipo Painting" canvas.   <br><br>
 
 ## 🤔 What is Pipo Painting?
 <img src="/about_project/pipo-example.jpg" width="40%" title="pipopainting-example" style="float: left" ></img>    
@@ -45,7 +41,7 @@
 [🔗 Amazon Products](https://www.amazon.com/Pipo-Painting/s?k=Pipo+Painting)   
 [🔗 Coupang Products](https://www.coupang.com/np/search?q=%ED%94%BC%ED%8F%AC%ED%8E%98%EC%9D%B8%ED%8C%85&channel=relate)     
 
-## 💡 How to Use?
+## ⚙ How to Use?
 
 #### Command Line
 ```
@@ -60,7 +56,7 @@ python .
 https://localhost:5000
 ```
 
-## 🛠 Working Steps
+## 💡 Working Steps
 
 <h3  align="center">Original Image</h3>
 <p align="center">
@@ -100,7 +96,7 @@ https://localhost:5000
 
 ### 📍 Painting()
 
-> ***Painting()*** converts the image like a picture.   
+> ***Painting()*** converts the image like a picture through reduce color.   
 > Use Blurring and K-Means Clustering.   
 > This is **step 1** of the [Working Steps](#-working-steps)     
 
