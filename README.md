@@ -15,8 +15,16 @@
 - [Introduction](#pipo-painting-auto-creation-system)
 - [Our System is ...](#-our-system-is)    
 - [What is Pipo Painting?](#-what-is-pipo-painting)    
+- - [How to Use?](#-how-to-use)    
 - [Working Steps](#-working-steps)    
+  * [Original Image](#original-image)     
+  * [Step 1](#step-1-color-clustering-8-16-32-colors)    
+  * [Step 2](#step-2-select-appropriate-number-of-colors-and-line-drawing)     
+  * [Step 3](#step-3-remove-noise-line-and-set-color-numbering-color-label-included-or-not)     
 - [Python Modules](#-python-modules)    
+  + [Painting()](#-painting)
+  + [DrawLine()](#-drawline)
+  + [Numbering()](#-numbering)
 - [Contact to us](#-contact-to-us)    
 
 
@@ -37,7 +45,22 @@
 [🔗 Amazon Products](https://www.amazon.com/Pipo-Painting/s?k=Pipo+Painting)   
 [🔗 Coupang Products](https://www.coupang.com/np/search?q=%ED%94%BC%ED%8F%AC%ED%8E%98%EC%9D%B8%ED%8C%85&channel=relate)     
 
-## 🛠💡 Working Steps
+## 💡 How to Use?
+
+#### Command Line
+```
+git clone https://github.com/AutoPipo/Auto-create-Pipo-Painting.git
+cd Auto-create-Pipo-Painting
+pip install -r requirements.txt
+python .
+```
+
+#### On your Web Browser
+```
+https://localhost:5000
+```
+
+## 🛠 Working Steps
 
 <h3  align="center">Original Image</h3>
 <p align="center">
