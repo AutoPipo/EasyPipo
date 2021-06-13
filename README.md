@@ -8,15 +8,16 @@
 
 📌 **Authors** :  [Minku Koo](https://github.com/Minku-Koo) &nbsp;[Jiyong Park](https://github.com/Ji-yong219)      <br><br>
 📌 **Development Period** : Feb.2021 ~ Jun.2021     <br><br>
-📌 **Main Library** : cv2, numpy, Flask       <br><br>
+📌 **Main Library** : [cv2](https://docs.opencv.org/master/) &nbsp;[numpy](https://numpy.org/doc/) &nbsp;[Flask](https://flask.palletsprojects.com/en/2.0.x/)     <br><br>
 📌 **Keyword** : "Computer Vision", "Image Processing", "OpenCV", "Pipo Painting", "Line Detection", "Color Numbering"       <br><br>
 
-## 🔗 Contents
-[1. Our System is ...](#-our-system-is)    
-[2. What is Pipo Painting?](#-what-is-pipo-painting)    
-[3. Working Steps](#-working-steps)    
-[4. Python Modules](#-python-modules)    
-[5. Contact to us](#-contact-to-us)    
+## 📃 Contents
+- [Introduction](#pipo-painting-auto-creation-system)
+- [Our System is ...](#-our-system-is)    
+- [What is Pipo Painting?](#-what-is-pipo-painting)    
+- [Working Steps](#-working-steps)    
+- [Python Modules](#-python-modules)    
+- [Contact to us](#-contact-to-us)    
 
 
 ## ⚙ Our System is ...
@@ -32,9 +33,9 @@
 > The users are encouraged to wash the paintbrush every time a new numbered colour is being used.
 
 
-* [Wikipedia Discription](https://en.wikipedia.org/wiki/Paint_by_number)   
-* [Amazon Products](https://www.amazon.com/Pipo-Painting/s?k=Pipo+Painting)   
-* [Coupang Products](https://www.coupang.com/np/search?q=%ED%94%BC%ED%8F%AC%ED%8E%98%EC%9D%B8%ED%8C%85&channel=relate)
+[🔗 Wikipedia Discription](https://en.wikipedia.org/wiki/Paint_by_number)   
+[🔗 Amazon Products](https://www.amazon.com/Pipo-Painting/s?k=Pipo+Painting)   
+[🔗 Coupang Products](https://www.coupang.com/np/search?q=%ED%94%BC%ED%8F%AC%ED%8E%98%EC%9D%B8%ED%8C%85&channel=relate)     
 
 ## 🛠💡 Working Steps
 
@@ -67,7 +68,7 @@
   <img src="/about_project/test-image/lala-numbering.jpg" width="40%" title="numbering+non_label"></img>
 </p>
 
-<h3 align="center" >🔎 If it zoom in</h3>
+<h3 align="center" >🔎 If it zoom in, you can see numbers</h3>
 <p align="center">
   <img src="/about_project/test-image/lala-numbering-expand.jpg" width="50%" title="numbering-expand"></img>
 </p>
@@ -76,9 +77,52 @@
 
 ### 📍 Painting()
 
+> ***Painting()*** converts the image like a picture.   
+> Use Blurring and K-Means Clustering.   
+> This is **step 1** of the [Working Steps](#-working-steps)     
+
+```Python
+    painting = Painting( "./imagePath/image.jpg")
+    
+    # Blurring
+    blurImage = painting.blurring(  div = 8, 
+                                    radius = 10, 
+                                    sigmaColor =20, 
+                                    medianValue=7)
+    
+    # Color K-Means Clustering
+    clusteredImage = painting.colorClustering( blurImage, cluster = 16)
+    
+    expandedImage = imageExpand(clusteredImage, size = 4)
+    
+    # 확장된 이미지에서 변형된 색상을 군집화된 색상과 매칭
+    similarMap = painting.expandImageColorMatch(expandedImage)
+    # 군집화된 색상을 지정된 색상과 가장 비슷한 색상으로 매칭
+    paintingMap = painting.getPaintingColorMap(similarMap)
+```
+
 ### 📍 DrawLine()
 
+> ***DrawLine()*** draw a line based on the color border.   
+> Draw an arbitrary line at the edge of the image for apply Numbering()    
+> This is **step 2** of the [Working Steps](#-working-steps)   
+
+```Python
+    drawLine = DrawLine(image)
+    lineMap = drawLine.getDrawLine()
+    outlines = drawLine.drawOutline(lineMap)
+```
+
 ### 📍 Numbering()
+
+> ***Numbering()*** input the color index number inside the line.     
+> Find the contours and its hierarchy.    
+> Extracts the color label, calculates the Incenter point, and input a color index number.     
+> This is **step 3** of the [Working Steps](#-working-steps)    
+
+```Python
+    numbering = Numbering()
+```
 
 ## 📧 Contact to us
 - corleone@kakao.com
