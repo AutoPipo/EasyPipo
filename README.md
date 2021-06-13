@@ -11,12 +11,12 @@
 📌 **Main Library** : cv2, numpy, Flask       <br><br>
 📌 **Keyword** : "Computer Vision", "Image Processing", "OpenCV", "Pipo Painting", "Line Detection", "Color Numbering"       <br><br>
 
-## Contents
+## 🔗 Contents
 [1. Our System is ...](#-our-system-is)    
 [2. What is Pipo Painting?](#-what-is-pipo-painting)    
-[3. Working Steps](#https://github.com/AutoPipo/Auto-create-Pipo-Painting#-working-steps)    
-[4. Python Modules](#https://github.com/AutoPipo/Auto-create-Pipo-Painting#-python-modules)    
-[5. Contact to us](#https://github.com/AutoPipo/Auto-create-Pipo-Painting#-contact-to-us)    
+[3. Working Steps](#-working-steps)    
+[4. Python Modules](#-python-modules)    
+[5. Contact to us](#-contact-to-us)    
 
 
 ## ⚙ Our System is ...
