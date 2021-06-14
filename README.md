@@ -22,7 +22,7 @@
   * [Step 1](#step-1-color-clustering-8-16-32-colors)    
   * [Step 2](#step-2-select-appropriate-number-of-colors-and-line-drawing)     
   * [Step 3](#step-3-remove-noise-line-and-set-color-numbering-color-label-included-or-not)     
-- [Developed Modules](#-developed-modules)    
+- [Modules Development](#-modules-development)    
   + [Painting()](#-painting)
   + [DrawLine()](#-drawline)
   + [Numbering()](#-numbering)
@@ -93,7 +93,7 @@ https://localhost:5000
   <img src="/about_project/test-image/lala-numbering-expand.jpg" width="50%" title="numbering-expand"></img>
 </p>
 
-## 📚 Developed Modules
+## 📚 Modules Development
 
 ### 📍 Painting()
 
