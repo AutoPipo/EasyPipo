@@ -7,7 +7,7 @@
   <img src="/about_project/logo.png" width="25%" title="logo" ></img>
 </p><br>
 
-📌 **Name** : Easy Pipo
+📌 **Name** : Easy Pipo     
 📌 **Authors** :  [Minku Koo](https://github.com/Minku-Koo) &nbsp;[Jiyong Park](https://github.com/Ji-yong219)      <br><br>
 📌 **Development Period** : Feb.2021 ~ Jun.2021     <br><br>
 📌 **Main Library** : [OpenCV](https://docs.opencv.org/master/), [numpy](https://numpy.org/doc/), [Flask](https://flask.palletsprojects.com/en/2.0.x/)     <br><br>
