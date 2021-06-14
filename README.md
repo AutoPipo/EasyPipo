@@ -13,7 +13,7 @@
 📌 **Main Library** : [OpenCV](https://docs.opencv.org/master/), [numpy](https://numpy.org/doc/), [Flask](https://flask.palletsprojects.com/en/2.0.x/)     <br><br>
 📌 **Keyword** : "Computer Vision", "Image Processing", "OpenCV", "Pipo Painting", "Line Detection", "Color Numbering"       <br><br>
 
-## 📃 Contents
+## 📃 Table of Contents
 - [Introduction](#pipo-painting-auto-creation-system)
 - [What is Pipo Painting?](#-what-is-pipo-painting)    
 - [How to Use?](#-how-to-use)    
@@ -57,7 +57,7 @@ python .
 https://localhost:5000
 ```
 
-## 💡 Working Steps
+## 💡 Working Process
 
 <h3  align="center">Original Image</h3>
 <p align="center">
@@ -145,6 +145,6 @@ https://localhost:5000
 ```
 
 ## 📧 Contact to us
-- corleone@kakao.com
-- wldydslapjyy@naver.com 
+- [Minku Koo](https://github.com/Minku-Koo) / corleone@kakao.com
+- [Jiyong Park](https://github.com/Ji-yong219) / wldydslapjyy@naver.com 
 
