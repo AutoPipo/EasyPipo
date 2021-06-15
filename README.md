@@ -46,8 +46,8 @@
 
 #### Command Line
 ```
-git clone https://github.com/AutoPipo/Auto-create-Pipo-Painting.git
-cd Auto-create-Pipo-Painting
+git clone https://github.com/AutoPipo/EasyPipo.git
+cd EasyPipo
 pip install -r requirements.txt
 python .
 ```
