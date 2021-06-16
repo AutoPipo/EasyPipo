@@ -162,7 +162,13 @@ https://localhost:5000
     # Make White image same size with Image drawn with lines
     result_img = makeWhiteFromImage(lineMap)
     # Draw contouor borders and Color index on White image
-    result_img = setColorNumberFromContours(result_img, thresh, contours, hierarchy, img_lab, lab, colorNames)
+    result_img = setColorNumberFromContours(result_img, 
+                                              thresh, 
+                                              contours, 
+                                              hierarchy, 
+                                              img_lab, 
+                                              lab, 
+                                              colorNames)
     # Draw Color label index on Result image
     result_img2 = setColorLabel(result_img.copy(), colorNames, colors)
     
