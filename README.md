@@ -16,7 +16,8 @@
 ## 📃 Table of Contents
 - [Introduction](#pipo-painting-auto-creation-system)
 - [What is Pipo Painting?](#-what-is-pipo-painting)    
-- [How to Use?](#-how-to-use)    
+- [How to Use?](#-how-to-use)   
+- [SW Architecture](#-sw-architecture)    
 - [Working Process](#-working-process)    
   * [Original Image](#original-image)     
   * [Step 1](#step-1-color-clustering-8-16-32-colors)    
@@ -56,6 +57,11 @@ python .
 ```
 https://localhost:5000
 ```
+## 🖥 SW Architecture
+<p align="center">
+  <img src="/about_project/SW Architecture.png" width="50%" title="sw-architecture"></img>
+</p>
+
 
 ## 💡 Working Process
 
@@ -128,20 +134,39 @@ https://localhost:5000
 > This is **step 2** of the [Working Steps](#-working-steps)   
 
 ```Python
+    # Input : Painted Image
+    
     drawLine = DrawLine(image)
     lineMap = drawLine.getDrawLine()
-    outlines = drawLine.drawOutline(lineMap)
+    lineMap = drawLine.drawOutline(lineMap)
+    
+    # Output : Image drawn with lines
 ```
 
 ### 📍 Numbering()
 
 > ***Numbering()*** input the color index number inside the line.     
-> Find the contours and its hierarchy.    
+> Find the contours and its hierarchy.     
 > Extracts the color label, calculates the Incenter point, and input a color index number.     
-> This is **step 3** of the [Working Steps](#-working-steps)    
+> This is **step 3** of the [Working Steps](#-working-steps)     
 
 ```Python
-    numbering = Numbering()
+    # Input : Image drawn with lines
+    
+    # get Color(RGB) dictionary, Color index dictionary from Painted image 
+    colorNames, colors = getColorFromImage(image)
+    # Extracts Color label from Painted Image
+    img_lab, lab = getImgLabelFromImage(colors, image)
+    # Extracts contours, hierarchy, thresh from Image drawn with lines
+    contours, hierarchy, thresh = getContoursFromImage(lineMap)
+    # Make White image same size with Image drawn with lines
+    result_img = makeWhiteFromImage(lineMap)
+    # Draw contouor borders and Color index on White image
+    result_img = setColorNumberFromContours(result_img, thresh, contours, hierarchy, img_lab, lab, colorNames)
+    # Draw Color label index on Result image
+    result_img2 = setColorLabel(result_img.copy(), colorNames, colors)
+    
+    # Output : Pipo Painting Canvas Image
 ```
 
 ## 📧 Contact to us
