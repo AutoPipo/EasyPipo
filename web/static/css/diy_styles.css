@@ -136,12 +136,6 @@ body{
 
 
 
-
-
-
-
-
-
 /*main page title*/
 header{
     position: relative;
@@ -314,7 +308,6 @@ header{
 .fileBox{
     position: relative;
     width: 560px;
-    /* height: 300px; */
     height: fit-height;
     margin: 30px auto;
     padding: 15px;
@@ -451,7 +444,6 @@ img + .download_btn{
     border-collapse: collapse;
 }
 #reduce_box td{
-    /* border: 1px solid black; */
     width: 250px;
 }
 .cluster_number_input{

@@ -1,5 +1,4 @@
 function close_btn(target){
-    // alert(target);
     $(".fileBox").remove();
     $("#file").val(null);
     $(".go_btn").hide();
@@ -7,6 +6,7 @@ function close_btn(target){
 
 
 
+// Progress Bar, 개발 중
 
 // $( document ).ready(function() {
 //     $('[data-toggle="popover"]').popover();
@@ -195,8 +195,6 @@ $(window).on('load', function(){
                 var fileName = f.name;
                 var fileSize = f.size / 1024 / 1024;
                 fileSize = fileSize < 1 ? fileSize.toFixed(3) : fileSize.toFixed(1);
-
-                // "<image src=\'{{url_for('static',filename='css/icon/preview_image.png')}}\'>" +
 
                 tag += 
                     "<div class='fileBox'>" +

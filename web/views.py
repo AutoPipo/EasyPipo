@@ -1,16 +1,12 @@
 ﻿# flask server
 # Author : minku Koo
 # Project Start:: 2021.03.10
-# Last Modified from Ji-yong 2021.03.30
+# Last Modified from Ji-yong 2021.06.11
 
 from flask import Flask, request, render_template, jsonify, Blueprint, redirect, url_for, session, current_app
 import cv2
-# import matplotlib.pyplot as plt
 import numpy as np
-# import sqlite3 as sqlite
-# import json
 import os
-# from libs.brush import Brush
 from libs.utils import *
 from libs.imageProcessing import *
 from libs.drawLine import *
@@ -30,15 +26,7 @@ def index():
     if "id" not in session:
         session["id"] = get_job_id()
     
-    # session.pop("id")
     return render_template("index.html")
-    
-@views.route("/howToUse", methods=["GET"])
-def howToUse():
-    if "id" not in session:
-        session["id"] = get_job_id()
-    
-    return render_template("how_to_use.html")
     
 @views.route("/whatIsPipo", methods=["GET"])
 def whatIsPipo():
@@ -47,7 +35,14 @@ def whatIsPipo():
     
     return render_template("what_is_pipo.html")
     
-@views.route("/ColorSetting", methods=["GET"])
+@views.route("/howToUse", methods=["GET"])
+def howToUse():
+    if "id" not in session:
+        session["id"] = get_job_id()
+    
+    return render_template("how_to_use.html")
+    
+@views.route("/colorSetting", methods=["GET"])
 def ColorSetting():
     if "id" not in session:
         session["id"] = get_job_id()
@@ -73,9 +68,9 @@ def upload_img():
             filename = file.filename 
             filepath = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
             filepath = filepath.replace("\\", "/")
-            file_page_path = os.path.splitext(filepath)[0]
+            # file_page_path = os.path.splitext(filepath)[0]
             
-            # pdf file save (with uploaded)
+            # file save (with uploaded)
             file.save(filepath)
             success = True
 
@@ -100,10 +95,6 @@ def upload_img():
         return resp
 
 
-colorNames = {}
-colors = {}
-img_lab = None
-lab = None
 
 def reduce_color_process(idx, image_path, img, cluster, result, colorNames, colors):
     idx = str(idx)
@@ -136,6 +127,10 @@ def reduce_color_process(idx, image_path, img, cluster, result, colorNames, colo
     return
 
 
+colorNames = {}
+colors = {}
+img_lab = None
+lab = None
 img_list = []
 
 @views.route("/convert", methods=["POST"])
@@ -228,8 +223,6 @@ def convert():
         image_name2 = image_name.split('.')[0]+f"_reduce_{reduce_data}." + image_name.split('.')[1]
         print(f'./web/static/render_image/{image_name2}')
 
-        # paintingMap = cv2.imread(f'./web/static/render_image/{image_name2}')
-
         paintingMap = img_list[int(reduce_data)-1]
 
         # number_of_color = paintingTool.getNumberOfColor(paintingMap)
@@ -274,7 +267,7 @@ def convert():
         # 결과이미지 렌더링
         # image를 넣으면 원본이미지에 그려주고, result_img에 넣으면 백지에 그려줌
         print(f'넘버링 시작')
-        result_img = setColorNumberFromContours2(result_img, thresh, contours, hierarchy, img_lab, lab, colorNames[reduce_idx])
+        result_img = setColorNumberFromContours(result_img, thresh, contours, hierarchy, img_lab, lab, colorNames[reduce_idx])
 
         print(f'컬러 레이블링 시작')
         result_img2 = setColorLabel(result_img.copy(), colorNames[reduce_idx], colors[reduce_idx])
