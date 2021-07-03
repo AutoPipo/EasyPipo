@@ -19,9 +19,9 @@ def imageSave(image, directory = "./result-image/", name = "", id=""):
 
 
 dir = "./test-image/"
-file = "notebook"
+file = "dh2"
 base = ".jpg"
-id = "1"
+id = "40"
 
 
 painting = Painting( dir+file+base )
@@ -33,7 +33,7 @@ imageSave(blurImage, name = file+"-blur", id=id)
 
 print("========  Clustering =======")
 start = time.time()
-similarMap = painting.colorClustering( blurImage, cluster = 24 )
+similarMap = painting.colorClustering( blurImage, cluster = 40 )
 imageSave(similarMap, name = file+"-kmeans", id=id)
 print("time :", round((time.time() - start), 3) ,"초 정도.." )
 
