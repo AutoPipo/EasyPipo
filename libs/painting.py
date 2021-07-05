@@ -2,7 +2,7 @@
 # Image to Painting Process
 
 # Start : 21.04.01
-# Update : 21.06.12
+# Update : 21.07.06
 # Author : Minku Koo
 '''
 
@@ -199,8 +199,7 @@ class Painting:
             returns
                 similarColor <np.ndarray> : most similar color (BGR type)
             """
-            # print("color:", color)
-            # print("colors:", colors)
+            
             # 수정 07.06
             min_dist = 255*255*255*1.0
             min_index = 0
@@ -283,8 +282,8 @@ class Painting:
                 colorName.append( self.colorName[idx] )
             
             return colorName
-        
-        self.clusteredColorName = setClusteredColorName(imageColors)
+        if oneProcess:
+            self.clusteredColorName = setClusteredColorName(imageColors)
         
         return img
     
