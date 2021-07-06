@@ -1,4 +1,9 @@
 ﻿# test
+'''
+21.07.02 >> ctest로 변경
+
+'''
+
 
 
 import time, os
@@ -12,14 +17,10 @@ def imageSave(image, directory = "./result-image/", name = "", id=""):
     cv2.imwrite(path+".jpg", image)
     return
     
-# import time
-# start = time.time()
-# print("비교 시간 :", round((time.time() - start), 3) ,"초.." )
-
 dir = "./test-image/"
-file = "iron"
-base = ".png"
-id = "colorcount32"
+file = "dog"
+base = ".jpg"
+id = "2"
 
 
 

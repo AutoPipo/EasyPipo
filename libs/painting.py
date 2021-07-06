@@ -2,7 +2,7 @@
 # Image to Painting Process
 
 # Start : 21.04.01
-# Update : 21.06.12
+# Update : 21.07.06
 # Author : Minku Koo
 '''
 
@@ -26,8 +26,11 @@ class Painting:
         
         # 지정된 hex color 리스트
         self.hexColorCode =  HexColorCode().hexColorCodeList
+        self.colorName = HexColorCode().colorNameList
+        
         # clustered color list
         self.clusteredColors = np.array([])
+        self.clusteredColorName = []
     
     # image blurring
     @numba.jit(forceobj = True)
@@ -196,6 +199,23 @@ class Painting:
             returns
                 similarColor <np.ndarray> : most similar color (BGR type)
             """
+            
+            # 수정 07.06
+            min_dist = 255*255*255*1.0
+            min_index = 0
+            # color1 = np.array( [color[2], color[1], color[0]] )
+            for idx, c in enumerate( colors ):
+                # c1 = np.array([ c[2], c[1], c[0] ])
+                dist = self.__colorDistance(c, color)
+                if dist < min_dist:
+                    min_index = idx
+                    min_dist = dist
+            index = min_index
+            # 기존
+            '''
+            print("color:", color)
+            print("colors:", colors)
+            
             absSum = np.sum( np.square( np.abs(colors - color) ) , axis = 1 )
             indexs = np.where( absSum ==  np.min( absSum ) )[0]
             
@@ -216,7 +236,8 @@ class Painting:
                 index  = indexs[ hsv_distances.index(min(hsv_distances)) ]
             else:
                 index = indexs[0]
-                
+            '''
+            # print("similar:", colors[ index ])
             return colors[ index ]
         
         img = colorImage.copy()
@@ -229,6 +250,7 @@ class Painting:
             clusteredColor, paintingColor = matchColors
         
         colorDict = {}
+        imageColors = []
         for y, row in enumerate(colorImage):
             for x, color in enumerate(row):
                 t_color = tuple(color)
@@ -248,8 +270,54 @@ class Painting:
                 
                 img[y][x] = similarColor
                 colorDict[t_color] = similarColor
+                imageColors.append( similarColor )
                 
+        def setClusteredColorName(colorList):
+            colorName = []
+            colorList = [ tuple([x for x in color]) for color in colorList ]
+            # print(colorList)
+            for rgb in set(colorList):
+                hex = self.__bgr2hex( (rgb[2], rgb[1], rgb[0]) )
+                idx = self.hexColorCode.index(hex)
+                colorName.append( self.colorName[idx] )
+            
+            return colorName
+        if oneProcess:
+            self.clusteredColorName = setClusteredColorName(imageColors)
+        
         return img
+    
+    #https://stackoverflow.com/questions/8863810/python-find-similar-colors-best-way
+    def __colorDistance1(self, rgb1, rgb2):
+        '''d = {} distance between two colors(3)'''
+        rm = 0.5*(rgb1[0]+rgb2[0])
+        d = sum( ( 2 + rm, 4, 3 - rm ) * ( rgb1-rgb2 ) ** 2 ) ** 0.5
+        return d
+    
+    def __colorDistance(self, fst, snd):
+        '''
+        # https://dev.to/tejeshreddy/color-difference-between-2-colours-using-python-182b
+        '''
+        from colormath.color_objects import sRGBColor, LabColor
+        from colormath.color_conversions import convert_color
+        from colormath.color_diff import delta_e_cie2000
+
+        # Red Color
+        color1_rgb = sRGBColor( fst[2], fst[1], fst[0] )
+
+        # Blue Color
+        color2_rgb = sRGBColor( snd[2], snd[1], snd[0] )
+
+        # Convert from RGB to Lab Color Space
+        color1_lab = convert_color(color1_rgb, LabColor)
+
+        # Convert from RGB to Lab Color Space
+        color2_lab = convert_color(color2_rgb, LabColor)
+
+        # Find the color difference
+        delta_e = delta_e_cie2000(color1_lab, color2_lab)
+        # print("The difference between the 2 color = ", delta_e)
+        return delta_e
     
     # BGR Color tuple convert to Hex Color String Code
     def __bgr2hex(self, bgr):

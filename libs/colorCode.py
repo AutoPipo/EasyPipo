@@ -2,7 +2,7 @@
 
 class HexColorCode:
     def __init__(self):
-        self.hexColorCodes = """
+        self.hexColorCode1 = """
 FF8000,B45F04,61380B,DF7401,886A08,5F4C0B,B37126,AD6B20,
 9B590D,72410A,86541B,765228,95652D,A86E2C,BC721E,9D5707,
 A2551A,8C440D,663510,714625,A45C25,A7581C,A04C0B,9A4707,
@@ -205,7 +205,7 @@ B4B4B4,BEBEBE,C8C8C8,D2D2D2,DCDCDC,
 000000,282828,323232,3C3C3C,464646,
 505050,5A5A5A,646464,6E6E6E,787878
 """
-        self.hexColorCode = """
+        self.hexColorCode2 = """
 FF0000,00FF00,0000FF,
 CD5C5C,7FFFD4,
 00FFFF,E9967A,00FA9A,
@@ -271,7 +271,28 @@ F4A460,DAA520,
 0B610B,0B3B0B,0B0B3B,0B0B61,0B2161,3B0B0B
 """
         
+        self.hexColorCode = """
+FFFFFF,F5F2CF,E6B7CB,DB8CA9,
+FC4F87,A84C99,CC2133,A71931,
+F3D5B1,DC7E38,E09486,FBE22E,
+E7A632,BE994B,DEE7AE,D7DD3F,
+4F994A,79BFB5,4D9D9A,A5D1F4,
+265297,1B3B64,AA92C2,5E56A1,
+462864,8F7660,AA7F52,5B3101,
+A4A8A9,161513
+"""
+        self.colorName = """
+White,Antique White,Cherry Blossom Pink,Wild Rose Pink,
+Tutti Fruitti,Fun Fuchsia,Bright Red,Christmas Red,
+Natural Beige,Bright Orange,Bright Coral,Bright Yellow,
+Goldenrod,Antique Gold,Early Spring Green,Citrus Green,
+Holiday Green,Turquoise,Dark Turquoise,Cool Blue,
+Bright Blue,Navy Blue,Lavender,Purple Passion,
+African Violet,Country Maple,Golden Brown,Cinnamon Brown,
+Storm Cloud Grey,Black
+"""
         self.hexColorCodeList = self.hexColorCode.replace("\n", "").split(",")
+        self.colorNameList = self.colorName.replace("\n", "").split(",")
         
 if __name__ == "__main__":
     code = HexColorCode().hexColorCodeList

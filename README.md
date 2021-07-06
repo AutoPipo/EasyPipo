@@ -2,6 +2,10 @@
 ## "Pipo Painting" Auto Creation System
 ### Using Image Processing, the real image is automatically converted to a "Pipo Painting" canvas.   
 
+<p align="right">
+<a href="https://hits.seeyoufarm.com" ><img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2FAutoPipo%2FEasyPipo&count_bg=%23E27735&title_bg=%23474444&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=true"/></a>
+</p>
+
 <h3 align="center">Our Icon</h3>
 <p align="center">
   <img src="/about_project/logo.png" width="25%" title="logo" ></img>
