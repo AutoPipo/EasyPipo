@@ -1,2 +1,4 @@
 
 *.pyc
+libs/__pycache__/drawLine.cpython-38.pyc
+*.pyc
