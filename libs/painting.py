@@ -2,7 +2,7 @@
 # Image to Painting Process
 
 # Start : 21.04.01
-# Update : 21.07.06
+# Update : 21.07.07
 # Author : Minku Koo
 '''
 
@@ -261,12 +261,17 @@ class Painting:
                 color = np.array( [int(x) for x in color] )
                 
                 # clustered color와 매칭
+                similarColor = getSimilarColor(similarColor, paintingColor) \
+                               if oneProcess else getSimilarColor(color, clusteredColor) 
+                
+                '''
                 similarColor = getSimilarColor(color, clusteredColor)
                 
                 # painting까지 같이하는지
                 if oneProcess:
                     # clustered color를 지정된 color와 매칭
                     similarColor = getSimilarColor(similarColor, paintingColor)
+                '''
                 
                 img[y][x] = similarColor
                 colorDict[t_color] = similarColor
