@@ -206,8 +206,8 @@ class Painting:
             # color1 = np.array( [color[2], color[1], color[0]] )
             for idx, c in enumerate( colors ):
                 # c1 = np.array([ c[2], c[1], c[0] ])
-                dist = self.__colorDistance(c, color)
-                if dist < min_dist:
+                dist, sum_c, sum_color = self.__colorDistance(c, color)
+                if dist <= min_dist:
                     min_index = idx
                     min_dist = dist
             index = min_index
@@ -259,7 +259,7 @@ class Painting:
                     continue
                 
                 color = np.array( [int(x) for x in color] )
-                
+                '''
                 # clustered color와 매칭
                 similarColor = getSimilarColor(similarColor, paintingColor) \
                                if oneProcess else getSimilarColor(color, clusteredColor) 
@@ -271,7 +271,7 @@ class Painting:
                 if oneProcess:
                     # clustered color를 지정된 color와 매칭
                     similarColor = getSimilarColor(similarColor, paintingColor)
-                '''
+                
                 
                 img[y][x] = similarColor
                 colorDict[t_color] = similarColor
@@ -295,7 +295,7 @@ class Painting:
     #https://stackoverflow.com/questions/8863810/python-find-similar-colors-best-way
     def __colorDistance1(self, rgb1, rgb2):
         '''d = {} distance between two colors(3)'''
-        rm = 0.5*(rgb1[0]+rgb2[0])
+        rm = 0.5*(rgb1[2]+rgb2[2])
         d = sum( ( 2 + rm, 4, 3 - rm ) * ( rgb1-rgb2 ) ** 2 ) ** 0.5
         return d
     
@@ -322,7 +322,7 @@ class Painting:
         # Find the color difference
         delta_e = delta_e_cie2000(color1_lab, color2_lab)
         # print("The difference between the 2 color = ", delta_e)
-        return delta_e
+        return delta_e, sum(fst), sum(snd)
     
     # BGR Color tuple convert to Hex Color String Code
     def __bgr2hex(self, bgr):
