@@ -166,6 +166,7 @@ def setColorNumberFromContours(img, thresh, contours, hierarchy, img_lab, lab, c
         chlidren = [ i for i, ii in enumerate(hierarchy[0]) if ii[3] == idx ]
 
 
+
         raw_dist = np.zeros(thresh.shape, dtype=np.uint8)
         cv2.drawContours(raw_dist, contour, -1, (255, 255, 255), 1)
         cv2.fillPoly(raw_dist, pts =[contour], color=(255, 255, 255))
@@ -203,5 +204,6 @@ def setColorLabel(img, colorNames, colors):
     for idx in range(len(colors)):
         cv2.putText(img, colorNames[idx], (20, 40*(idx+1)), fontface, scale, (50, 50, 50), thickness, 8)
         cv2.rectangle(img, (60, 40*(idx+1)-20), (90, 40*(idx+1)), tuple([int(i) for i in colors[idx]]), -1, 8)
+        print(colors[idx])
 
     return img
