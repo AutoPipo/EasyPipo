@@ -373,7 +373,9 @@ def imageExpand(image, guessSize=False, size = 3):
     returns
         image <np.ndarray> : expanded image
     """
-    if guessSize : size = ( 5000 // image.shape[1] ) + 1
+    if guessSize : 
+        length = max(image.shape[1], image.shape[0])
+        size = ( 5000 // length ) + 1
     #       INTER_LANCZOS4
     image = cv2.resize(image, None, fx=size, fy=size, interpolation=cv2.INTER_LINEAR)
     
