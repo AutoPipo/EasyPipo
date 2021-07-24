@@ -24,7 +24,8 @@ log.setLevel(logging.ERROR)
 @views.route("/", methods=["GET"])
 def index():
     if "id" not in session:
-        session["id"] = get_job_id()
+        # session["id"] = get_job_id()
+        pass
     
     return render_template("index.html")
     
