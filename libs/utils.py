@@ -1,5 +1,11 @@
 ﻿
 import cv2
+import random, datetime, os
+
+def get_job_id():
+    nowTime = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
+    job_id = nowTime + str(random.randint(11 , 999999))
+    return job_id
 
 # 이미지 투명하게
 def setBackgroundAlpha(painted_map, numbered_map, alpha = 0.15):
