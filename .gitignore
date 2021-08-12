@@ -2,3 +2,8 @@
 *.pyc
 libs/__pycache__/drawLine.cpython-38.pyc
 *.pyc
+libs/__pycache__/colorCode.cpython-38.pyc
+libs/__pycache__/imageProcessing.cpython-38.pyc
+libs/__pycache__/painting.cpython-38.pyc
+libs/__pycache__/utils.cpython-38.pyc
+*.pyc
