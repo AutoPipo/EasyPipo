@@ -27,6 +27,7 @@
   * [Step 1](#step-1-color-clustering-8-16-32-colors)    
   * [Step 2](#step-2-select-appropriate-number-of-colors-and-line-drawing)     
   * [Step 3](#step-3-remove-noise-line-and-set-color-numbering-color-label-included-or-not)     
+- [Testing Video](#-testing-video)
 - [Modules Development](#-modules-development)    
   + [Painting()](#-painting)
   + [DrawLine()](#-drawline)
@@ -102,6 +103,10 @@ https://localhost:5000
 <p align="center">
   <img src="/about_project/test-image/lala-numbering-expand.jpg" width="50%" title="numbering-expand"></img>
 </p>
+
+## 📽 Testing Video
+### You can see the Testing Video [here](https://www.youtube.com/watch?v=W1ty6_Ro2hw) (Youtube)
+
 
 ## 📚 Modules Development
 
