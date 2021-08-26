@@ -132,6 +132,7 @@ class Painting:
         """
         
         height, width = image.shape[:2]
+        print("H, W:", height, width)
         samples = np.zeros([ height * width, 3 ], dtype=np.float32)
         
         count = 0
@@ -161,7 +162,7 @@ class Painting:
                     # max_iter = 최대 반복 횟수 지정
                     # epsilon = 요구되는 특정 정확도
                     criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 
-                                10000, # max_iter 
+                                100000, # max_iter 
                                 0.0001), # epsilon 
                     # attempts : 다른 initial centroid 이용해 반복 실행할 횟수
                     attempts = rounds, 
