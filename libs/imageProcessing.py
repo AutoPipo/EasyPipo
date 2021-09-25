@@ -1,7 +1,7 @@
 ﻿# image processing
 # Author : Ji-yong
 # Project Start:: 2021.04.01
-# Last Modified from Ji-yong 2021.06.12
+# Last Modified from Ji-yong 2021.09.24
 
 
 import cv2
@@ -156,7 +156,8 @@ def getRadiusCenterCircle(raw_dist):
 
 @numba.jit(forceobj = True)
 def setColorNumberFromContours(img, thresh, contours, hierarchy, img_lab, lab, colorNames):
-    # 컨투어 별로 체크
+
+    # 컨투어 리스트 Looping
     for idx in trange(len(contours), file=sys.stdout, desc='Set Numbering'):
         contour = contours[idx]
 
@@ -164,8 +165,6 @@ def setColorNumberFromContours(img, thresh, contours, hierarchy, img_lab, lab, c
         if cv2.contourArea(contour) < 80: continue
 
         chlidren = [ i for i, ii in enumerate(hierarchy[0]) if ii[3] == idx ]
-
-
 
         raw_dist = np.zeros(thresh.shape, dtype=np.uint8)
         cv2.drawContours(raw_dist, contour, -1, (255, 255, 255), 1)
@@ -175,15 +174,17 @@ def setColorNumberFromContours(img, thresh, contours, hierarchy, img_lab, lab, c
 
         # 내접원 반지름, 중심좌표 추출
         radius, center, points = getRadiusCenterCircle(raw_dist)
-        # 반지름 작은거 무시
-        if radius < 10: continue
 
-        
+        # 반지름 작은거 무시
+        if radius < 8: continue
+
         if center is not None:
             # 넘버링 여러 곳에 하는 기능 개발 중, 주석처리 하였음
             # for radius, center in points:
 
             cv2.drawContours(img, [contour], -1, (100, 100, 100), 1)
+
+            # 내접원 확인용(주석 풀면 활성화)
             # cv2.circle(img, center, int(radius), (0, 255, 0), 1, cv2.LINE_8, 0)
 
             # 컨투어 내부에 검출된 색을 표시
