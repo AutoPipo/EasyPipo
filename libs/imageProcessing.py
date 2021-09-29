@@ -1,7 +1,7 @@
 ﻿# image processing
 # Author : Ji-yong
 # Project Start:: 2021.04.01
-# Last Modified from Ji-yong 2021.09.24
+# Last Modified from Ji-yong 2021.10.29
 
 
 import cv2
@@ -34,9 +34,10 @@ def createColorDict(image):
 
 # Contour 영역 내에 텍스트 쓰기
 # https://github.com/bsdnoobz/opencv-code/blob/master/shape-detect.cpp
-def setLabel(image, num, pt):
+def setLabel(image, num, pt, radius):
     fontface = cv2.FONT_HERSHEY_SIMPLEX
     scale = 0.3 # 0.6
+    scale = radius / 100
     thickness = 1 # 2
 
     textsize = cv2.getTextSize(num, fontface, scale, thickness)[0]
@@ -191,7 +192,7 @@ def setColorNumberFromContours(img, thresh, contours, hierarchy, img_lab, lab, c
             color_text = label(img_lab, contour, lab, colorNames)
 
             center_ = (center[0], center[1])
-            setLabel(img, color_text, center_)
+            setLabel(img, color_text, center_, radius)
 
     return img
 
