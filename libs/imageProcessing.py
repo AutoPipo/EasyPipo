@@ -43,7 +43,7 @@ def setLabel(image, num, pt, radius):
     textsize = cv2.getTextSize(num, fontface, scale, thickness)[0]
     pt = (int(pt[0]-(textsize[0]/2)+1), int(pt[1]+(textsize[1]/2)))
 
-    cv2.putText(image, num, pt, fontface, scale, (0, 0, 0), thickness, 8)
+    cv2.putText(image, num, pt, fontface, scale, (100, 100, 100), thickness, 8)
 
 
 # 컨투어 내부의 색을 평균내서 어느 색인지 체크
