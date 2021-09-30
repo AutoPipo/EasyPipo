@@ -37,7 +37,7 @@ def createColorDict(image):
 def setLabel(image, num, pt, radius):
     fontface = cv2.FONT_HERSHEY_SIMPLEX
     # scale = 0.3 # 0.6
-    scale = 0.6 if radius / 100 < 0.6 else radius / 100
+    scale = 0.5 if radius / 100 < 0.5 else radius / 100
     thickness = 1 # 2
 
     textsize = cv2.getTextSize(num, fontface, scale, thickness)[0]
