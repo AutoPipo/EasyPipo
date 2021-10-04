@@ -44,7 +44,7 @@ def setLabel(image, num, pt, radius):
     textsize = cv2.getTextSize(num, fontface, scale, thickness)[0]
     pt = (int(pt[0]-(textsize[0]/2)+1), int(pt[1]+(textsize[1]/2)))
 
-    cv2.putText(image, num, pt, fontface, scale, (100, 100, 100), thickness, 8)
+    cv2.putText(image, num, pt, fontface, scale, (150, 150, 150), thickness, 8)
 
 
 # 컨투어 내부의 색을 평균내서 어느 색인지 체크
@@ -184,7 +184,7 @@ def setColorNumberFromContours(img, thresh, contours, hierarchy, img_lab, lab, c
             # 넘버링 여러 곳에 하는 기능 개발 중, 주석처리 하였음
             # for radius, center in points:
 
-            cv2.drawContours(img, [contour], -1, (100, 100, 100), 1)
+            cv2.drawContours(img, [contour], -1, (150, 150, 150), 1)
 
             # 내접원 확인용(주석 풀면 활성화)
             # cv2.circle(img, center, int(radius), (0, 255, 0), 1, cv2.LINE_8, 0)
