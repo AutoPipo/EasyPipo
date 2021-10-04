@@ -38,7 +38,7 @@ def setLabel(image, num, pt, radius):
     fontface = cv2.FONT_HERSHEY_SIMPLEX
 
     scale = 0.5 if radius / 100 < 0.5 else radius / 100 # 0.6
-    thickness = 1 # 2
+    thickness = 2 # 2
 
     textsize = cv2.getTextSize(num, fontface, scale, thickness)[0]
     pt = (int(pt[0]-(textsize[0]/2)+1), int(pt[1]+(textsize[1]/2)))
