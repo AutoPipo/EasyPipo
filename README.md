@@ -1,6 +1,6 @@
 # Easy Pipo
-## "Pipo Painting" Auto Creation System
-### Using Image Processing, the real image is automatically converted to a "Pipo Painting" canvas.   
+## "Pipo Painting" Image Auto Creation System
+### Using Image Processing, the real image is automatically converted to a "Pipo Painting" image.   
 
 <p align="right">
 <a href="https://hits.seeyoufarm.com" ><img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2FAutoPipo%2FEasyPipo&count_bg=%23E27735&title_bg=%23474444&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=true"/></a>
@@ -17,8 +17,14 @@
 📌 **Main Library** : [OpenCV](https://docs.opencv.org/master/), [numpy](https://numpy.org/doc/), [Flask](https://flask.palletsprojects.com/en/2.0.x/)     <br><br>
 📌 **Keyword** : "Computer Vision", "Image Processing", "OpenCV", "Pipo Painting", "Line Detection", "Color Numbering"       <br><br>
 
+
+<h2 align="center" >Process Summary</h2>
+<p align="center">
+  <img src="/about_project/task_process.gif" width="60%" title="task-process"></img>
+</p>
+
 ## 📃 Table of Contents
-- [Introduction](#pipo-painting-auto-creation-system)
+- [Introduction](#pipo-painting-image-auto-creation-system)
 - [What is Pipo Painting?](#-what-is-pipo-painting)    
 - [How to Use?](#-how-to-use)   
 - [SW Architecture](#-sw-architecture)    
@@ -32,6 +38,7 @@
   + [Painting()](#-painting)
   + [DrawLine()](#-drawline)
   + [Numbering()](#-numbering)
+- [Patent Application](#-patent-application)
 - [Contact to us](#-contact-to-us)    
 
 ## 🤔 What is Pipo Painting?
@@ -103,6 +110,7 @@ https://localhost:5000
 <p align="center">
   <img src="/about_project/test-image/lala-numbering-expand.jpg" width="50%" title="numbering-expand"></img>
 </p>
+
 
 ## 📽 Testing Video
 ### You can see the Testing Video [here](https://www.youtube.com/watch?v=W1ty6_Ro2hw) (Youtube)
@@ -183,6 +191,11 @@ https://localhost:5000
     
     # Output : Pipo Painting Canvas Image
 ```
+
+## 💡 Patent Application
+#### ✔ 발명 명칭 : 피포페인팅 이미지 자동변환방법 및 이를 이용한 피포페인팅 이미지 자동변환 시스템
+#### ✔ 출원 번호 : 10-2021-0152394
+#### ✔ 출원 날짜 : 2021.11.08 
 
 ## 📧 Contact to us
 - [Minku Koo](https://github.com/Minku-Koo) / corleone@kakao.com
