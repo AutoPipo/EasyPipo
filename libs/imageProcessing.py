@@ -6,6 +6,7 @@
 
 import cv2
 import numpy as np
+from numpy.core.numeric import zeros_like
 from scipy.spatial import distance as dist
 import numba
 from tqdm import trange
@@ -156,9 +157,10 @@ def getRadiusCenterCircle(raw_dist):
 
 
 
-@numba.jit(forceobj = True)
-def setColorNumberFromContours(img, thresh, contours, hierarchy, img_lab, lab, colorNames):
+# @numba.jit(forceobj = True)
+def setColorNumberFromContours(img, thresh, contours, hierarchy, img_lab, lab, colorNames, gif_mode):
 
+    cnt = 9
     # 컨투어 리스트 Looping
     for idx in trange(len(contours), file=sys.stdout, desc='Set Numbering'):
         contour = contours[idx]
@@ -194,6 +196,9 @@ def setColorNumberFromContours(img, thresh, contours, hierarchy, img_lab, lab, c
 
             center_ = (center[0], center[1])
             setLabel(img, color_text, center_, radius)
+            if gif_mode:
+                cv2.imwrite(f'D:/ppt_img/img{str(cnt).zfill(4)}.png', img)
+            cnt += 1
 
     return img
 

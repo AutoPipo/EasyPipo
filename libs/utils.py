@@ -18,7 +18,7 @@ def setBackgroundAlpha(painted_map, numbered_map, alpha = 0.15):
         painted_map applied alpha + numbered_map <np.ndarray>
     '''
     
-    return cv2.addWeighted(painted_map, alpha, numbered_map, (1-alpha), 0)
+    return cv2.addWeighted(painted_map, alpha, numbered_map, (1-alpha), 0, dtype = cv2.CV_32F)
 
 # BGR to CYMK , Mixing ratios
 # 21.07.17
