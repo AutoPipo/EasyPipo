@@ -32,6 +32,7 @@
   + [Painting()](#-painting)
   + [DrawLine()](#-drawline)
   + [Numbering()](#-numbering)
+- [Patent Application](#-patent-application)
 - [Contact to us](#-contact-to-us)    
 
 ## 🤔 What is Pipo Painting?
@@ -183,6 +184,11 @@ https://localhost:5000
     
     # Output : Pipo Painting Canvas Image
 ```
+
+## 💡 Patent Application
+#### ✔ 발명 명칭 : 피포페인팅 이미지 자동변환방법 및 이를 이용한 피포페인팅 이미지 자동변환 시스템
+#### ✔ 출원 번호 : 10-2021-0152394
+#### ✔ 출원 날짜 : 2021.11.08 
 
 ## 📧 Contact to us
 - [Minku Koo](https://github.com/Minku-Koo) / corleone@kakao.com
