@@ -136,6 +136,7 @@ img_list = []
 
 @views.route("/convert", methods=["POST"])
 def convert():
+    gif_mode = False
     global colorNames
     global colors
 
@@ -160,6 +161,9 @@ def convert():
         image_name2 = image_name.split('.')[0]+"_origin." + image_name.split('.')[1]
         cv2.imwrite(f'./web/static/render_image/{image_name}', image)
         cv2.imwrite(f'./web/static/render_image/{image_name2}', image)
+
+        if gif_mode:
+            cv2.imwrite(f'D:/ppt_img/img0001.png', image)
         return jsonify(target="#original_img", img_name=image_name2)
 
     elif job == "reduce_color":
@@ -167,6 +171,9 @@ def convert():
 
         paintingTool.image = cv2.imread(f'./web/static/render_image/{image_name}')
         image = paintingTool.image
+
+        if gif_mode:
+            cv2.imwrite(f'D:/ppt_img/img0002.png', image)
 
         print(f'블러 시작')
 
@@ -177,6 +184,8 @@ def convert():
             sigmaColor =20, 
             medianValue=7
         )
+        if gif_mode:
+            cv2.imwrite(f'D:/ppt_img/img0003.png', blurImage)
 
         clusters = [int(i) for i in reduce_data.split(',')[:3]]
 
@@ -214,6 +223,9 @@ def convert():
         cv2.imwrite(f'./web/static/render_image/{image_name2_2}', painting_map_2)
         cv2.imwrite(f'./web/static/render_image/{image_name2_3}', painting_map_3)
 
+        if gif_mode:
+            cv2.imwrite(f'D:/ppt_img/img0004.png', painting_map_2)
+
         print(f'./web/static/render_image/{image_name2_2}')
 
         return jsonify(target="#reduce_img", img_name=image_name2, clusters=clusters)
@@ -235,8 +247,14 @@ def convert():
 
 
         drawLineTool = DrawLine(paintingMap)
+        if gif_mode:
+            cv2.imwrite(f'D:/ppt_img/img0005.png', paintingMap)
         lined_image = drawLineTool.getDrawLine()
+        if gif_mode:
+            cv2.imwrite(f'D:/ppt_img/img0006.png', lined_image)
         lined_image = drawLineTool.drawOutline(lined_image)
+        if gif_mode:
+            cv2.imwrite(f'D:/ppt_img/img0007.png', lined_image)
 
         # 레이블 추출
         img_lab, lab = getImgLabelFromImage(colors[reduce_data], paintingMap)
@@ -252,6 +270,11 @@ def convert():
     elif job == "numbering":
         reduce_idx = session['reduce_idx']
 
+        # image_name2 = image_name.split('.')[0]+f"_reduce_{reduce_data}." + image_name.split('.')[1]
+        # print(f'./web/static/render_image/{image_name2}')
+
+        paintingMap = img_list[int(reduce_idx)-1]
+
         image_name2 = image_name.split('.')[0]+"_linedraw." + image_name.split('.')[1]
         paintingTool.image = cv2.imread(f'./web/static/render_image/{image_name2}')
         lined_image = paintingTool.image
@@ -262,23 +285,32 @@ def convert():
 
 
         # 결과 이미지 백지화
-        result_img = makeWhiteFromImage(lined_image)
+        result_img = makeWhiteFromImage(paintingMap)
+
+        result_img = setBackgroundAlpha(paintingMap, result_img)
+        if gif_mode:
+            cv2.imwrite(f'D:/ppt_img/img0008.png', result_img)
         # result_img = paintingMap
 
         # 결과이미지 렌더링
         # image를 넣으면 원본이미지에 그려주고, result_img에 넣으면 백지에 그려줌
         print(f'넘버링 시작')
-        result_img = setColorNumberFromContours(result_img, thresh, contours, hierarchy, img_lab, lab, colorNames[reduce_idx])
+        result_img = setColorNumberFromContours(result_img, thresh, contours, hierarchy, img_lab, lab, colorNames[reduce_idx], gif_mode)
 
         print(f'컬러 레이블링 시작')
         result_img2 = setColorLabel(result_img.copy(), colorNames[reduce_idx], colors[reduce_idx])
+        if gif_mode:
+            cv2.imwrite(f'D:/ppt_img/img9999.png', result_img)
 
         print(f'작업 완료')
 
         image_name2 = image_name.split('.')[0]+"_numbering." + image_name.split('.')[1]
         image_name2_2 = image_name.split('.')[0]+"_numbering_label." + image_name.split('.')[1]
+
         cv2.imwrite(f'./web/static/render_image/{image_name2}', result_img)
         cv2.imwrite(f'./web/static/render_image/{image_name2_2}', result_img2)
+        if gif_mode:
+            cv2.imwrite(f'D:/ppt_img/img10000.png', result_img2)
         return jsonify(target="#numbering_img", img_name=image_name2)
 
     return jsonify(img_name=image_name)
