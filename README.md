@@ -102,13 +102,12 @@ https://localhost:5000
 <!--<h3  align="center">Color Label Included&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Unincluded
 </h3>-->
 <p align="center">
-  <img src="/about_project/test-image/lala-numbering-label.jpg" width="40%" title="numbering+label"></img>
-  <img src="/about_project/test-image/lala-numbering.jpg" width="40%" title="numbering+non_label"></img>
+  <img src="/about_project/test-image/background_alpha.png" width="50%" title="numbering+label"></img>
 </p>
 
 <h3 align="center" >🔎 If it zoom in, you can see numbers</h3>
 <p align="center">
-  <img src="/about_project/test-image/lala-numbering-expand.jpg" width="50%" title="numbering-expand"></img>
+  <img src="/about_project/test-image/background_alpha_zoom.png" width="50%" title="numbering-expand"></img>
 </p>
 
 
