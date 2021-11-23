@@ -45,6 +45,62 @@ body{
 
 
 
+/*main page title*/
+header{
+    position: relative;
+    height: 150px;
+    padding-top: 60px;
+    border-bottom: solid 2px #7c7c7c;
+    background: rgb(255, 245, 245);
+}
+
+#logo_img{
+    position: absolute;
+    display: inline-block;
+    height: 50px;
+    left: 15vw;
+    bottom: 10px;
+    vertical-align: middle;
+    border: 1px solid black;
+    cursor: pointer;
+}
+
+.index_title{
+    position: absolute;
+    display: inline-block;
+    width: fit-content;
+    height: 50px;
+    line-height: 50px;
+    left: 18vw;
+    bottom: 10px;
+    vertical-align: middle;
+    font-family: pangolin;
+    font-size: 32pt;
+    font-weight: bold;
+    cursor: pointer;
+    /* box-shadow: 0 2px 0 blue; */
+}
+.top_menu_box{
+    position: absolute;
+    display: inline-block;
+    right: 15vw;
+    bottom: 15px;
+}
+.top_menu_item{
+    display: inline-block;
+    margin: 0 20px;
+    font-family: pangolin;
+    font-weight: bold;
+    font-size: 14pt;
+    cursor: pointer;
+}
+
+.sub_title{
+    margin: 70px;
+    font-family: indieflower;
+    font-size: 42pt;
+    font-weight: bold;
+}
 
 
 
@@ -55,6 +111,8 @@ body{
 .bold{font-weight:bold;}
 .step_title{position:absolute; top: -5px; left:-10px;}
 .timeline-wrapper {
+    width: 80vw;
+    margin: 0 auto;
     padding-left:80px;
     min-width: 400px;
     font-family: 'Helvetica';
@@ -150,62 +208,6 @@ background-color: white;
 
 
 
-/*main page title*/
-header{
-    position: relative;
-    height: 150px;
-    padding-top: 60px;
-    border-bottom: solid 2px #7c7c7c;
-    background: rgb(255, 245, 245);
-}
-
-#logo_img{
-    position: absolute;
-    display: inline-block;
-    height: 50px;
-    left: 50px;
-    bottom: 10px;
-    vertical-align: middle;
-    border: 1px solid black;
-    cursor: pointer;
-}
-
-.index_title{
-    position: absolute;
-    display: inline-block;
-    width: fit-content;
-    height: 50px;
-    line-height: 50px;
-    left: 120px;
-    bottom: 10px;
-    vertical-align: middle;
-    font-family: pangolin;
-    font-size: 32pt;
-    font-weight: bold;
-    cursor: pointer;
-    /* box-shadow: 0 2px 0 blue; */
-}
-.top_menu_box{
-    position: absolute;
-    display: inline-block;
-    right: 0;
-    bottom: 15px;
-}
-.top_menu_item{
-    display: inline-block;
-    margin: 0 20px;
-    font-family: pangolin;
-    font-weight: bold;
-    font-size: 14pt;
-    cursor: pointer;
-}
-
-.sub_title{
-    margin: 70px;
-    font-family: indieflower;
-    font-size: 42pt;
-    font-weight: bold;
-}
 
 
 
