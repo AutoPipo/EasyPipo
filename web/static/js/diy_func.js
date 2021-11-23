@@ -100,7 +100,11 @@ $(window).on('load', function(){
                 // $($($(data.target+'_box').parent()).prev()).removeClass('current');
                 // $($(data.target+'_box').parent()).addClass('current');
 
-                $($(data.target+'_box').parent().next()).addClass('is-done');
+                // $($(data.target+'_box').parent().next()).addClass('is-done');
+                
+                $(data.target+'_box').parent().addClass('is-done');
+                $($(data.target+'_box').parent()).removeClass('current');
+                $($(data.target+'_box').parent().next()).addClass('current');
 
 
                 var time = new Date().getTime();

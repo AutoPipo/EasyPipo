@@ -39,8 +39,19 @@ body{
     width: 100vw;
     height: 95vh;
     text-align: center;
+    
+    
+    user-drag: none; 
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-drag: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
 }
 
+/* body, html {
+    cursor: url(cursor.gif), pointer;
+} */
 
 
 
@@ -119,6 +130,7 @@ header{
     font-size: 14px;
     /*border: 1px solid #CCC;*/
 }
+
 .StepProgress {
     position: relative;
     padding-left: 45px;
@@ -136,7 +148,7 @@ header{
 }
 .StepProgress-item {
     position: relative;
-    counter-increment: list;
+    /* counter-increment: list; */
 }
 .StepProgress-item:not(:last-child) {
     padding-bottom: 20px;
@@ -172,11 +184,11 @@ header{
     border: 2px solid var(--theme-color);
     background-color: var(--theme-color);
 }
-/*.StepProgress-item.current::before { 
+.StepProgress-item.current::before { 
 border-left: 2px solid green;
 }
 .StepProgress-item.current::after {
-content: counter(list);
+content: "";
 padding-top: 1px;
 width: 19px;
 height: 18px;
@@ -187,7 +199,7 @@ text-align: center;
 color: green;
 border: 2px solid green;
 background-color: white;
-}*/
+}
 .StepProgress strong {
     display: block;
 }
