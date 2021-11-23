@@ -6,36 +6,6 @@ function close_btn(target){
 
 
 
-// Progress Bar, 개발 중
-
-// $( document ).ready(function() {
-//     $('[data-toggle="popover"]').popover();
-//     var i = 1;
-//     $('.vprogress .circle').removeClass().addClass('circle');
-//     $('.vprogress .bar').removeClass().addClass('bar');
-//     setInterval(function() {
-//         $('.vprogress .circle:nth-of-type(' + i + ')').addClass('active');
-        
-//         $('.vprogress .circle:nth-of-type(' + (i-1) + ')').removeClass('active').addClass('done');
-        
-//         $('.vprogress .circle:nth-of-type(' + (i-1) + ') .label').html('✓');
-        
-//         $('.vprogress .bar:nth-of-type(' + (i-1) + ')').addClass('active');
-        
-//         $('.vprogress .bar:nth-of-type(' + (i-2) + ')').removeClass('active').addClass('done');
-        
-//         i++;
-        
-//         if (i==0) {
-//             $('.vprogress .bar').removeClass().addClass('bar');
-//             $('.vprogress div.circle').removeClass().addClass('circle');
-//             i = 1;
-//         }
-//     }, 1000);
-// });
-
-
-
 
 
 $(window).on('load', function(){
@@ -125,6 +95,13 @@ $(window).on('load', function(){
             type: 'POST',
             success: function (data) {
                 $(data.target+'_box').show();
+                
+                // $($($(data.target+'_box').parent()).prev()).addClass('is-done');
+                // $($($(data.target+'_box').parent()).prev()).removeClass('current');
+                // $($(data.target+'_box').parent()).addClass('current');
+
+                $($(data.target+'_box').parent().next()).addClass('is-done');
+
 
                 var time = new Date().getTime();
 

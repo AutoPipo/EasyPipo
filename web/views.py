@@ -136,7 +136,7 @@ img_list = []
 
 @views.route("/convert", methods=["POST"])
 def convert():
-    gif_mode = False
+    gif_mode = True
     global colorNames
     global colors
 
