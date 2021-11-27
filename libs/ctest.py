@@ -1,7 +1,6 @@
 ﻿# new colortest
 '''
 21.07.02 여기서 테스트 진행
-
 '''
 
 import time, os
@@ -15,31 +14,32 @@ def imageSave(image, directory = "./result-image/", name = "", id=""):
     path = os.path.join(directory, name+"-"+id)
     cv2.imwrite(path+".jpg", image)
     return
-    
+
 
 
 dir = "./test-image/"
-file = "dh2"
+file = "dh1"
 base = ".jpg"
-id = "40"
+id = "p2"
 
+print(file,"작업중")
 
 painting = Painting( dir+file+base )
 
 print("========  blurImage =======")
-blurImage = painting.blurring( div = 10, radius = 10, sigmaColor =20, medianValue=5)
+blurImage = painting.blurring( div = 4, radius = 12, sigmaColor = 16, medianValue= 7)
 imageSave(blurImage, name = file+"-blur", id=id)
 
 
 print("========  Clustering =======")
 start = time.time()
-similarMap = painting.colorClustering( blurImage, cluster = 40 )
+similarMap = painting.colorClustering( blurImage, cluster = 32 )
 imageSave(similarMap, name = file+"-kmeans", id=id)
-print("time :", round((time.time() - start), 3) ,"초 정도.." )
-
+print("time :", round((time.time() - start), 5) ,"초 정도.." )
+# time.sleep(50)
 print("========= Expand Process ========")
 start = time.time()
-expandedImage = imageExpand(similarMap, guessSize = True) #, size=1)
+expandedImage = imageExpand(similarMap, guessSize = False, size=3) #, size=1)
 imageSave(similarMap, name = file+"-expand", id=id)
 print("time :", round((time.time() - start), 3) ,"초 정도.." )
 
@@ -47,12 +47,14 @@ print("time :", round((time.time() - start), 3) ,"초 정도.." )
 print("========= expandImageColorMatch Process ========")
 start = time.time()
 # 확장된 이미지에서 변형된 색상을 군집화된 색상과 매칭
-paintingMap = painting.allColorMatcing(expandedImage)
+# paintingMap = painting.allColorMatcing(expandedImage)
+paintingMap = painting.expandImageColorMatch(expandedImage)
+
 imageSave(paintingMap, name = file+"-expand-kmeans", id=id)
 print("time :", round((time.time() - start), 3) ,"초 정도.." )
 
 
-
+print("color names..\n",painting.clusteredColorName)
 
 drawLine = DrawLine(paintingMap)
 
@@ -88,18 +90,20 @@ result_img = setColorNumberFromContours(result_img,
                                           lab, 
                                           colorNames)
 # Draw Color label index on Result image
-# result_img2 = setColorLabel(result_img, colorNames, colors)
+result_img2 = setColorLabel(result_img, colorNames, colors)
 
-print(">>", result_img.shape )
-print(">>", paintingMap.shape )
-imageSave(result_img, name = file+"-result", id=id)
+
+imageSave(result_img2, name = file+"-result", id=id)
 
 
 line = cv2.imread( "./result-image/"+file+"-result-"+id+base )
 paint = cv2.imread( "./result-image/"+file+"-expand-kmeans-"+id+base )
 
 
-result_ = setBackgroundAlpha( paint.copy(), line.copy(), alpha = 0.12 )
+result_ = setBackgroundAlpha( paint.copy(), line.copy(), alpha = 0.13 )
 
 imageSave(result_, name = file+"-alpha", id=id)
+
+print("work finished..!!")
+
 
