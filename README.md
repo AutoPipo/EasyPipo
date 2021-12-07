@@ -198,5 +198,5 @@ https://localhost:5000
 
 ## 📧 Contact to us
 - [Minku Koo](https://github.com/Minku-Koo) / corleone@kakao.com
-- [Jiyong Park](https://github.com/Ji-yong219) / wldydslapjyy@naver.com 
+- [Jiyong Park](https://github.com/Ji-yong219) / comjiyong@kakao.com  
 
