@@ -145,7 +145,6 @@ def convert():
 
     global img_list
 
-
     job = request.form['job']
     image_path = request.form['image_path']
     reduce_data = request.form['reduce_data']
