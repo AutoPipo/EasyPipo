@@ -289,7 +289,6 @@ def convert():
         result_img = setBackgroundAlpha(paintingMap, result_img)
         if gif_mode:
             cv2.imwrite(f'D:/ppt_img/img0008.png', result_img)
-        # result_img = paintingMap
 
         # 결과이미지 렌더링
         # image를 넣으면 원본이미지에 그려주고, result_img에 넣으면 백지에 그려줌
@@ -308,6 +307,7 @@ def convert():
 
         cv2.imwrite(f'./web/static/render_image/{image_name2}', result_img)
         cv2.imwrite(f'./web/static/render_image/{image_name2_2}', result_img2)
+
         if gif_mode:
             cv2.imwrite(f'D:/ppt_img/img10000.png', result_img2)
         return jsonify(target="#numbering_img", img_name=image_name2)
