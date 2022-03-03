@@ -1,7 +1,7 @@
 ﻿# flask server
 # Author : minku Koo
 # Project Start:: 2021.03.10
-# Last Modified from Ji-yong 2021.06.11
+# Last Modified from Ji-yong 2022.03.03
 
 from flask import Flask, request, render_template, jsonify, Blueprint, redirect, url_for, session, current_app
 import cv2
@@ -24,8 +24,7 @@ log.setLevel(logging.ERROR)
 @views.route("/", methods=["GET"])
 def index():
     if "id" not in session:
-        # session["id"] = get_job_id()
-        pass
+        session["id"] = get_job_id()
     
     return render_template("index.html")
     
