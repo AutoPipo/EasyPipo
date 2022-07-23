@@ -51,7 +51,7 @@
 > The users are encouraged to wash the paintbrush every time a new numbered colour is being used.
 
 
-[🔗 Wikipedia Discription](https://en.wikipedia.org/wiki/Paint_by_number)   
+[🔗 Wikipedia Description](https://en.wikipedia.org/wiki/Paint_by_number)   
 [🔗 Amazon Products](https://www.amazon.com/Pipo-Painting/s?k=Pipo+Painting)   
 [🔗 Coupang Products](https://www.coupang.com/np/search?q=%ED%94%BC%ED%8F%AC%ED%8E%98%EC%9D%B8%ED%8C%85&channel=relate)     
 
