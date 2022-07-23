@@ -85,8 +85,6 @@ if __name__ == "__main__":
     lineMap = drawLine.getDrawLine()
     outlines = drawLine.drawOutline(lineMap)
     lineOnImage = drawLine.getLineOnImage()
-    
-    
     '''
     pass
     

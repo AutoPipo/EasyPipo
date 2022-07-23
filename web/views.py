@@ -173,8 +173,6 @@ def convert():
         if gif_mode:
             cv2.imwrite(f'D:/ppt_img/img0002.png', image)
 
-        print(f'블러 시작')
-
         # 색 단순화 + 블러 처리
         blurImage = paintingTool.blurring(
             div = 8, 
@@ -240,9 +238,6 @@ def convert():
         # print("Number of Color :", number_of_color)
 
         # 선 그리기
-        print(f'선 그리기 시작')
-
-
 
         drawLineTool = DrawLine(paintingMap)
         if gif_mode:
