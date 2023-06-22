@@ -7,6 +7,14 @@ from flask import Flask
 from .views import views
 import os
 
+"""App factory
+File: app.py
+Created: 2023-06-22
+
+@author: Ji-yong219
+LastModifyDate: 
+LastModifier: 
+"""
 def create_app():
     app = Flask(__name__)
     app.register_blueprint(views)
