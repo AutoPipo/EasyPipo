@@ -1,24 +1,23 @@
 ﻿# flask server
 # Author : minku Koo
-# Project Start:: 2021.03.10
-# Last Modified from Ji-yong 2022.03.03
+# Project Start:: 2021.03.10.
+# Last Modified from Ji-yong 2022.03.03.
 
-from flask import Flask, request, render_template, jsonify, Blueprint, redirect, url_for, session, current_app
+from flask import request, render_template, jsonify, Blueprint, redirect, url_for, session, current_app
 import cv2
-import numpy as np
 import os
 from libs.utils import *
 from libs.imageProcessing import *
 from libs.drawLine import *
 from libs.painting import *
 
-from multiprocessing import Process, Queue, Manager
+from multiprocessing import Process, Manager
 
 import logging
 
 views = Blueprint("server", __name__)
 log = logging.getLogger('werkzeug')
-log.setLevel(logging.ERROR)
+log.setLevel(logging.DEBUG) #logging.ERROR
 
 
 @views.route("/", methods=["GET"])

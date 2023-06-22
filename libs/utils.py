@@ -1,6 +1,5 @@
-﻿
-import cv2
-import random, datetime, os
+﻿import cv2
+import random, datetime
 
 def get_job_id():
     nowTime = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
@@ -21,6 +20,6 @@ def setBackgroundAlpha(painted_map, numbered_map, alpha = 0.15):
     return cv2.addWeighted(painted_map, alpha, numbered_map, (1-alpha), 0, dtype = cv2.CV_32F)
 
 # BGR to CYMK , Mixing ratios
-# 21.07.17
+# 21.07.17.
 def ratio_brg2cymk(blue, green, red):
     return 0
