@@ -1,7 +1,7 @@
 ﻿# flask create app
 # Author : Ji-yong219
-# Project Start:: 2021.03.10
-# Last Modified from Ji-yong 2021.06.12
+# Project Start:: 2021.03.10.
+# Last Modified from Ji-yong 2023.06.22.
 
 from flask import Flask
 from .views import views
