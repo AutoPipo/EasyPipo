@@ -179,7 +179,7 @@ def setColorNumberFromContours(img, thresh, contours, hierarchy, img_lab, lab, c
 
         # 내접원 반지름, 중심좌표 추출
         radius, center, points = getRadiusCenterCircle(raw_dist)
-        center, radius = cv2.minEnclosingCircle(raw_dist)
+        # center, radius = cv2.minEnclosingCircle(raw_dist)
 
 
         # mask = np.zeros((512, 512), dtype=np.uint8)
