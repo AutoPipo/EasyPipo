@@ -1,0 +1,117 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>EASY PIPO</title>
+
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/moonspam/NanumBarunGothic@1.0/nanumbarungothicsubset.css">
+	<link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Fugaz+One&display=swap" rel="stylesheet">
+	<!-- import jquery -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+    <!-- local js & css file import start -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/diy_styles.css') }}">
+</head>
+
+<body>
+    {% include "menu_template.html" %}
+	
+	<div class="centerbox">
+    <div class="image_box">
+		<img class="main_img" src="./static/images/whatispipo-main.png">
+	</div>
+	
+	<div class="contentbox">
+		<h2 class="content discript_title">
+		누구나 쉽게 그림을 그리도록, 피포 페인팅
+		</h2>
+		<h3 class="content discript_sub_title">
+		피포 페인팅은 그림을 손쉽게 그릴 수 있는 DIY(Do It Yourself) 그림 키트입니다.
+		</h3>
+		<ul class="content discript">
+			<li>
+			<div class="number">1</div>
+			<div class="number_discript">캔버스 위에 색칠놀이처럼 선이 그려져있습니다.</div>
+			</li>
+			<li>
+			<div class="number">2</div>
+			<div class="number_discript">그려진 선 내부에 번호가 쓰여져 있습니다.</div>
+			</li>
+			<li>
+			<div class="number">3</div>
+			<div class="number_discript">번호에 맞는 물감을 칠해주면, 하나의 그림이 완성됩니다.</div>
+			</li>
+		</ul>
+	</div>
+	</div>
+</body>
+<style>
+	.centerbox{
+		display:inline-block;
+		//border: solid 1px red;
+		width: 100%;
+		padding: 20px;
+	}
+	.contentbox{
+		display:inline-block;
+		//border: solid 1px blue;
+		width: 58%;
+		vertical-align:top;
+		margin: 10px;
+	}
+	.image_box{
+		//border: solid 1px blue;
+		display:inline-block;
+		width: 40%;
+		//padding: 20px;
+		margin: 10px;
+	}
+	.main_img{
+		width: 80%;
+	}
+	
+	.content{
+		font-family: NanumBarunGothic;
+	}
+	
+	.discript_title{
+		font-size: 45px;
+		font-weight: normal;
+	}
+	
+	.discript_sub_title{
+		font-size: 23px;
+		margin: 10px auto;
+	}
+	
+	.discript{
+		font-size: 22px;
+		margin-top: 40px;
+		margin-left: 30px;
+		list-style: none;
+		line-height: 80px;
+		text-align: left;
+	}
+	
+	.number{
+		font-size: 100px;
+		font-weight: bold;
+		font-family: 'Fugaz One', cursive;
+		display: inline-block;
+		color: #F8ECE0;
+		//color: #D8D8D8;
+		//position: relative;
+		//z-index: 2;
+	}
+	
+	.number_discript{
+		
+		display: inline-block;
+		//position: absolute; 
+		//vertical-align: top;
+		//z-index: 1;
+		//left:10px;
+	}
+	
+</style>
+</html>
