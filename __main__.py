@@ -1,11 +1,10 @@
 ﻿# -*- coding: utf-8 -*-
-from web.app import create_app
+import logging
+log = logging.getLogger('werkzeug')
+log.setLevel(logging.DEBUG) #logging.ERROR
 
-# Temporary to avoid No Attribute'asscalar' Error
-import numpy
-def patch_asscalar(a):
-    return a.item()
-setattr(numpy, "asscalar", patch_asscalar)
+from src.main.app import create_app
 
-app = create_app()
-app.run()
+if __name__ == "__main__":
+    app = create_app()
+    app.run()
