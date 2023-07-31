@@ -6,7 +6,7 @@
     height: 30px; 
     float: right;
     top: 200px;
-    right: 100px;
+    right: calc(15vw + 102px);
     z-index:9999;
 } 
 
