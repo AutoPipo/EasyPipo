@@ -60,6 +60,7 @@ body{
 header{
     position: relative;
     height: 150px;
+    margin: 0 auto;
     padding-top: 60px;
     border-bottom: solid 2px #7c7c7c;
     background: rgb(255, 245, 245);
