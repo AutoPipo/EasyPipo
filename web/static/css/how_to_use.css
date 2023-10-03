@@ -85,6 +85,7 @@
     width: 49vw; 
     height: calc(70vh - 150px);
     top: 0;
+    float: left;
 }
 .ex_text_early{
     display: inline-block;
@@ -104,10 +105,11 @@
 }
 ul{
     text-align: left;
-    margin-left: 50px;
+    margin-left: 10px;
     vertical-align: middle;
 }
 li{
+    font-size: 20px;
     margin-bottom: 20px;
 }
 div{
